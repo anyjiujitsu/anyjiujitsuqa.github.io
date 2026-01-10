@@ -1,1 +1,42 @@
+:root{
+  --bg: #ebebeb;
+  --green: #234c31;
+  --row: #e2e4e4;
+  --beige: #ebdeca;
+  --shadow: rgba(0,0,0,0.18);
+
+  --text: #111;
+  --muted: rgba(0,0,0,0.55);
+
+  --radius: 14px;
+  --radiusPill: 999px;
+
+  --pagePad: 14px;
+  --maxW: 900px;
+
+  /* Header */
+  --titleSize: 56px;        /* mobile first */
+  --titleTracking: -0.04em;
+
+  /* Pills */
+  --pillH: 36px;
+  --pillFont: 14px;
+  --pillPadX: 12px;
+
+  /* Table */
+  --groupLabelFont: 12px;
+  --rowFont: 14px;
+
+  /* Indicator dot */
+  --dotSize: 10px;
+}
+@media (min-width: 900px){
+  :root{
+    --pagePad: 24px;
+    --titleSize: 72px;
+    --pillH: 40px;
+    --pillFont: 14px;
+    --rowFont: 14px;
+  }
+}
 
