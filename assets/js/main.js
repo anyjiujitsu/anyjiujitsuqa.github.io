@@ -195,18 +195,49 @@ async function init(){
     const openMatDot   = document.getElementById("openMatDot");
 
     function setOpenMatUI(){
-      const on = !!state.openMat;
+      const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
 
+    function closeOpenMatMenu(){
+      if (!openMatMenu) return;
+      openMatMenu.hidden = true;
+      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
+    }
+
     function positionOpenMatMenu(){
       if (!openMatMenu || !openMatBtn) return;
+
       openMatMenu.style.position = "fixed";
       openMatMenu.style.zIndex = "1000";
-      const rect = openMatBtn.getBoundingClientRect();
-      openMatMenu.style.left = rect.left + "px";
-      openMatMenu.style.top = (rect.bottom + 8) + "px";
+
+      const btnRect = openMatBtn.getBoundingClientRect();
+      const menuW = openMatMenu.offsetWidth || 240;
+      const gutter = 8;
+
+      let left = btnRect.left;
+      const maxLeft = window.innerWidth - menuW - gutter;
+      if (left > maxLeft) left = maxLeft;
+      if (left < gutter) left = gutter;
+
+      const top = btnRect.bottom + 8;
+
+      openMatMenu.style.left = `${left}px`;
+      openMatMenu.style.top = `${top}px`;
+    }
+
+    function openOpenMatMenu(){
+      if (!openMatMenu) return;
+      openMatMenu.hidden = false;
+      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
+
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
+      });
+
+      requestAnimationFrame(positionOpenMatMenu);
     }
 
     if (openMatBtn && openMatMenu) {
@@ -214,9 +245,8 @@ async function init(){
         e.preventDefault();
         e.stopPropagation();
         const isOpen = !openMatMenu.hidden;
-        openMatMenu.hidden = isOpen;
-        openMatBtn.setAttribute("aria-expanded", String(!isOpen));
-        if (!isOpen) requestAnimationFrame(positionOpenMatMenu);
+        if (isOpen) closeOpenMatMenu();
+        else openOpenMatMenu();
       });
     }
 
@@ -225,6 +255,7 @@ async function init(){
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
         if (el.type !== "radio") return;
+
         state.openMat = el.value;
         setOpenMatUI();
         render();
@@ -236,12 +267,33 @@ async function init(){
         e.preventDefault();
         state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
         }
         setOpenMatUI();
         render();
       });
     }
+
+    document.addEventListener("click", (e) => {
+      if (!openMatMenu || openMatMenu.hidden) return;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#openMatMenu") || target.closest("#openMatBtn")) return;
+      closeOpenMatMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeOpenMatMenu();
+    });
+
+    window.addEventListener("resize", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+    });
+    window.addEventListener("scroll", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+    }, { passive: true });
+
+    setOpenMatUI();
 
     render();
 
