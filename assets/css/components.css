@@ -54,6 +54,17 @@
 .pill__input::placeholder{
   color: rgba(0,0,0,0.42);
 }
+/* Hide the browser-provided search cancel “X” so we only use our own clear button */
+.pill__input[type="search"]::-webkit-search-cancel-button{
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+.pill__input[type="search"]::-webkit-search-decoration{
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .pill__clear{
   border:0;
   background: transparent;
