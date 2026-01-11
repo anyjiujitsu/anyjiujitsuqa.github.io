@@ -9,16 +9,35 @@ async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
 
-  // View toggle + slider
+  // View toggle + slider (drag-driven)
   const viewTitle = document.getElementById("viewTitle");
   const tabIndex = document.getElementById("tabIndex");
   const tabEvents = document.getElementById("tabEvents");
   const viewShell = document.getElementById("viewShell");
+  const viewToggle = document.getElementById("viewToggle");
+
+  let viewProgress = 0; // 0 = Index, 1 = Events
+  let isDraggingView = false;
+
+  function applyViewProgress(p, withTransition){
+    const clamped = Math.max(0, Math.min(1, p));
+    viewProgress = clamped;
+
+    // toggle transitions on/off while dragging for a true slider feel
+    if (withTransition) {
+      document.documentElement.style.setProperty("--viewTransition", "260ms");
+    } else {
+      document.documentElement.style.setProperty("--viewTransition", "0ms");
+    }
+
+    document.body.style.setProperty("--viewProgress", String(clamped));
+  }
 
   function setView(view){
     state.view = view;
 
-    document.body.dataset.view = view;
+    const p = (view === "events") ? 1 : 0;
+    applyViewProgress(p, true);
 
     if (tabIndex) tabIndex.setAttribute("aria-selected", view === "index" ? "true" : "false");
     if (tabEvents) tabEvents.setAttribute("aria-selected", view === "events" ? "true" : "false");
@@ -30,41 +49,77 @@ async function init(){
   if (tabIndex) tabIndex.addEventListener("click", () => setView("index"));
   if (tabEvents) tabEvents.addEventListener("click", () => setView("events"));
 
-  // Swipe between views (mobile-friendly)
-  if (viewShell) {
+  function snapFromProgress(){
+    const next = (viewProgress >= 0.5) ? "events" : "index";
+    setView(next);
+  }
+
+  // Drag on the toggle itself (best fidelity)
+  if (viewToggle) {
     let startX = 0;
-    let startY = 0;
-    let dragging = false;
+    let startP = 0;
+
+    viewToggle.addEventListener("pointerdown", (e) => {
+      isDraggingView = true;
+      viewToggle.setPointerCapture(e.pointerId);
+      startX = e.clientX;
+      startP = viewProgress;
+      applyViewProgress(viewProgress, false);
+    });
+
+    viewToggle.addEventListener("pointermove", (e) => {
+      if (!isDraggingView) return;
+      const dx = e.clientX - startX;
+      const width = viewToggle.getBoundingClientRect().width;
+      const delta = dx / (width / 2); // half width = full travel
+      applyViewProgress(startP + delta, false);
+    });
+
+    const end = () => {
+      if (!isDraggingView) return;
+      isDraggingView = false;
+      snapFromProgress();
+    };
+
+    viewToggle.addEventListener("pointerup", end);
+    viewToggle.addEventListener("pointercancel", end);
+    viewToggle.addEventListener("lostpointercapture", end);
+  }
+
+  // Swipe the whole view area (mobile-friendly)
+  if (viewShell) {
+    let startX = 0, startY = 0, startP = 0;
 
     viewShell.addEventListener("touchstart", (e) => {
       if (e.touches.length !== 1) return;
-      dragging = true;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
+      startP = viewProgress;
+      applyViewProgress(viewProgress, false);
     }, { passive: true });
 
-    viewShell.addEventListener("touchend", (e) => {
-      if (!dragging) return;
-      dragging = false;
-
-      const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
-      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : startY;
-
-      const dx = endX - startX;
-      const dy = endY - startY;
-
-      // Ignore mostly-vertical gestures
+    viewShell.addEventListener("touchmove", (e) => {
+      if (e.touches.length !== 1) return;
+      const x = e.touches[0].clientX;
+      const y = e.touches[0].clientY;
+      const dx = x - startX;
+      const dy = y - startY;
       if (Math.abs(dy) > Math.abs(dx)) return;
 
-      const threshold = 60;
-      if (dx <= -threshold) setView("events");
-      if (dx >= threshold) setView("index");
+      const width = window.innerWidth;
+      const delta = -dx / width; // swipe left => increase progress (toward events)
+      applyViewProgress(startP + delta, false);
+    }, { passive: true });
+
+    viewShell.addEventListener("touchend", () => {
+      snapFromProgress();
     }, { passive: true });
   }
 
   // default view
   if (!state.view) state.view = "index";
   setView(state.view);
+
 
   // Search elements
   const searchInput = document.getElementById("searchInput");
@@ -128,6 +183,57 @@ async function init(){
     setStatesSelectedUI();
   }
 
+  function renderEvents(rows){
+    const root = document.getElementById("eventsRoot");
+    if (!root) return;
+    root.innerHTML = "";
+
+    // Very simple card list for now (until we build the real Events renderer)
+    for (const r of rows.slice(0, 200)) {
+      const div = document.createElement("div");
+      div.className = "table";
+      div.style.marginBottom = "10px";
+
+      const row = document.createElement("div");
+      row.className = "row";
+      row.style.gridTemplateColumns = "1.4fr 1fr 0.8fr";
+
+      const name = document.createElement("div");
+      name.innerHTML = `<div class="cell__name">${escapeHTML(pick(r, ["NAME","Title","Event","EVENT","Seminar by"]) || "Event")}</div>
+                        <div class="cell__ig">${escapeHTML(pick(r, ["Location","WHERE","IG","Gym","HOST"]) || "")}</div>`;
+
+      const city = document.createElement("div");
+      city.innerHTML = `<div class="cell__city">${escapeHTML(pick(r, ["Date","DATE"]) || "")}</div>
+                        <div class="cell__state">${escapeHTML(pick(r, ["Time","TIME","Type","TYPE"]) || "")}</div>`;
+
+      const days = document.createElement("div");
+      days.innerHTML = `<div class="cell__days">${escapeHTML(pick(r, ["Price","PRICE"]) || "")}</div>
+                        <div class="cell__ota">${escapeHTML(pick(r, ["Notes","NOTES"]) || "")}</div>`;
+
+      row.appendChild(name);
+      row.appendChild(city);
+      row.appendChild(days);
+      div.appendChild(row);
+      root.appendChild(div);
+    }
+  }
+
+  function pick(obj, keys){
+    for (const k of keys){
+      if (obj && obj[k] != null && String(obj[k]).trim() !== "") return String(obj[k]).trim();
+    }
+    return "";
+  }
+
+  function escapeHTML(str){
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function buildStatesMenu(){
     if (!stateList) return;
 
@@ -163,6 +269,19 @@ async function init(){
     status.textContent = "Loading…";
     allRows = await loadCSV("data/directory.csv");
 
+    // Load Events data (Events view)
+    let allEvents = [];
+    try{
+      allEvents = await loadCSV("directory/events.csv");
+      const es = document.getElementById("eventsStatus");
+      if (es) es.textContent = `${allEvents.length} events`;
+      renderEvents(allEvents);
+    }catch(err){
+      console.warn(err);
+      const es = document.getElementById("eventsStatus");
+      if (es) es.textContent = "Failed to load events";
+    }
+
     // ---- Search wiring ----
     if (searchInput) {
       searchInput.addEventListener("input", () => {
@@ -178,6 +297,32 @@ async function init(){
         state.search = "";
         searchInput.focus();
         render();
+      });
+    }
+
+    // ---- Events search wiring ----
+    const eventsSearchInput = document.getElementById("eventsSearchInput");
+    const eventsSearchClear = document.getElementById("eventsSearchClear");
+    let eventsSearch = "";
+    function applyEventsSearch(rows){
+      const q = (eventsSearch || "").trim().toLowerCase();
+      if (!q) return rows;
+      return rows.filter(r => JSON.stringify(r).toLowerCase().includes(q));
+    }
+    if (eventsSearchInput) {
+      eventsSearchInput.addEventListener("input", () => {
+        eventsSearch = eventsSearchInput.value || "";
+        // re-render using last loaded events if present
+        if (typeof allEvents !== "undefined") renderEvents(applyEventsSearch(allEvents));
+      });
+    }
+    if (eventsSearchClear) {
+      eventsSearchClear.addEventListener("click", () => {
+        if (!eventsSearchInput) return;
+        eventsSearchInput.value = "";
+        eventsSearch = "";
+        eventsSearchInput.focus();
+        if (typeof allEvents !== "undefined") renderEvents(allEvents);
       });
     }
 
