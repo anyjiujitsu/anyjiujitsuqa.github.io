@@ -9,21 +9,78 @@ async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
 
-  // Search elements (must exist in index.html)
+  // Search elements
   const searchInput = document.getElementById("searchInput");
   const searchClear = document.getElementById("searchClear");
+
+  // States pill elements
+  const stateBtn   = document.getElementById("stateBtn");
+  const stateMenu  = document.getElementById("stateMenu");
+  const stateList  = document.getElementById("stateList");
+  const stateClear = document.getElementById("stateClear");
+  const stateDot   = document.getElementById("stateDot");
+
+  function setStatesSelectedUI(){
+    const has = state.states && state.states.size > 0;
+    if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
+    if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
+  }
+
+  function closeStateMenu(){
+    if (!stateMenu) return;
+    stateMenu.hidden = true;
+    if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
+  }
+
+  function openStateMenu(){
+    if (!stateMenu) return;
+    stateMenu.hidden = false;
+    if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
+  }
 
   function render(){
     const filtered = applyFilters(allRows, state);
     renderGroups(root, filtered);
     status.textContent = `${filtered.length} gyms`;
+    setStatesSelectedUI();
+  }
+
+  function buildStatesMenu(){
+    if (!stateList) return;
+
+    const uniqueStates = Array.from(
+      new Set(
+        allRows
+          .map(r => String(r.STATE ?? "").trim())
+          .filter(Boolean)
+      )
+    ).sort((a,b) => a.localeCompare(b));
+
+    stateList.innerHTML = "";
+
+    for (const code of uniqueStates){
+      const label = document.createElement("label");
+      label.className = "menu__item";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = code;
+      cb.checked = state.states.has(code);
+
+      const span = document.createElement("span");
+      span.textContent = code;
+
+      label.appendChild(cb);
+      label.appendChild(span);
+      stateList.appendChild(label);
+    }
   }
 
   try{
     status.textContent = "Loading…";
     allRows = await loadCSV("data/directory.csv");
 
-    // ✅ Wire search -> state -> render
+    // ---- Search wiring ----
     if (searchInput) {
       searchInput.addEventListener("input", () => {
         state.search = searchInput.value || "";
@@ -41,7 +98,62 @@ async function init(){
       });
     }
 
-    // initial render
+    // ---- States pill wiring ----
+    buildStatesMenu();
+    setStatesSelectedUI();
+
+    if (stateBtn && stateMenu) {
+      stateBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !stateMenu.hidden;
+        if (isOpen) closeStateMenu();
+        else openStateMenu();
+      });
+    }
+
+    if (stateList) {
+      stateList.addEventListener("change", (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "checkbox") return;
+
+        if (el.checked) state.states.add(el.value);
+        else state.states.delete(el.value);
+
+        render();
+      });
+    }
+
+    if (stateClear) {
+      stateClear.addEventListener("click", (e) => {
+        e.preventDefault();
+        state.states.clear();
+
+        if (stateList) {
+          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+            cb.checked = false;
+          });
+        }
+
+        render();
+      });
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!stateMenu || stateMenu.hidden) return;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#stateMenu") || target.closest("#stateBtn")) return;
+      closeStateMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeStateMenu();
+    });
+
     render();
 
   } catch(err){
