@@ -20,10 +20,22 @@ async function init(){
   const stateClear = document.getElementById("stateClear");
   const stateDot   = document.getElementById("stateDot");
 
+  function ensureDotStyle(dotEl){
+    if (!dotEl) return;
+    // If CSS is missing or overridden, make sure the dot is still visible.
+    if (!dotEl.style.width) dotEl.style.width = "10px";
+    if (!dotEl.style.height) dotEl.style.height = "10px";
+    dotEl.style.borderRadius = "50%";
+    dotEl.style.backgroundColor = "#28a745";
+    dotEl.style.boxShadow =
+      "0 0 4px rgba(40,167,69,0.9), 0 0 8px rgba(40,167,69,0.7), 0 0 14px rgba(40,167,69,0.5)";
+  }
+
+
   function setStatesSelectedUI(){
     const has = state.states && state.states.size > 0;
     if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
-    if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
+    if (stateDot) { ensureDotStyle(stateDot); stateDot.style.display = has ? "inline-block" : "none"; }
   }
 
   function closeStateMenu(){
@@ -197,7 +209,7 @@ async function init(){
     function setOpenMatUI(){
       const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
-      if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
+      if (openMatDot) { ensureDotStyle(openMatDot); openMatDot.style.display = on ? "inline-block" : "none"; }
     }
 
     function closeOpenMatMenu(){
