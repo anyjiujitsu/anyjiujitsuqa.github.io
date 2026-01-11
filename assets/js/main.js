@@ -111,6 +111,7 @@ async function init(){
       searchInput.addEventListener("input", () => {
         state.search = searchInput.value || "";
         render();
+        closeOpenMatMenu();
       });
     }
 
@@ -121,6 +122,7 @@ async function init(){
         state.search = "";
         searchInput.focus();
         render();
+        closeOpenMatMenu();
       });
     }
 
@@ -148,6 +150,7 @@ async function init(){
         else state.states.delete(el.value);
 
         render();
+        closeOpenMatMenu();
       });
     }
 
@@ -163,6 +166,7 @@ async function init(){
         }
 
         render();
+        closeOpenMatMenu();
       });
     }
 
@@ -259,6 +263,7 @@ async function init(){
         state.openMat = el.value;
         setOpenMatUI();
         render();
+        closeOpenMatMenu();
       });
     }
 
@@ -271,6 +276,7 @@ async function init(){
         }
         setOpenMatUI();
         render();
+        closeOpenMatMenu();
       });
     }
 
