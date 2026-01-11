@@ -136,30 +136,73 @@
         </div>
 
     <!-- EVENTS VIEW -->
+    
+    <!-- EVENTS VIEW -->
     <div class="viewPanel" id="viewEvents" aria-label="Events">
       <nav class="filters" aria-label="Events filters">
         <div class="filters__inner">
+          <!-- Events Search -->
           <div class="pill pill--search">
             <span class="pill__icon" aria-hidden="true">🔎</span>
             <input id="eventsSearchInput" class="pill__input" type="text" inputmode="search"
                    autocomplete="off" autocapitalize="none" spellcheck="false"
-                   placeholder='Search events (coming soon)' />
+                   placeholder='Search events' />
             <button id="eventsSearchClear" class="pill__clear" type="button" aria-label="Clear">×</button>
           </div>
 
-          <div class="pill pill--select" aria-disabled="true" style="opacity:.6;">
-            <span class="pill__label">Date</span><span class="pill__caret">▾</span>
+          <!-- Events Filter 1 -->
+          <div class="pillSelect" data-filter="eventsPill1">
+            <button id="eventsPill1Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label">DATE</span>
+              <span class="pill__dot" id="eventsPill1Dot" aria-hidden="true"></span>
+              <span class="pill__caret" aria-hidden="true">▾</span>
+            </button>
+            <div id="eventsPill1Menu" class="menu" role="menu" aria-label="Date menu" hidden>
+              <div class="menu__header">
+                <div class="menu__title">DATE</div>
+                <button id="eventsPill1Clear" class="menu__clear" type="button">Clear</button>
+              </div>
+              <div class="menu__empty">Coming soon</div>
+            </div>
           </div>
 
-          <div class="pill pill--select" aria-disabled="true" style="opacity:.6;">
-            <span class="pill__label">Type</span><span class="pill__caret">▾</span>
+          <!-- Events Filter 2 -->
+          <div class="pillSelect" data-filter="eventsPill2">
+            <button id="eventsPill2Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label">TYPE</span>
+              <span class="pill__dot" id="eventsPill2Dot" aria-hidden="true"></span>
+              <span class="pill__caret" aria-hidden="true">▾</span>
+            </button>
+            <div id="eventsPill2Menu" class="menu" role="menu" aria-label="Type menu" hidden>
+              <div class="menu__header">
+                <div class="menu__title">TYPE</div>
+                <button id="eventsPill2Clear" class="menu__clear" type="button">Clear</button>
+              </div>
+              <div class="menu__empty">Coming soon</div>
+            </div>
+          </div>
+
+          <!-- Events Filter 3 -->
+          <div class="pillSelect" data-filter="eventsPill3">
+            <button id="eventsPill3Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label">WHERE</span>
+              <span class="pill__dot" id="eventsPill3Dot" aria-hidden="true"></span>
+              <span class="pill__caret" aria-hidden="true">▾</span>
+            </button>
+            <div id="eventsPill3Menu" class="menu" role="menu" aria-label="Where menu" hidden>
+              <div class="menu__header">
+                <div class="menu__title">WHERE</div>
+                <button id="eventsPill3Clear" class="menu__clear" type="button">Clear</button>
+              </div>
+              <div class="menu__empty">Coming soon</div>
+            </div>
           </div>
         </div>
       </nav>
 
       <main class="content" aria-label="Events">
         <div class="content__inner">
-          <div id="eventsStatus" class="status" aria-live="polite">Events view coming soon</div>
+          <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
           <div id="eventsRoot"></div>
         </div>
       </main>
