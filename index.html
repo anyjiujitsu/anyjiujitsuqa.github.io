@@ -18,18 +18,29 @@
     <!-- Header Area -->
     <header class="header" id="header">
       <div class="header__inner">
-        <h1 class="header__title" aria-label="Index">INDEX</h1>
+        <h1 class="header__title" id="viewTitle" aria-label="Current view">INDEX</h1>
 
         <!-- If you don’t have the logo yet, keep this as text or hide it -->
         <div class="header__logo" aria-label="ANY logo">
           <!-- <img src="assets/img/any-logo.png" alt="ANY" /> -->
           <span class="header__logoText">ANY</span>
         </div>
+      
+      <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
+        <button class="viewToggle__tab" id="tabIndex" role="tab" aria-selected="true" type="button">Index</button>
+        <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="false" type="button">Events</button>
+        <div class="viewToggle__thumb" aria-hidden="true"></div>
       </div>
+</div>
     </header>
 
     <!-- Navigation Bar Area -->
-    <nav class="filters" id="filters" aria-label="Filters">
+    
+    <div class="viewShell" id="viewShell">
+      <div class="viewSlider" id="viewSlider">
+        <!-- INDEX VIEW -->
+        <div class="viewPanel" id="viewIndex" aria-label="Index">
+<nav class="filters" id="filters" aria-label="Filters">
       <div class="filters__inner">
         <!-- Pill 1: Search -->
         <div class="pill pill--search">
@@ -79,15 +90,15 @@
             </div>
             <div class="menu__list">
               <label class="menu__item">
-                <input type="checkbox" data-openmat="1" value="all" />
+                <input type="radio" name="openMat" value="all" />
                 <span>All</span>
               </label>
               <label class="menu__item">
-                <input type="checkbox" data-openmat="1" value="sat" />
+                <input type="radio" name="openMat" value="sat" />
                 <span>Saturday</span>
               </label>
               <label class="menu__item">
-                <input type="checkbox" data-openmat="1" value="sun" />
+                <input type="radio" name="openMat" value="sun" />
                 <span>Sunday</span>
               </label>
 </div>
@@ -122,6 +133,41 @@
         <div id="groupsRoot"></div>
       </div>
     </main>
+        </div>
+
+    <!-- EVENTS VIEW -->
+    <div class="viewPanel" id="viewEvents" aria-label="Events">
+      <nav class="filters" aria-label="Events filters">
+        <div class="filters__inner">
+          <div class="pill pill--search">
+            <span class="pill__icon" aria-hidden="true">🔎</span>
+            <input id="eventsSearchInput" class="pill__input" type="text" inputmode="search"
+                   autocomplete="off" autocapitalize="none" spellcheck="false"
+                   placeholder='Search events (coming soon)' />
+            <button id="eventsSearchClear" class="pill__clear" type="button" aria-label="Clear">×</button>
+          </div>
+
+          <div class="pill pill--select" aria-disabled="true" style="opacity:.6;">
+            <span class="pill__label">Date</span><span class="pill__caret">▾</span>
+          </div>
+
+          <div class="pill pill--select" aria-disabled="true" style="opacity:.6;">
+            <span class="pill__label">Type</span><span class="pill__caret">▾</span>
+          </div>
+        </div>
+      </nav>
+
+      <main class="content" aria-label="Events">
+        <div class="content__inner">
+          <div id="eventsStatus" class="status" aria-live="polite">Events view coming soon</div>
+          <div id="eventsRoot"></div>
+        </div>
+      </main>
+    </div>
+
+      </div>
+    </div>
+
   </div>
 </body>
 </html>
