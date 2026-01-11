@@ -17,21 +17,26 @@ export function applyFilters(rows, state){
   );
 
   return rows.filter(r => {
+    // States pill
     if (stateSet.size > 0 && !stateSet.has(getField(r, ["STATE"]))) return false;
 
+    // SAT/SUN presence
     const satVal = getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]);
     const sunVal = getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]);
     const hasSat = satVal.trim() !== "";
     const hasSun = sunVal.trim() !== "";
 
+    // OpenMat pill modes
     if (om === "all" && !(hasSat || hasSun)) return false;
     if (om === "sat" && !hasSat) return false;
     if (om === "sun" && !hasSun) return false;
 
+    // Search bar special tokens
     if (wantsSat && !hasSat) return false;
     if (wantsSun && !hasSun) return false;
     if (wantsOpenMat && !(hasSat || hasSun)) return false;
 
+    // Text terms: OR match (keep the behavior you wanted for comma tokens)
     if (textTerms.length > 0) {
       const haystack = buildHaystack(r);
       let matched = false;
@@ -70,6 +75,7 @@ function buildHaystack(r){
     getField(r, ["IG"]),
     getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]),
     getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]),
+    getField(r, ["OTA", "ota"]),
   ];
   return parts.join(" ").toLowerCase();
 }
