@@ -9,6 +9,63 @@ async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
 
+  // View toggle + slider
+  const viewTitle = document.getElementById("viewTitle");
+  const tabIndex = document.getElementById("tabIndex");
+  const tabEvents = document.getElementById("tabEvents");
+  const viewShell = document.getElementById("viewShell");
+
+  function setView(view){
+    state.view = view;
+
+    document.body.dataset.view = view;
+
+    if (tabIndex) tabIndex.setAttribute("aria-selected", view === "index" ? "true" : "false");
+    if (tabEvents) tabEvents.setAttribute("aria-selected", view === "events" ? "true" : "false");
+
+    if (viewTitle) viewTitle.textContent = view === "events" ? "EVENTS" : "INDEX";
+    document.title = view === "events" ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
+  }
+
+  if (tabIndex) tabIndex.addEventListener("click", () => setView("index"));
+  if (tabEvents) tabEvents.addEventListener("click", () => setView("events"));
+
+  // Swipe between views (mobile-friendly)
+  if (viewShell) {
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
+
+    viewShell.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      dragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    viewShell.addEventListener("touchend", (e) => {
+      if (!dragging) return;
+      dragging = false;
+
+      const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
+      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : startY;
+
+      const dx = endX - startX;
+      const dy = endY - startY;
+
+      // Ignore mostly-vertical gestures
+      if (Math.abs(dy) > Math.abs(dx)) return;
+
+      const threshold = 60;
+      if (dx <= -threshold) setView("events");
+      if (dx >= threshold) setView("index");
+    }, { passive: true });
+  }
+
+  // default view
+  if (!state.view) state.view = "index";
+  setView(state.view);
+
   // Search elements
   const searchInput = document.getElementById("searchInput");
   const searchClear = document.getElementById("searchClear");
@@ -20,22 +77,10 @@ async function init(){
   const stateClear = document.getElementById("stateClear");
   const stateDot   = document.getElementById("stateDot");
 
-  function ensureDotStyle(dotEl){
-    if (!dotEl) return;
-    // If CSS is missing or overridden, make sure the dot is still visible.
-    if (!dotEl.style.width) dotEl.style.width = "10px";
-    if (!dotEl.style.height) dotEl.style.height = "10px";
-    dotEl.style.borderRadius = "50%";
-    dotEl.style.backgroundColor = "#28a745";
-    dotEl.style.boxShadow =
-      "0 0 4px rgba(40,167,69,0.9), 0 0 8px rgba(40,167,69,0.7), 0 0 14px rgba(40,167,69,0.5)";
-  }
-
-
   function setStatesSelectedUI(){
     const has = state.states && state.states.size > 0;
     if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
-    if (stateDot) { ensureDotStyle(stateDot); stateDot.style.display = has ? "inline-block" : "none"; }
+    if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
   }
 
   function closeStateMenu(){
@@ -209,7 +254,7 @@ async function init(){
     function setOpenMatUI(){
       const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
-      if (openMatDot) { ensureDotStyle(openMatDot); openMatDot.style.display = on ? "inline-block" : "none"; }
+      if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
 
     function closeOpenMatMenu(){
@@ -244,9 +289,9 @@ async function init(){
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
-      // Sync checked state from current filter value (checkbox UI, single-select logic)
-      openMatMenu.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach(cb => {
-        cb.checked = (cb.value === state.openMat);
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
       });
 
       requestAnimationFrame(positionOpenMatMenu);
@@ -266,19 +311,9 @@ async function init(){
       openMatMenu.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "checkbox") return;
-        if (!el.matches('input[data-openmat="1"]')) return;
+        if (el.type !== "radio") return;
 
-        // Enforce single selection while keeping checkbox UI (to match States look)
-        if (el.checked) {
-          openMatMenu.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach(cb => {
-            cb.checked = (cb === el);
-          });
-          state.openMat = el.value; // "all" | "sat" | "sun"
-        } else {
-          state.openMat = "";
-        }
-
+        state.openMat = el.value;
         setOpenMatUI();
         render();
       });
@@ -289,7 +324,7 @@ async function init(){
         e.preventDefault();
         state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach(cb => cb.checked = false);
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
         }
         setOpenMatUI();
         render();
