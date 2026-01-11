@@ -188,6 +188,61 @@ async function init(){
       if (stateMenu && !stateMenu.hidden) positionStateMenu();
     }, { passive: true });
 
+    // ---- OpenMat pill wiring ----
+    const openMatBtn   = document.getElementById("openMatBtn");
+    const openMatMenu  = document.getElementById("openMatMenu");
+    const openMatClear = document.getElementById("openMatClear");
+    const openMatDot   = document.getElementById("openMatDot");
+
+    function setOpenMatUI(){
+      const on = !!state.openMat;
+      if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
+      if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
+    }
+
+    function positionOpenMatMenu(){
+      if (!openMatMenu || !openMatBtn) return;
+      openMatMenu.style.position = "fixed";
+      openMatMenu.style.zIndex = "1000";
+      const rect = openMatBtn.getBoundingClientRect();
+      openMatMenu.style.left = rect.left + "px";
+      openMatMenu.style.top = (rect.bottom + 8) + "px";
+    }
+
+    if (openMatBtn && openMatMenu) {
+      openMatBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !openMatMenu.hidden;
+        openMatMenu.hidden = isOpen;
+        openMatBtn.setAttribute("aria-expanded", String(!isOpen));
+        if (!isOpen) requestAnimationFrame(positionOpenMatMenu);
+      });
+    }
+
+    if (openMatMenu) {
+      openMatMenu.addEventListener("change", (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "radio") return;
+        state.openMat = el.value;
+        setOpenMatUI();
+        render();
+      });
+    }
+
+    if (openMatClear) {
+      openMatClear.addEventListener("click", (e) => {
+        e.preventDefault();
+        state.openMat = "";
+        if (openMatMenu) {
+          openMatMenu.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        }
+        setOpenMatUI();
+        render();
+      });
+    }
+
     render();
 
   } catch(err){
