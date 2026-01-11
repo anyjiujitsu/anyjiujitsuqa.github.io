@@ -279,3 +279,14 @@ body[data-view="events"] .viewSlider{
   width: 50%;
   flex: 0 0 50%;
 }
+
+/* Slider progress driven by CSS variable (0 = Index, 1 = Events) */
+body{
+  --viewProgress: 0;
+}
+.viewToggle__thumb{
+  transform: translateX(calc(100% * var(--viewProgress)));
+}
+.viewSlider{
+  transform: translateX(calc(-50% * var(--viewProgress)));
+}
