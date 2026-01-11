@@ -54,6 +54,16 @@
 .pill__input::placeholder{
   color: rgba(0,0,0,0.42);
 }
+/* Hide browser-provided search UI (iOS Safari/Chrome) so only our custom X shows */
+.pill__input::-webkit-search-cancel-button,
+.pill__input::-webkit-search-decoration,
+.pill__input::-webkit-search-results-button,
+.pill__input::-webkit-search-results-decoration{
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 /* Hide the browser-provided search cancel “X” so we only use our own clear button */
 .pill__input[type="search"]::-webkit-search-cancel-button{
   -webkit-appearance: none;
