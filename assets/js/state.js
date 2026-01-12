@@ -1,6 +1,7 @@
 export const state = {
   search: "",
   states: new Set(),
+  openMatMode: "",
   openMat: "", // "", "Y", "N"
   guests: new Set(), // placeholder
 };
@@ -19,4 +20,3 @@ export function clearGuests(){ state.guests.clear(); }
 export function hasAnySelection(){
   return state.search.trim().length > 0 || state.states.size > 0 || state.openMat !== "" || state.guests.size > 0;
 }
-
