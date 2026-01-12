@@ -193,10 +193,8 @@ async function init(){
   }
 
   function openStateMenu(){
-      closeOpenMatMenu();
-      closeOpenMatMenu();
-      if (!stateMenu) return;
-      stateMenu.hidden = false;
+    if (!stateMenu) return;
+    stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
     // Position after it becomes measurable
     requestAnimationFrame(positionStateMenu);
@@ -538,7 +536,7 @@ async function init(){
         e.stopPropagation();
         const isOpen = !stateMenu.hidden;
         if (isOpen) closeStateMenu();
-        else { closeOpenMatMenu(); openStateMenu(); }
+        else openStateMenu();
       });
     }
 
@@ -632,14 +630,13 @@ async function init(){
     }
 
     function openOpenMatMenu(){
-      closeStateMenu();
       if (!openMatMenu) return;
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
-      // Sync checked state from current filter value (checkbox UI uses data-openmat)
-      openMatMenu.querySelectorAll('input[data-openmat="1"]').forEach(el => {
-        el.checked = (el.value === state.openMat);
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
       });
 
       requestAnimationFrame(positionOpenMatMenu);
@@ -651,49 +648,17 @@ async function init(){
         e.stopPropagation();
         const isOpen = !openMatMenu.hidden;
         if (isOpen) closeOpenMatMenu();
-        else { closeStateMenu(); openOpenMatMenu(); }
+        else openOpenMatMenu();
       });
-
-      // Close OpenMat menu on outside click
-      document.addEventListener("click", (e) => {
-        if (!openMatMenu || openMatMenu.hidden) return;
-        const t = e.target;
-        if (!(t instanceof Element)) return;
-        if (t.closest("#openMatMenu") || t.closest("#openMatBtn")) return;
-        closeOpenMatMenu();
-      });
-
-      // Close OpenMat on Escape
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeOpenMatMenu();
-      });
-
-      // Keep OpenMat menu positioned on resize/scroll while open
-      window.addEventListener("resize", () => {
-        if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
-      });
-      window.addEventListener("scroll", () => {
-        if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
-      }, { passive: true });
     }
 
     if (openMatMenu) {
       openMatMenu.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "checkbox" && el.type !== "radio") return;
+        if (el.type !== "radio") return;
 
-        // Keep OpenMat as a single-selection filter (even though it uses checkboxes for uniform UI)
-        if (el.type === "checkbox") {
-          // uncheck all others
-          openMatMenu.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach(cb => {
-            if (cb !== el) cb.checked = false;
-          });
-          state.openMat = el.checked ? el.value : "";
-        } else {
-          state.openMat = el.value;
-        }
-
+        state.openMat = el.value;
         setOpenMatUI();
         render();
       });
@@ -704,7 +669,7 @@ async function init(){
         e.preventDefault();
         state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[data-openmat="1"]').forEach(el => el.checked = false);
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
         }
         setOpenMatUI();
         render();
@@ -731,16 +696,6 @@ async function init(){
     }, { passive: true });
 
     setOpenMatUI();
-
-    // Click-away closes any open filter menus
-    document.addEventListener("click", (e) => {
-      const t = e.target;
-      const inState = stateBtn.contains(t) || stateMenu.contains(t);
-      const inOpenMat = openMatBtn.contains(t) || openMatMenu.contains(t);
-      if (inState || inOpenMat) return;
-      closeStatesMenu();
-      closeOpenMatMenu();
-    });
 
     render();
 
