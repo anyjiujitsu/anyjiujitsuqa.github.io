@@ -168,36 +168,12 @@ async function init(){
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
   }
 
-  function positionStateMenu(){
-    if (!stateMenu || !stateBtn) return;
-
-    // Ensure it can overlay even if pills row is scroll-clipped
-    stateMenu.style.position = "fixed";
-    stateMenu.style.zIndex = "1000";
-
-    const btnRect = stateBtn.getBoundingClientRect();
-
-    // Use computed width after un-hiding (so offsetWidth is valid)
-    const menuW = stateMenu.offsetWidth || 240;
-    const gutter = 8;
-
-    let left = btnRect.left;
-    const maxLeft = window.innerWidth - menuW - gutter;
-    if (left > maxLeft) left = maxLeft;
-    if (left < gutter) left = gutter;
-
-    const top = btnRect.bottom + 8;
-
-    stateMenu.style.left = `${left}px`;
-    stateMenu.style.top = `${top}px`;
-  }
 
   function openStateMenu(){
     if (!stateMenu) return;
     stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
     // Position after it becomes measurable
-    requestAnimationFrame(positionStateMenu);
   }
 
   function render(){
@@ -584,10 +560,8 @@ async function init(){
 
     // Keep menu positioned on resize/scroll while open
     window.addEventListener("resize", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
     });
     window.addEventListener("scroll", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
     }, { passive: true });
 
     // ---- OpenMat pill wiring ----
@@ -608,26 +582,6 @@ async function init(){
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
     }
 
-    function positionOpenMatMenu(){
-      if (!openMatMenu || !openMatBtn) return;
-
-      openMatMenu.style.position = "fixed";
-      openMatMenu.style.zIndex = "1000";
-
-      const btnRect = openMatBtn.getBoundingClientRect();
-      const menuW = openMatMenu.offsetWidth || 240;
-      const gutter = 8;
-
-      let left = btnRect.left;
-      const maxLeft = window.innerWidth - menuW - gutter;
-      if (left > maxLeft) left = maxLeft;
-      if (left < gutter) left = gutter;
-
-      const top = btnRect.bottom + 8;
-
-      openMatMenu.style.left = `${left}px`;
-      openMatMenu.style.top = `${top}px`;
-    }
 
     function openOpenMatMenu(){
       if (!openMatMenu) return;
@@ -639,7 +593,6 @@ async function init(){
         r.checked = (r.value === state.openMat);
       });
 
-      requestAnimationFrame(positionOpenMatMenu);
     }
 
     if (openMatBtn && openMatMenu) {
@@ -689,10 +642,8 @@ async function init(){
     });
 
     window.addEventListener("resize", () => {
-      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     });
     window.addEventListener("scroll", () => {
-      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     }, { passive: true });
 
     setOpenMatUI();
