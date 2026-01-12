@@ -156,6 +156,87 @@ async function init(){
   const stateClear = document.getElementById("stateClear");
   const stateDot   = document.getElementById("stateDot");
 
+  // -----------------------------
+  // DROPDOWN PORTALING (GLOBAL)
+  // -----------------------------
+  // The view slider/panels can create clipping/stacking contexts (overflow/transform)
+  // which makes dropdown menus appear "under" other content. To keep the UX consistent
+  // and avoid CSS z-index whack-a-mole, we portal dropdown menus to <body> and position
+  // them using `position: fixed`.
+  function portalMenuOpen(menuEl, anchorEl){
+    if (!menuEl || !anchorEl) return;
+    if (menuEl.dataset.portalized === "1") {
+      // Already portalized; just reposition.
+      positionPortalMenu(menuEl, anchorEl);
+      return;
+    }
+
+    // Save original DOM location so we can restore on close.
+    menuEl.dataset.portalized = "1";
+    menuEl.dataset.portalParentId = menuEl.parentElement?.id || "";
+    menuEl._portalParent = menuEl.parentElement;
+    menuEl._portalNextSibling = menuEl.nextSibling;
+
+    document.body.appendChild(menuEl);
+    menuEl.style.position = "fixed";
+    menuEl.style.zIndex = "9999";
+    menuEl.style.left = "0px";
+    menuEl.style.top = "0px";
+
+    positionPortalMenu(menuEl, anchorEl);
+  }
+
+  function positionPortalMenu(menuEl, anchorEl){
+    const rect = anchorEl.getBoundingClientRect();
+    const gap = 8;
+
+    // Ensure we can measure width.
+    const prevDisplay = menuEl.style.display;
+    const wasHidden = menuEl.hasAttribute("hidden") || getComputedStyle(menuEl).display === "none";
+    if (wasHidden) {
+      menuEl.removeAttribute("hidden");
+      menuEl.style.display = "block";
+    }
+
+    const menuW = menuEl.offsetWidth || 240;
+    let left = rect.left;
+    const maxLeft = Math.max(8, window.innerWidth - menuW - 8);
+    if (left > maxLeft) left = maxLeft;
+
+    menuEl.style.left = `${Math.round(left)}px`;
+    menuEl.style.top  = `${Math.round(rect.bottom + gap)}px`;
+
+    // Restore display control (hidden attribute will be set by open/close functions).
+    if (wasHidden) {
+      menuEl.style.display = prevDisplay;
+      menuEl.setAttribute("hidden", "");
+    }
+  }
+
+  function portalMenuClose(menuEl){
+    if (!menuEl) return;
+    if (menuEl.dataset.portalized !== "1") return;
+
+    // Restore to original DOM location.
+    const parent = menuEl._portalParent;
+    const next = menuEl._portalNextSibling;
+    if (parent) {
+      if (next) parent.insertBefore(menuEl, next);
+      else parent.appendChild(menuEl);
+    }
+
+    delete menuEl._portalParent;
+    delete menuEl._portalNextSibling;
+    delete menuEl.dataset.portalized;
+    delete menuEl.dataset.portalParentId;
+
+    // Reset positioning so CSS can take over if needed.
+    menuEl.style.position = "";
+    menuEl.style.left = "";
+    menuEl.style.top = "";
+    menuEl.style.zIndex = "";
+  }
+
   function setStatesSelectedUI(){
     const has = state.states && state.states.size > 0;
     if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
@@ -164,27 +245,23 @@ async function init(){
 
   function closeStateMenu(){
     if (!stateMenu) return;
+    portalMenuClose(stateMenu);
     stateMenu.hidden = true;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
   }
 
   function positionStateMenu(){
-  // Menus are positioned by CSS (absolute) under their .pillSelect containers.
-  // Clear any inline positioning we may have applied in older versions.
-  if (!stateMenu) return;
-  stateMenu.style.position = "";
-  stateMenu.style.top = "";
-  stateMenu.style.left = "";
-  stateMenu.style.transform = "";
-  stateMenu.style.width = "";
+  // If the menu is open, keep it anchored to the trigger.
+  if (!stateMenu || stateMenu.hidden) return;
+  portalMenuOpen(stateMenu, stateBtn);
 }
 
   function openStateMenu(){
     if (!stateMenu) return;
     stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
-    // Position after it becomes measurable
-    requestAnimationFrame(positionStateMenu);
+    // Portal & position after it becomes measurable
+    requestAnimationFrame(() => portalMenuOpen(stateMenu, stateBtn));
   }
 
   function render(){
@@ -591,24 +668,22 @@ async function init(){
 
     function closeOpenMatMenu(){
       if (!openMatMenu) return;
+      portalMenuClose(openMatMenu);
       openMatMenu.hidden = true;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
     }
 
     function positionOpenMatMenu(){
-  // Menus are positioned by CSS (absolute) under their .pillSelect containers.
-  if (!openMatMenu) return;
-  openMatMenu.style.position = "";
-  openMatMenu.style.top = "";
-  openMatMenu.style.left = "";
-  openMatMenu.style.transform = "";
-  openMatMenu.style.width = "";
-}
+      if (!openMatMenu || !openMatBtn) return;
+      portalMenuOpen(openMatMenu, openMatBtn);
+    }
 
     function openOpenMatMenu(){
       if (!openMatMenu) return;
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
+
+      portalMenuOpen(openMatMenu, openMatBtn);
 
       // Sync checkbox state from current mode (exclusive selection)
       const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
