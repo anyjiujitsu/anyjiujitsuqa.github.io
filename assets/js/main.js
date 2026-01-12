@@ -383,15 +383,34 @@ async function init(){
 
     // Load Events data (Events view)
     let allEvents = [];
+    async function loadFirstAvailable(paths){
+      let lastErr = null;
+      for (const p of paths){
+        try{
+          return await loadCSV(p);
+        }catch(e){
+          lastErr = e;
+        }
+      }
+      throw lastErr || new Error("No paths tried");
+    }
+
     try{
-      allEvents = await loadCSV("directory/events.csv");
+      // Try multiple likely repo paths (keeps QA/dev repos flexible)
+      allEvents = await loadFirstAvailable([
+        "directory/events.csv",
+        "data/events.csv",
+        "events.csv"
+      ]);
+
       const es = document.getElementById("eventsStatus");
       if (es) es.textContent = `${allEvents.length} events`;
       renderEvents(allEvents);
     }catch(err){
       console.warn(err);
       const es = document.getElementById("eventsStatus");
-      if (es) es.textContent = "Failed to load events";
+      // Show the actual error so debugging is instant
+      if (es) es.textContent = `Failed to load events (${err?.message || err})`;
     }
 
     // ---- Search wiring ----
