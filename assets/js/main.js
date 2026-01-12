@@ -1,5 +1,5 @@
 import { loadCSV } from "./data.js";
-import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat, setGuestsWelcomed, clearGuests } from "./state.js";
+import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat } from "./state.js";
 import { applyFilters } from "./filters.js";
 import { renderGroups } from "./render.js";
 
@@ -658,12 +658,6 @@ async function init(){
     const openMatBtn   = document.getElementById("openMatBtn");
     const openMatMenu  = document.getElementById("openMatMenu");
     const openMatClear = document.getElementById("openMatClear");
-
-    // Guests menu
-    const guestsBtn = document.getElementById("guestsBtn");
-    const guestsMenu = document.getElementById("guestsMenu");
-    const guestsClear = document.getElementById("guestsClear");
-    const guestsWelcomedCb = document.getElementById("guestWelcomed");
     const openMatDot   = document.getElementById("openMatDot");
 
     function setOpenMatUI(){
@@ -704,7 +698,6 @@ async function init(){
         e.stopPropagation();
         const isOpen = !openMatMenu.hidden;
         if (isOpen) closeOpenMatMenu();
-        if (guestsMenuOpen) closeGuestsMenu();
         else openOpenMatMenu();
       });
     }
@@ -742,95 +735,23 @@ async function init(){
       });
     }
 
-
-    // Guests filtering (Welcomed = OTA:Y)
-    let guestsMenuOpen = false;
-
-    function openGuestsMenu(){
-      // close the others
-      if (statesMenuOpen) closeStatesMenu();
-      if (openMatMenuOpen) closeOpenMatMenu();
-        if (guestsMenuOpen) closeGuestsMenu();
-      guestsMenuOpen = true;
-      guestsBtn.setAttribute("aria-expanded", "true");
-      guestsMenu.hidden = false;
-      portalMenuOpen(guestsMenu, guestsBtn);
-      setGuestsUI();
-    }
-
-    function closeGuestsMenu(){
-      guestsMenuOpen = false;
-      guestsBtn.setAttribute("aria-expanded", "false");
-      guestsMenu.hidden = true;
-      portalMenuClose(guestsMenu);
-    }
-
-    function positionGuestsMenu(){
-      if (!guestsMenuOpen) return;
-      portalMenuOpen(guestsMenu, guestsBtn);
-    }
-
-    if (guestsBtn && guestsMenu){
-      guestsBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (guestsMenuOpen) closeGuestsMenu();
-        else openGuestsMenu();
-      });
-
-      // close on outside click
-      document.addEventListener("click", (e) => {
-        if (!guestsMenuOpen) return;
-        if (guestsMenu.contains(e.target) || guestsBtn.contains(e.target)) return;
-        closeGuestsMenu();
-      });
-
-      window.addEventListener("resize", positionGuestsMenu);
-      window.addEventListener("scroll", positionGuestsMenu, true);
-    }
-
-    if (guestsWelcomedCb){
-      guestsWelcomedCb.addEventListener("change", () => {
-        setGuestsWelcomed(guestsWelcomedCb.checked);
-        setGuestsUI();
-        render();
-        positionGuestsMenu();
-      });
-    }
-
-    if (guestsClear){
-      guestsClear.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (guestsWelcomedCb) guestsWelcomedCb.checked = false;
-        clearGuests();
-        setGuestsUI();
-        render();
-        positionGuestsMenu();
-      });
-    }
-
     document.addEventListener("click", (e) => {
       if (!openMatMenu || openMatMenu.hidden) return;
       const target = e.target;
       if (!(target instanceof Element)) return;
       if (target.closest("#openMatMenu") || target.closest("#openMatBtn")) return;
       closeOpenMatMenu();
-        if (guestsMenuOpen) closeGuestsMenu();
     });
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeOpenMatMenu();
-        if (guestsMenuOpen) closeGuestsMenu();
     });
 
     window.addEventListener("resize", () => {
       if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
-      positionGuestsMenu();
     });
     window.addEventListener("scroll", () => {
       if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
-      positionGuestsMenu();
     }, { passive: true });
 
     setOpenMatUI();
@@ -842,13 +763,5 @@ async function init(){
     status.textContent = "Failed to load data";
   }
 }
-
-
-    function setGuestsUI(){
-      const on = !!state.guestsWelcomed;
-      guestsBtn.classList.toggle("pill--selected", on);
-      // keep checkbox in sync when menu is opened later
-      if (guestsWelcomedCb) guestsWelcomedCb.checked = on;
-    }
 
 init();
