@@ -212,34 +212,121 @@ async function init(){
     if (!root) return;
     root.innerHTML = "";
 
-    // Very simple card list for now (until we build the real Events renderer)
-    for (const r of rows.slice(0, 200)) {
-      const div = document.createElement("div");
-      div.className = "table";
-      div.style.marginBottom = "10px";
+    const grouped = groupEventsByMonth(rows);
 
-      const row = document.createElement("div");
-      row.className = "row";
-      row.style.gridTemplateColumns = "1.4fr 1fr 0.8fr";
+    for (const g of grouped) {
+      const groupEl = document.createElement("section");
+      groupEl.className = "group";
 
-      const name = document.createElement("div");
-      name.innerHTML = `<div class="cell__name">${escapeHTML(pick(r, ["NAME","Title","Event","EVENT","Seminar by"]) || "Event")}</div>
-                        <div class="cell__ig">${escapeHTML(pick(r, ["Location","WHERE","IG","Gym","HOST"]) || "")}</div>`;
+      const label = document.createElement("h2");
+      label.className = "group__label";
+      label.textContent = g.label;
 
-      const city = document.createElement("div");
-      city.innerHTML = `<div class="cell__city">${escapeHTML(pick(r, ["Date","DATE"]) || "")}</div>
-                        <div class="cell__state">${escapeHTML(pick(r, ["Time","TIME","Type","TYPE"]) || "")}</div>`;
+      const table = document.createElement("div");
+      table.className = "table";
 
-      const days = document.createElement("div");
-      days.innerHTML = `<div class="cell__days">${escapeHTML(pick(r, ["Price","PRICE"]) || "")}</div>
-                        <div class="cell__ota">${escapeHTML(pick(r, ["Notes","NOTES"]) || "")}</div>`;
+      for (const r of g.rows) {
+        const rowEl = document.createElement("div");
+        rowEl.className = "row";
+        // Match Index 3-column layout
+        rowEl.style.gridTemplateColumns = "1.4fr 1fr 0.8fr";
 
-      row.appendChild(name);
-      row.appendChild(city);
-      row.appendChild(days);
-      div.appendChild(row);
-      root.appendChild(div);
+        // Column 1: Event + Location
+        const c1 = document.createElement("div");
+        c1.innerHTML = `
+          <div class="cell__name">${escapeHTML(pick(r, ["NAME","Event","EVENT","Title","TITLE","Seminar by","SEMINAR BY","Tournament","TOURNAMENT"]) || "Event")}</div>
+          <div class="cell__ig">${escapeHTML(pick(r, ["Location","LOCATION","Where","WHERE","Gym","GYM","Host","HOST","IG"]) || "")}</div>
+        `;
+
+        // Column 2: Date + Time
+        const c2 = document.createElement("div");
+        c2.innerHTML = `
+          <div class="cell__city">${escapeHTML(formatDate(pick(r, ["Date","DATE","Start","START","Day","DAY"])) || "")}</div>
+          <div class="cell__state">${escapeHTML(pick(r, ["Time","TIME","Start Time","START TIME","Hours","HOURS"]) || "")}</div>
+        `;
+
+        // Column 3: Type + Price
+        const c3 = document.createElement("div");
+        c3.innerHTML = `
+          <div class="cell__days">${escapeHTML(pick(r, ["Type","TYPE","Event Type","EVENT TYPE"]) || "")}</div>
+          <div class="cell__ota">${escapeHTML(pick(r, ["Price","PRICE","Cost","COST","Fee","FEE"]) || "")}</div>
+        `;
+
+        rowEl.appendChild(c1);
+        rowEl.appendChild(c2);
+        rowEl.appendChild(c3);
+        table.appendChild(rowEl);
+      }
+
+      groupEl.appendChild(label);
+      groupEl.appendChild(table);
+      root.appendChild(groupEl);
     }
+  }
+
+  function groupEventsByMonth(rows){
+    const buckets = new Map();
+
+    for (const r of rows) {
+      const dRaw = pick(r, ["Date","DATE","Start","START","Day","DAY"]);
+      const d = parseAnyDate(dRaw);
+      const key = d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}` : "unknown";
+      if (!buckets.has(key)) buckets.set(key, { key, date: d, rows: [] });
+      buckets.get(key).rows.push(r);
+    }
+
+    const arr = Array.from(buckets.values());
+    arr.sort((a,b) => {
+      if (a.key === "unknown") return 1;
+      if (b.key === "unknown") return -1;
+      return (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0);
+    });
+
+    return arr.map(b => ({
+      label: b.key === "unknown" ? "Unknown Date" : formatMonthLabel(b.date),
+      rows: b.rows
+    }));
+  }
+
+  function formatMonthLabel(d){
+    if (!d) return "Unknown Date";
+    return d.toLocaleString(undefined, { month: "long", year: "numeric" }).toUpperCase();
+  }
+
+  function formatDate(raw){
+    const d = parseAnyDate(raw);
+    if (!d) return raw || "";
+    // e.g., Jan 11, 2026
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  function parseAnyDate(s){
+    const str = String(s ?? "").trim();
+    if (!str) return null;
+
+    // Try ISO first
+    const iso = Date.parse(str);
+    if (!Number.isNaN(iso)) return new Date(iso);
+
+    // Try MM/DD/YYYY
+    const m1 = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (m1){
+      let mm = parseInt(m1[1],10);
+      let dd = parseInt(m1[2],10);
+      let yy = parseInt(m1[3],10);
+      if (yy < 100) yy += 2000;
+      const d = new Date(yy, mm-1, dd);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    // Try Month DD, YYYY
+    const m2 = str.match(/^([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/);
+    if (m2){
+      const d = new Date(str);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    return null;
   }
 
   function pick(obj, keys){
@@ -257,6 +344,7 @@ async function init(){
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
   }
+
 
   function buildStatesMenu(){
     if (!stateList) return;
