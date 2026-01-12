@@ -1,5 +1,5 @@
 import { loadCSV } from "./data.js";
-import { state } from "./state.js";
+import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat } from "./state.js";
 import { applyFilters } from "./filters.js";
 import { renderGroups } from "./render.js";
 
@@ -168,12 +168,23 @@ async function init(){
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
   }
 
+  function positionStateMenu(){
+  // Menus are positioned by CSS (absolute) under their .pillSelect containers.
+  // Clear any inline positioning we may have applied in older versions.
+  if (!stateMenu) return;
+  stateMenu.style.position = "";
+  stateMenu.style.top = "";
+  stateMenu.style.left = "";
+  stateMenu.style.transform = "";
+  stateMenu.style.width = "";
+}
 
   function openStateMenu(){
     if (!stateMenu) return;
     stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
     // Position after it becomes measurable
+    requestAnimationFrame(positionStateMenu);
   }
 
   function render(){
@@ -560,8 +571,10 @@ async function init(){
 
     // Keep menu positioned on resize/scroll while open
     window.addEventListener("resize", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
     });
     window.addEventListener("scroll", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
     }, { passive: true });
 
     // ---- OpenMat pill wiring ----
@@ -571,7 +584,7 @@ async function init(){
     const openMatDot   = document.getElementById("openMatDot");
 
     function setOpenMatUI(){
-      const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
+      const on = state.openMatMode === "all" || state.openMatMode === "sat" || state.openMatMode === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
@@ -582,17 +595,26 @@ async function init(){
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
     }
 
+    function positionOpenMatMenu(){
+  // Menus are positioned by CSS (absolute) under their .pillSelect containers.
+  if (!openMatMenu) return;
+  openMatMenu.style.position = "";
+  openMatMenu.style.top = "";
+  openMatMenu.style.left = "";
+  openMatMenu.style.transform = "";
+  openMatMenu.style.width = "";
+}
 
     function openOpenMatMenu(){
       if (!openMatMenu) return;
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
-      // Sync checked state from current filter value
-      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
-        r.checked = (r.value === state.openMat);
-      });
+      // Sync checkbox state from current mode (exclusive selection)
+      const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
+      boxes.forEach(b => { b.checked = (b.value === state.openMatMode); });
 
+      requestAnimationFrame(positionOpenMatMenu);
     }
 
     if (openMatBtn && openMatMenu) {
@@ -606,23 +628,32 @@ async function init(){
     }
 
     if (openMatMenu) {
-      openMatMenu.addEventListener("change", (e) => {
-        const el = e.target;
-        if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "radio") return;
+      const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
 
-        state.openMat = el.value;
-        setOpenMatUI();
-        render();
+      boxes.forEach(box => {
+        box.addEventListener("change", () => {
+          // Exclusive selection like a radio group, but with checkbox visuals.
+          if (box.checked) {
+            boxes.forEach(b => { if (b !== box) b.checked = false; });
+            setOpenMatMode(box.value);
+          } else {
+            // Unchecking the active box clears the mode
+            setOpenMatMode("");
+          }
+
+          setOpenMatSelectedUI();
+          // Re-render with filters applied
+          renderIndex();
+        });
       });
     }
 
     if (openMatClear) {
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
-        state.openMat = "";
+        clearOpenMat();
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
+          openMatMenu.querySelectorAll('input[type="checkbox"]').forEach(b => b.checked = false);
         }
         setOpenMatUI();
         render();
@@ -642,8 +673,10 @@ async function init(){
     });
 
     window.addEventListener("resize", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     });
     window.addEventListener("scroll", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     }, { passive: true });
 
     setOpenMatUI();
