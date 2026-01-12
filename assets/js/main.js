@@ -537,7 +537,7 @@ async function init(){
         e.stopPropagation();
         const isOpen = !stateMenu.hidden;
         if (isOpen) closeStateMenu();
-        else openStateMenu();
+        else { closeOpenMatMenu(); openStateMenu(); }
       });
     }
 
@@ -631,13 +631,14 @@ async function init(){
     }
 
     function openOpenMatMenu(){
+      closeStateMenu();
       if (!openMatMenu) return;
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
-      // Sync checked state from current filter value
-      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
-        r.checked = (r.value === state.openMat);
+      // Sync checked state from current filter value (checkbox UI uses data-openmat)
+      openMatMenu.querySelectorAll('input[data-openmat="1"]').forEach(el => {
+        el.checked = (el.value === state.openMat);
       });
 
       requestAnimationFrame(positionOpenMatMenu);
@@ -649,7 +650,7 @@ async function init(){
         e.stopPropagation();
         const isOpen = !openMatMenu.hidden;
         if (isOpen) closeOpenMatMenu();
-        else openOpenMatMenu();
+        else { closeStateMenu(); openOpenMatMenu(); }
       });
     }
 
@@ -657,9 +658,19 @@ async function init(){
       openMatMenu.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "radio") return;
+        if (el.type !== "checkbox" && el.type !== "radio") return;
 
-        state.openMat = el.value;
+        // Keep OpenMat as a single-selection filter (even though it uses checkboxes for uniform UI)
+        if (el.type === "checkbox") {
+          // uncheck all others
+          openMatMenu.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach(cb => {
+            if (cb !== el) cb.checked = false;
+          });
+          state.openMat = el.checked ? el.value : "";
+        } else {
+          state.openMat = el.value;
+        }
+
         setOpenMatUI();
         render();
       });
@@ -670,7 +681,7 @@ async function init(){
         e.preventDefault();
         state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
+          openMatMenu.querySelectorAll('input[data-openmat="1"]').forEach(el => el.checked = false);
         }
         setOpenMatUI();
         render();
