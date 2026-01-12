@@ -1,25 +1,21 @@
+// Shared filter state for INDEX view
+
 export const state = {
-  // Search bar raw string (can include comma-separated tokens)
   search: "",
-  // Multi-select states
-  states: new Set(),
-
-  // OpenMat mode: "", "all", "sat", "sun"
-  openMatMode: "",
-
-  // Guests filter (Welcomed)
-  guestsWelcomed: false
+  states: new Set(),       // e.g. "CONNECTICUT"
+  openMatMode: "",         // "", "all" | "sat" | "sun"
+  guestsWelcomed: false,   // Guests pill: Welcomed (OTA == Y)
 };
 
-export function setSearch(v){
-  state.search = String(v ?? "");
+export function setSearch(value){
+  state.search = (value ?? "").toString();
 }
 
-export function toggleState(st){
-  const key = String(st ?? "").toUpperCase().trim();
-  if(!key) return;
-  if(state.states.has(key)) state.states.delete(key);
-  else state.states.add(key);
+export function toggleState(value){
+  const v = (value ?? "").toString();
+  if (!v) return;
+  if (state.states.has(v)) state.states.delete(v);
+  else state.states.add(v);
 }
 
 export function clearStates(){
@@ -27,21 +23,15 @@ export function clearStates(){
 }
 
 export function setOpenMatMode(mode){
-  const m = String(mode ?? "").toLowerCase().trim();
-  state.openMatMode = (m === "all" || m === "sat" || m === "sun") ? m : "";
+  state.openMatMode = (mode ?? "").toString();
 }
 
 export function clearOpenMat(){
   state.openMatMode = "";
 }
 
-
-export function setGuestsWelcomed(on){
-  state.guestsWelcomed = Boolean(on);
-}
-
-export function toggleGuestsWelcomed(){
-  state.guestsWelcomed = !state.guestsWelcomed;
+export function setGuestsWelcomed(val){
+  state.guestsWelcomed = !!val;
 }
 
 export function clearGuests(){
