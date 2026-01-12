@@ -255,7 +255,7 @@
   background: #fff;
   box-shadow: 0 6px 14px rgba(0,0,0,0.18);
   transform: translateX(0%);
-  transition: transform 220ms ease;
+  transition: transform var(--viewTransition, 260ms) ease;
 }
 body[data-view="events"] .viewToggle__thumb{
   transform: translateX(100%);
@@ -269,7 +269,7 @@ body[data-view="events"] .viewToggle__thumb{
   display: flex;
   width: 200%;
   transform: translateX(0%);
-  transition: transform 260ms ease;
+  transition: transform var(--viewTransition, 260ms) ease;
   will-change: transform;
 }
 body[data-view="events"] .viewSlider{
@@ -289,4 +289,14 @@ body{
 }
 .viewSlider{
   transform: translateX(calc(-50% * var(--viewProgress)));
+}
+
+/* Ensure slider + thumb transitions are controlled by JS via --viewTransition */
+.viewToggle__thumb{
+  transition: transform var(--viewTransition, 260ms) ease;
+  touch-action: pan-y;
+}
+.viewSlider{
+  transition: transform var(--viewTransition, 260ms) ease;
+  touch-action: pan-y;
 }
