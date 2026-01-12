@@ -397,11 +397,7 @@ async function init(){
 
     try{
       // Try multiple likely repo paths (keeps QA/dev repos flexible)
-      allEvents = await loadFirstAvailable([
-        "directory/events.csv",
-        "data/events.csv",
-        "events.csv"
-      ]);
+      allEvents = await loadFirstAvailable(["data/events.csv","directory/events.csv","events.csv"]);
 
       const es = document.getElementById("eventsStatus");
       if (es) es.textContent = `${allEvents.length} events`;
