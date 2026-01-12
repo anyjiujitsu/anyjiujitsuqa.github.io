@@ -716,9 +716,9 @@ async function init(){
             setOpenMatMode("");
           }
 
-          setOpenMatSelectedUI();
+          setOpenMatUI();
           // Re-render with filters applied
-          renderIndex();
+          render();
         });
       });
     }
