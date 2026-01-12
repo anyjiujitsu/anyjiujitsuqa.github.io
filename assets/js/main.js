@@ -1,5 +1,5 @@
 import { loadCSV } from "./data.js";
-import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat } from "./state.js";
+import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat, toggleGuestsWelcomed, clearGuests } from "./state.js";
 import { applyFilters } from "./filters.js";
 import { renderGroups } from "./render.js";
 
@@ -676,6 +676,7 @@ async function init(){
     function positionOpenMatMenu(){
       if (!openMatMenu || !openMatBtn) return;
       portalMenuOpen(openMatMenu, openMatBtn);
+portalMenuOpen(guestsMenu, guestsBtn);
     }
 
     function openOpenMatMenu(){
@@ -684,6 +685,7 @@ async function init(){
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
       portalMenuOpen(openMatMenu, openMatBtn);
+portalMenuOpen(guestsMenu, guestsBtn);
 
       // Sync checkbox state from current mode (exclusive selection)
       const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
@@ -755,6 +757,83 @@ async function init(){
     }, { passive: true });
 
     setOpenMatUI();
+
+    // ---- Guests pill wiring (Welcomed = OTA === "Y") ----
+    function setGuestsUI(){
+      const active = Boolean(state.guestsWelcomed);
+      if (guestsDot) guestsDot.style.display = active ? "inline-block" : "none";
+      if (guestsWelcomedEl) guestsWelcomedEl.checked = active;
+    }
+
+    function closeGuestsMenu(){
+      if (!guestsMenu) return;
+      guestsMenu.hidden = true;
+      guestsBtn?.setAttribute("aria-expanded", "false");
+    }
+
+    function positionGuestsMenu(){
+      if (!guestsMenu || !guestsBtn) return;
+      positionPortalMenu(guestsMenu, guestsBtn);
+    }
+
+    function openGuestsMenu(){
+      if (!guestsMenu) return;
+      guestsMenu.hidden = false;
+      guestsBtn?.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(positionGuestsMenu);
+    }
+
+    if (guestsBtn && guestsMenu) {
+      guestsBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !guestsMenu.hidden;
+        if (isOpen) closeGuestsMenu();
+        else openGuestsMenu();
+      });
+    }
+
+    if (guestsWelcomedEl) {
+      guestsWelcomedEl.addEventListener("change", () => {
+        toggleGuestsWelcomed();
+        setGuestsUI();
+        render();
+      });
+    }
+
+    if (guestsClear) {
+      guestsClear.addEventListener("click", (e) => {
+        e.preventDefault();
+        clearGuests();
+        setGuestsUI();
+        render();
+      });
+    }
+
+    // Keep menu anchored while open
+    window.addEventListener("resize", () => {
+      if (guestsMenu && !guestsMenu.hidden) positionGuestsMenu();
+    }, { passive: true });
+
+    window.addEventListener("scroll", () => {
+      if (guestsMenu && !guestsMenu.hidden) positionGuestsMenu();
+    }, { passive: true });
+
+    // Close on outside click / Escape (integrate with existing handlers)
+    document.addEventListener("pointerdown", (e) => {
+      if (!guestsMenu || guestsMenu.hidden) return;
+      const t = e.target;
+      if (guestsBtn?.contains(t)) return;
+      if (guestsMenu.contains(t)) return;
+      closeGuestsMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeGuestsMenu();
+    });
+
+    setGuestsUI();
+
 
     render();
 
