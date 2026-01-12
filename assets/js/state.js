@@ -7,8 +7,8 @@ export const state = {
   // OpenMat mode: "", "all", "sat", "sun"
   openMatMode: "",
 
-  // Guests placeholder (kept for UI parity)
-  guests: new Set()
+  // Guests filter (Welcomed)
+  guestsWelcomed: false
 };
 
 export function setSearch(v){
@@ -33,4 +33,17 @@ export function setOpenMatMode(mode){
 
 export function clearOpenMat(){
   state.openMatMode = "";
+}
+
+
+export function setGuestsWelcomed(on){
+  state.guestsWelcomed = Boolean(on);
+}
+
+export function toggleGuestsWelcomed(){
+  state.guestsWelcomed = !state.guestsWelcomed;
+}
+
+export function clearGuests(){
+  state.guestsWelcomed = false;
 }
