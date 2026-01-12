@@ -193,8 +193,9 @@ async function init(){
   }
 
   function openStateMenu(){
-    if (!stateMenu) return;
-    stateMenu.hidden = false;
+      closeOpenMatMenu();
+      if (!stateMenu) return;
+      stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
     // Position after it becomes measurable
     requestAnimationFrame(positionStateMenu);
@@ -595,38 +596,8 @@ async function init(){
     const openMatMenu  = document.getElementById("openMatMenu");
     const openMatClear = document.getElementById("openMatClear");
     const openMatDot   = document.getElementById("openMatDot");
-    const openMatList  = document.getElementById("openMatList");
 
-    function buildOpenMatMenu(){
-      if (!openMatList) return;
-
-      const options = [
-        { value: "all", label: "All" },
-        { value: "sat", label: "Saturday" },
-        { value: "sun", label: "Sunday" },
-      ];
-
-      openMatList.innerHTML = "";
-
-      for (const opt of options){
-        const label = document.createElement("label");
-        label.className = "menu__item";
-
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.value = opt.value;
-        cb.checked = (state.openMat === opt.value);
-
-        const span = document.createElement("span");
-        span.textContent = opt.label;
-
-        label.appendChild(cb);
-        label.appendChild(span);
-        openMatList.appendChild(label);
-      }
-    }
-
-    function setOpenMatSelectedUI(){
+    function setOpenMatUI(){
       const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
@@ -661,9 +632,14 @@ async function init(){
 
     function openOpenMatMenu(){
       if (!openMatMenu) return;
-      buildOpenMatMenu(); // sync checked state
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
+
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
+      });
+
       requestAnimationFrame(positionOpenMatMenu);
     }
 
@@ -677,20 +653,14 @@ async function init(){
       });
     }
 
-    if (openMatList) {
-      openMatList.addEventListener("change", (e) => {
+    if (openMatMenu) {
+      openMatMenu.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "radio") return;
 
-        // Single-select behavior with checkbox UI (keeps pill mechanics uniform with States)
-        openMatList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-          if (cb !== el) cb.checked = false;
-        });
-
-        state.openMat = "";
-        if (el.checked) state.openMat = el.value;
-
-        setOpenMatSelectedUI();
+        state.openMat = el.value;
+        setOpenMatUI();
         render();
       });
     }
@@ -699,19 +669,14 @@ async function init(){
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
         state.openMat = "";
-
-        if (openMatList) {
-          openMatList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-            cb.checked = false;
-          });
+        if (openMatMenu) {
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
         }
-
-        setOpenMatSelectedUI();
+        setOpenMatUI();
         render();
       });
     }
 
-    // Close menu when clicking outside
     document.addEventListener("click", (e) => {
       if (!openMatMenu || openMatMenu.hidden) return;
       const target = e.target;
@@ -720,12 +685,10 @@ async function init(){
       closeOpenMatMenu();
     });
 
-    // Close on Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeOpenMatMenu();
     });
 
-    // Keep menu positioned on resize/scroll while open
     window.addEventListener("resize", () => {
       if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     });
@@ -733,7 +696,17 @@ async function init(){
       if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     }, { passive: true });
 
-    setOpenMatSelectedUI();
+    setOpenMatUI();
+
+    // Click-away closes any open filter menus
+    document.addEventListener("click", (e) => {
+      const t = e.target;
+      const inState = stateBtn.contains(t) || stateMenu.contains(t);
+      const inOpenMat = openMatBtn.contains(t) || openMatMenu.contains(t);
+      if (inState || inOpenMat) return;
+      closeStatesMenu();
+      closeOpenMatMenu();
+    });
 
     render();
 
