@@ -194,6 +194,7 @@ async function init(){
 
   function openStateMenu(){
       closeOpenMatMenu();
+      closeOpenMatMenu();
       if (!stateMenu) return;
       stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
@@ -652,6 +653,28 @@ async function init(){
         if (isOpen) closeOpenMatMenu();
         else { closeStateMenu(); openOpenMatMenu(); }
       });
+
+      // Close OpenMat menu on outside click
+      document.addEventListener("click", (e) => {
+        if (!openMatMenu || openMatMenu.hidden) return;
+        const t = e.target;
+        if (!(t instanceof Element)) return;
+        if (t.closest("#openMatMenu") || t.closest("#openMatBtn")) return;
+        closeOpenMatMenu();
+      });
+
+      // Close OpenMat on Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeOpenMatMenu();
+      });
+
+      // Keep OpenMat menu positioned on resize/scroll while open
+      window.addEventListener("resize", () => {
+        if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+      });
+      window.addEventListener("scroll", () => {
+        if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+      }, { passive: true });
     }
 
     if (openMatMenu) {
