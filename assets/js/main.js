@@ -9,7 +9,7 @@ async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
 
-  // View toggle + slider (drag-driven)
+  // View toggle + slider (true continuous drag)
   const viewTitle = document.getElementById("viewTitle");
   const tabIndex = document.getElementById("tabIndex");
   const tabEvents = document.getElementById("tabEvents");
@@ -17,27 +17,35 @@ async function init(){
   const viewToggle = document.getElementById("viewToggle");
 
   let viewProgress = 0; // 0 = Index, 1 = Events
-  let isDraggingView = false;
+  let dragging = false;
+  let dragPointerId = null;
 
-  function applyViewProgress(p, withTransition){
+  function setTransition(ms){
+    document.body.style.setProperty("--viewTransition", ms + "ms");
+  }
+
+  function applyProgress(p){
     const clamped = Math.max(0, Math.min(1, p));
     viewProgress = clamped;
-
-    // toggle transitions on/off while dragging for a true slider feel
-    if (withTransition) {
-      document.documentElement.style.setProperty("--viewTransition", "260ms");
-    } else {
-      document.documentElement.style.setProperty("--viewTransition", "0ms");
-    }
-
     document.body.style.setProperty("--viewProgress", String(clamped));
+
+    // Live header label while dragging (feels iOS-like)
+    if (viewTitle){
+      if (clamped >= 0.5) viewTitle.textContent = "EVENTS";
+      else viewTitle.textContent = "INDEX";
+    }
+  }
+
+  function commitViewFromProgress(){
+    const next = (viewProgress >= 0.5) ? "events" : "index";
+    setView(next);
   }
 
   function setView(view){
     state.view = view;
 
-    const p = (view === "events") ? 1 : 0;
-    applyViewProgress(p, true);
+    setTransition(260);
+    applyProgress(view === "events" ? 1 : 0);
 
     if (tabIndex) tabIndex.setAttribute("aria-selected", view === "index" ? "true" : "false");
     if (tabEvents) tabEvents.setAttribute("aria-selected", view === "events" ? "true" : "false");
@@ -49,44 +57,57 @@ async function init(){
   if (tabIndex) tabIndex.addEventListener("click", () => setView("index"));
   if (tabEvents) tabEvents.addEventListener("click", () => setView("events"));
 
-  function snapFromProgress(){
-    const next = (viewProgress >= 0.5) ? "events" : "index";
-    setView(next);
-  }
-
-  // Drag on the toggle itself (best fidelity)
+  // Pointer drag on the toggle track: thumb + view move together in real time
   if (viewToggle) {
-    let startX = 0;
-    let startP = 0;
-
     viewToggle.addEventListener("pointerdown", (e) => {
-      isDraggingView = true;
-      viewToggle.setPointerCapture(e.pointerId);
-      startX = e.clientX;
-      startP = viewProgress;
-      applyViewProgress(viewProgress, false);
+      dragging = true;
+      dragPointerId = e.pointerId;
+      viewToggle.setPointerCapture(dragPointerId);
+
+      setTransition(0);
+
+      const rect = viewToggle.getBoundingClientRect();
+      const padding = 4; // matches CSS
+      const trackW = rect.width - padding * 2;
+      const thumbW = trackW / 2;
+      const travel = trackW - thumbW; // thumb travel distance
+
+      const x = e.clientX - rect.left - padding;
+      const p = (x - thumbW / 2) / travel; // center-based
+      applyProgress(p);
     });
 
     viewToggle.addEventListener("pointermove", (e) => {
-      if (!isDraggingView) return;
-      const dx = e.clientX - startX;
-      const width = viewToggle.getBoundingClientRect().width;
-      const delta = dx / (width / 2); // half width = full travel
-      applyViewProgress(startP + delta, false);
+      if (!dragging || e.pointerId !== dragPointerId) return;
+
+      const rect = viewToggle.getBoundingClientRect();
+      const padding = 4;
+      const trackW = rect.width - padding * 2;
+      const thumbW = trackW / 2;
+      const travel = trackW - thumbW;
+
+      const x = e.clientX - rect.left - padding;
+      const p = (x - thumbW / 2) / travel;
+      applyProgress(p);
     });
 
-    const end = () => {
-      if (!isDraggingView) return;
-      isDraggingView = false;
-      snapFromProgress();
+    const endDrag = (e) => {
+      if (!dragging) return;
+      if (e && dragPointerId != null && e.pointerId !== dragPointerId) return;
+
+      dragging = false;
+      dragPointerId = null;
+
+      setTransition(260);
+      commitViewFromProgress();
     };
 
-    viewToggle.addEventListener("pointerup", end);
-    viewToggle.addEventListener("pointercancel", end);
-    viewToggle.addEventListener("lostpointercapture", end);
+    viewToggle.addEventListener("pointerup", endDrag);
+    viewToggle.addEventListener("pointercancel", endDrag);
+    viewToggle.addEventListener("lostpointercapture", endDrag);
   }
 
-  // Swipe the whole view area (mobile-friendly)
+  // Swipe the whole view area (same continuous behavior)
   if (viewShell) {
     let startX = 0, startY = 0, startP = 0;
 
@@ -95,30 +116,33 @@ async function init(){
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       startP = viewProgress;
-      applyViewProgress(viewProgress, false);
+      setTransition(0);
     }, { passive: true });
 
     viewShell.addEventListener("touchmove", (e) => {
       if (e.touches.length !== 1) return;
       const x = e.touches[0].clientX;
       const y = e.touches[0].clientY;
+
       const dx = x - startX;
       const dy = y - startY;
+
       if (Math.abs(dy) > Math.abs(dx)) return;
 
-      const width = window.innerWidth;
-      const delta = -dx / width; // swipe left => increase progress (toward events)
-      applyViewProgress(startP + delta, false);
+      const delta = -dx / window.innerWidth; // left swipe increases progress
+      applyProgress(startP + delta);
     }, { passive: true });
 
     viewShell.addEventListener("touchend", () => {
-      snapFromProgress();
+      setTransition(260);
+      commitViewFromProgress();
     }, { passive: true });
   }
 
   // default view
   if (!state.view) state.view = "index";
   setView(state.view);
+
 
 
   // Search elements
