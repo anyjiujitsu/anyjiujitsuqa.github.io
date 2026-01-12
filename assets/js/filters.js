@@ -13,7 +13,7 @@ export function applyFilters(rows, state){
   const raw = (state?.search ?? "").trim().toLowerCase();
   const stateSet = state?.states ?? new Set();
   const omMode = (state?.openMatMode ?? "").toLowerCase();
-  const guestsWelcomed = Boolean(state?.guestsWelcomed);
+  const guestsWelcomed = !!state?.guestsWelcomed;
 
   // Split by commas → AND across terms
   const terms = raw
@@ -43,8 +43,8 @@ export function applyFilters(rows, state){
     if (omMode === "sat" && !hasSat) return false;
     if (omMode === "sun" && !hasSun) return false;
 
-    // --- Guests pill (Welcomed) ---
-    if (guestsWelcomed) {
+    // --- Guests pill (Welcomed = OTA:Y) ---
+    if (guestsWelcomed){
       const ota = String(r.OTA ?? "").trim().toUpperCase();
       if (ota !== "Y") return false;
     }
