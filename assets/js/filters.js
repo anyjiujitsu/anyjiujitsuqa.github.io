@@ -1,7 +1,7 @@
 export function applyFilters(rows, state){
   const raw = (state?.search ?? "").trim().toLowerCase();
   const stateSet = state?.states ?? new Set();
-  const om = state?.openMat ?? "";
+  const omMode = (state?.openMatMode ?? state?.openMat ?? "").toString().trim().toUpperCase();
 
   const terms = raw
     .split(",")
@@ -19,17 +19,21 @@ export function applyFilters(rows, state){
 
   return rows.filter(r => {
     // --- Existing pill filters (unchanged) ---
-    if (stateSet.size > 0 && !stateSet.has(String(getField(r, ["STATE"]) ?? "").trim().toUpperCase())) return false;
+    if (stateSet.size > 0 && !stateSet.has(getField(r, ["STATE"]))) return false;
 
     const OTA = getField(r, ["OTA"]).toUpperCase();
-    if (om === "Y" && OTA !== "Y") return false;
-    if (om === "N" && OTA === "Y") return false;
+    if (omMode === "Y" && OTA !== "Y") return false;
+    if (omMode === "N" && OTA === "Y") return false;
 
     // --- Robust SAT/SUN detection (header-name tolerant) ---
     const satVal = getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]);
     const sunVal = getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]);
     const hasSat = satVal.trim() !== "";
     const hasSun = sunVal.trim() !== "";
+
+    if (omMode === "ALL" && !(hasSat || hasSun)) return false;
+    if (omMode === "SAT" && !hasSat) return false;
+    if (omMode === "SUN" && !hasSun) return false;
 
     // 2) sat/saturday => SAT not blank
     if (wantsSat && !hasSat) return false;
