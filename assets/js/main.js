@@ -532,55 +532,9 @@ async function init(){
     }
 
 
-    if (stateList) {
-      stateList.addEventListener("change", (e) => {
-        const el = e.target;
-        if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "checkbox") return;
+    
 
-        if (el.checked) state.states.add(el.value);
-        else state.states.delete(el.value);
 
-        render();
-      });
-    }
-
-    if (stateClear) {
-      stateClear.addEventListener("click", (e) => {
-        e.preventDefault();
-        state.states.clear();
-
-        if (stateList) {
-          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-            cb.checked = false;
-          });
-        }
-
-        render();
-      });
-    }
-
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!stateMenu || stateMenu.hidden) return;
-      const target = e.target;
-      if (!(target instanceof Element)) return;
-      if (target.closest("#stateMenu") || target.closest("#stateBtn")) return;
-      closeStateMenu();
-    });
-
-    // Close on Escape
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeStateMenu();
-    });
-
-    // Keep menu positioned on resize/scroll while open
-    window.addEventListener("resize", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
-    });
-    window.addEventListener("scroll", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
-    }, { passive: true });
 
     // ----     // OpenMat pill controller (shared base behavior)
     const openMatBtn   = document.getElementById("openMatBtn");
@@ -599,33 +553,10 @@ async function init(){
       menu: openMatMenu,
       clearBtn: openMatClear,
       onOpen: () => {
-        // Sync checkbox checks from current state on open
-        openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((cb) => {
-          cb.checked = (cb.value === state.openMat);
+        // Sync radio checks from current state on open
+        openMatMenu?.querySelectorAll('input[type="checkbox"][name="openMat"]').forEach((r) => {
+          r.checked = (r.value === state.openMat);
         });
-      },
-      onMenuChange: (e) => {
-        const el = e.target;
-        if (!(el instanceof HTMLInputElement)) return;
-        if (el.type !== "checkbox" || el.dataset.openmat !== "1") return;
-
-        // Single-select checkbox behavior: checking one unchecks the others.
-        if (el.checked) {
-          openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((cb) => {
-            if (cb !== el) cb.checked = false;
-          });
-          state.openMat = el.value;
-        } else {
-          // If user unchecks the selected option, clear the filter.
-          state.openMat = "";
-        }
-
-        render();
-        setOpenMatUI();
-      },
-      updateSelectedUI: setOpenMatUI,
-    });
-
       },
       onMenuChange: (e) => {
         const el = e.target;
@@ -642,7 +573,7 @@ async function init(){
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
         state.openMat = "";
-        openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((r) => (r.checked = false));
+        openMatMenu?.querySelectorAll('input[type="checkbox"][name="openMat"]').forEach((r) => (r.checked = false));
         setOpenMatUI();
         render();
       });
