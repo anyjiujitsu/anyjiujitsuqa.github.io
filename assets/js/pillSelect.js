@@ -17,6 +17,27 @@ export function createPillSelect({
   }
 
   let open = false;
+  let originalParent = null;
+  let originalNextSibling = null;
+
+  function attachToBody(){
+    // Portal menu to <body> so fixed positioning isn't affected by transformed parents.
+    if (menu.parentElement === document.body) return;
+    originalParent = menu.parentElement;
+    originalNextSibling = menu.nextSibling;
+    document.body.appendChild(menu);
+  }
+
+  function restoreFromBody(){
+    if (!originalParent) return;
+    if (originalNextSibling && originalNextSibling.parentNode === originalParent) {
+      originalParent.insertBefore(menu, originalNextSibling);
+    } else {
+      originalParent.appendChild(menu);
+    }
+    originalParent = null;
+    originalNextSibling = null;
+  }
 
   function setAria(){
     btn.setAttribute("aria-expanded", open ? "true" : "false");
