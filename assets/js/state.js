@@ -1,8 +1,9 @@
 export const state = {
   search: "",
   states: new Set(),
-  openMat: "", // "", "Y", "N"
+  openMat: "", // "", "all", "sat", "sun"
   guests: new Set(), // placeholder
+  view: "index",
 };
 
 export function setSearch(v){ state.search = v; }
@@ -17,5 +18,10 @@ export function clearStates(){ state.states.clear(); }
 export function clearGuests(){ state.guests.clear(); }
 
 export function hasAnySelection(){
-  return state.search.trim().length > 0 || state.states.size > 0 || state.openMat !== "" || state.guests.size > 0;
+  return (
+    state.search.trim().length > 0 ||
+    state.states.size > 0 ||
+    state.openMat !== "" ||
+    state.guests.size > 0
+  );
 }
