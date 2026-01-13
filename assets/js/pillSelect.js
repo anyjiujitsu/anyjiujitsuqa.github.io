@@ -83,7 +83,6 @@ export function createPillSelect({
   }
 
   function position(){
-    // Force fixed layout, and neutralize common CSS that can “center” the menu.
     menu.style.setProperty("position", "fixed", "important");
     menu.style.setProperty("z-index", "1000", "important");
     menu.style.transform = "none";
@@ -131,7 +130,6 @@ export function createPillSelect({
     requestAnimationFrame(() => {
       if (typeof onOpen === "function") onOpen();
       position();
-      // Some layouts settle one tick later (mobile zoom / transforms)
       setTimeout(position, 0);
     });
 
@@ -160,7 +158,6 @@ export function createPillSelect({
     else openMenu();
   }
 
-  // Wire base interactions
   btn.addEventListener("click", toggleMenu);
 
   if (typeof onMenuChange === "function"){
@@ -177,11 +174,9 @@ export function createPillSelect({
     });
   }
 
-  // Register so opening one pill closes others
   const reg = getRegistry();
   reg.add(closeMenu);
 
-  // initial UI
   setAria();
   updateSelectedUI();
 
