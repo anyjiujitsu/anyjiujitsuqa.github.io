@@ -47,6 +47,11 @@ export function createPillSelect({
   function position(){
     menu.style.position = "fixed";
     menu.style.zIndex = "1000";
+    // Ensure no CSS centering transforms affect positioning
+    menu.style.transform = "none";
+    menu.style.right = "auto";
+    menu.style.bottom = "auto";
+    menu.style.margin = "0";
 
     const btnRect = btn.getBoundingClientRect();
     const menuW = menu.offsetWidth || 240;
