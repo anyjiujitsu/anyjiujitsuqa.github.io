@@ -1,27 +1,65 @@
 // assets/js/pillSelect.js
-// Shared controller for all filter pills (States, Open Mat, Guests, etc.)
-// Handles: open/close, fixed positioning, outside click, Escape, resize/scroll reposition.
+// Shared dropdown pill controller (INDEX + EVENTS).
+// Contract:
+// - Same open/close behavior for every pill
+// - Same positioning (portaled to <body> to avoid transformed parent issues)
+// - Same indicator behavior (dot is ensured/created if missing)
+// - Only one pill menu open at a time
 
-let __pillSelectCurrent = null;
+function getRegistry(){
+  window.__pillSelectRegistry = window.__pillSelectRegistry || new Set();
+  window.__pillSelectCloseAll = window.__pillSelectCloseAll || (() => {
+    for (const fn of window.__pillSelectRegistry) { try { fn(); } catch(e) {} }
+  });
+  return window.__pillSelectRegistry;
+}
+
+export function ensurePillDot(btn, dotId){
+  if (!btn) return null;
+
+  let dot = document.getElementById(dotId);
+  if (dot) return dot;
+
+  dot = document.createElement("span");
+  dot.id = dotId;
+  dot.className = "pill__dot";
+  dot.setAttribute("aria-hidden", "true");
+  dot.style.display = "none";
+
+  const caret = btn.querySelector(".pill__caret");
+  if (caret && caret.parentNode === btn) btn.insertBefore(dot, caret);
+  else btn.appendChild(dot);
+
+  return dot;
+}
 
 export function createPillSelect({
   btn,
   menu,
   clearBtn,
+  dotId,
+  hasSelection,
   onOpen,
-  updateSelectedUI,
   onMenuChange,
+  onClear,
 }){
   if (!btn || !menu) {
-    return { open(){}, close(){}, isOpen(){ return false; } };
+    return { open(){}, close(){}, isOpen(){ return false; }, updateSelectedUI(){} };
   }
 
   let open = false;
   let originalParent = null;
   let originalNextSibling = null;
 
+  const dot = dotId ? ensurePillDot(btn, dotId) : null;
+
+  function updateSelectedUI(){
+    const selected = typeof hasSelection === "function" ? !!hasSelection() : false;
+    btn.classList.toggle("pill--selected", selected);
+    if (dot) dot.style.display = selected ? "inline-block" : "none";
+  }
+
   function attachToBody(){
-    // Portal menu to <body> so fixed positioning isn't affected by transformed parents.
     if (menu.parentElement === document.body) return;
     originalParent = menu.parentElement;
     originalNextSibling = menu.nextSibling;
@@ -45,9 +83,9 @@ export function createPillSelect({
   }
 
   function position(){
-    menu.style.position = "fixed";
-    menu.style.zIndex = "1000";
-    // Ensure no CSS centering transforms affect positioning
+    // Force fixed layout, and neutralize common CSS that can “center” the menu.
+    menu.style.setProperty("position", "fixed", "important");
+    menu.style.setProperty("z-index", "1000", "important");
     menu.style.transform = "none";
     menu.style.right = "auto";
     menu.style.bottom = "auto";
@@ -64,47 +102,8 @@ export function createPillSelect({
 
     const top = btnRect.bottom + 8;
 
-    menu.style.left = `${left}px`;
-    menu.style.top = `${top}px`;
-  }
-
-  function openMenu(){
-    if (__pillSelectCurrent && __pillSelectCurrent !== api) {
-      __pillSelectCurrent.close();
-    }
-    __pillSelectCurrent = api;
-
-    open = true;
-    setAria();
-
-    requestAnimationFrame(() => {
-      if (typeof onOpen === "function") onOpen();
-      position();
-    });
-
-    window.addEventListener("resize", onResize, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("click", onDocClick);
-    document.addEventListener("keydown", onKeyDown);
-  }
-
-  function closeMenu(){
-    if (!open) return;
-    open = false;
-    if (__pillSelectCurrent === api) __pillSelectCurrent = null;
-    setAria();
-
-    window.removeEventListener("resize", onResize);
-    window.removeEventListener("scroll", onScroll);
-    document.removeEventListener("click", onDocClick);
-    document.removeEventListener("keydown", onKeyDown);
-  }
-
-  function toggleMenu(e){
-    e?.preventDefault?.();
-    e?.stopPropagation?.();
-    if (open) closeMenu();
-    else openMenu();
+    menu.style.setProperty("left", `${left}px`, "important");
+    menu.style.setProperty("top", `${top}px`, "important");
   }
 
   function onResize(){ if (open) position(); }
@@ -122,29 +121,74 @@ export function createPillSelect({
     if (e.key === "Escape") closeMenu();
   }
 
+  function openMenu(){
+    try { window.__pillSelectCloseAll?.(); } catch(e) {}
+
+    open = true;
+    attachToBody();
+    setAria();
+
+    requestAnimationFrame(() => {
+      if (typeof onOpen === "function") onOpen();
+      position();
+      // Some layouts settle one tick later (mobile zoom / transforms)
+      setTimeout(position, 0);
+    });
+
+    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("click", onDocClick);
+    document.addEventListener("keydown", onKeyDown);
+  }
+
+  function closeMenu(){
+    if (!open) return;
+    open = false;
+    setAria();
+    restoreFromBody();
+
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("scroll", onScroll);
+    document.removeEventListener("click", onDocClick);
+    document.removeEventListener("keydown", onKeyDown);
+  }
+
+  function toggleMenu(e){
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    if (open) closeMenu();
+    else openMenu();
+  }
+
+  // Wire base interactions
   btn.addEventListener("click", toggleMenu);
 
-  if (typeof onMenuChange === "function") {
+  if (typeof onMenuChange === "function"){
     menu.addEventListener("change", (e) => onMenuChange(e));
   }
 
-  if (clearBtn) {
+  if (clearBtn){
     clearBtn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (typeof onClear === "function") onClear();
+      updateSelectedUI();
       closeMenu();
-      if (typeof updateSelectedUI === "function") updateSelectedUI();
     });
   }
 
-  setAria();
-  if (typeof updateSelectedUI === "function") updateSelectedUI();
+  // Register so opening one pill closes others
+  const reg = getRegistry();
+  reg.add(closeMenu);
 
-  const api = {
+  // initial UI
+  setAria();
+  updateSelectedUI();
+
+  return {
     open: openMenu,
     close: closeMenu,
     isOpen: () => open,
+    updateSelectedUI,
   };
-
-  return api;
 }
