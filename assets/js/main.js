@@ -599,10 +599,33 @@ async function init(){
       menu: openMatMenu,
       clearBtn: openMatClear,
       onOpen: () => {
-        // Sync radio checks from current state on open
-        openMatMenu?.querySelectorAll('input[type="radio"][name="openMat"]').forEach((r) => {
-          r.checked = (r.value === state.openMat);
+        // Sync checkbox checks from current state on open
+        openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((cb) => {
+          cb.checked = (cb.value === state.openMat);
         });
+      },
+      onMenuChange: (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "checkbox" || el.dataset.openmat !== "1") return;
+
+        // Single-select checkbox behavior: checking one unchecks the others.
+        if (el.checked) {
+          openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((cb) => {
+            if (cb !== el) cb.checked = false;
+          });
+          state.openMat = el.value;
+        } else {
+          // If user unchecks the selected option, clear the filter.
+          state.openMat = "";
+        }
+
+        render();
+        setOpenMatUI();
+      },
+      updateSelectedUI: setOpenMatUI,
+    });
+
       },
       onMenuChange: (e) => {
         const el = e.target;
@@ -619,7 +642,7 @@ async function init(){
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
         state.openMat = "";
-        openMatMenu?.querySelectorAll('input[type="radio"][name="openMat"]').forEach((r) => (r.checked = false));
+        openMatMenu?.querySelectorAll('input[type="checkbox"][data-openmat="1"]').forEach((r) => (r.checked = false));
         setOpenMatUI();
         render();
       });
