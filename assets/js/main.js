@@ -1,5 +1,5 @@
 import { loadCSV } from "./data.js";
-import { state, setSearch, toggleState, clearStates, setOpenMatMode, clearOpenMat } from "./state.js";
+import { state } from "./state.js";
 import { applyFilters } from "./filters.js";
 import { renderGroups } from "./render.js";
 
@@ -51,7 +51,7 @@ async function init(){
     if (tabEvents) tabEvents.setAttribute("aria-selected", view === "events" ? "true" : "false");
 
     if (viewTitle) viewTitle.textContent = view === "events" ? "EVENTS" : "INDEX";
-    document.title = view === "events" ? "ANY N.E. â€“ EVENTS" : "ANY N.E. â€“ GYM INDEX";
+    document.title = view === "events" ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
   }
 
   if (tabIndex) tabIndex.addEventListener("click", () => setView("index"));
@@ -156,87 +156,6 @@ async function init(){
   const stateClear = document.getElementById("stateClear");
   const stateDot   = document.getElementById("stateDot");
 
-  // -----------------------------
-  // DROPDOWN PORTALING (GLOBAL)
-  // -----------------------------
-  // The view slider/panels can create clipping/stacking contexts (overflow/transform)
-  // which makes dropdown menus appear "under" other content. To keep the UX consistent
-  // and avoid CSS z-index whack-a-mole, we portal dropdown menus to <body> and position
-  // them using `position: fixed`.
-  function portalMenuOpen(menuEl, anchorEl){
-    if (!menuEl || !anchorEl) return;
-    if (menuEl.dataset.portalized === "1") {
-      // Already portalized; just reposition.
-      positionPortalMenu(menuEl, anchorEl);
-      return;
-    }
-
-    // Save original DOM location so we can restore on close.
-    menuEl.dataset.portalized = "1";
-    menuEl.dataset.portalParentId = menuEl.parentElement?.id || "";
-    menuEl._portalParent = menuEl.parentElement;
-    menuEl._portalNextSibling = menuEl.nextSibling;
-
-    document.body.appendChild(menuEl);
-    menuEl.style.position = "fixed";
-    menuEl.style.zIndex = "9999";
-    menuEl.style.left = "0px";
-    menuEl.style.top = "0px";
-
-    positionPortalMenu(menuEl, anchorEl);
-  }
-
-  function positionPortalMenu(menuEl, anchorEl){
-    const rect = anchorEl.getBoundingClientRect();
-    const gap = 8;
-
-    // Ensure we can measure width.
-    const prevDisplay = menuEl.style.display;
-    const wasHidden = menuEl.hasAttribute("hidden") || getComputedStyle(menuEl).display === "none";
-    if (wasHidden) {
-      menuEl.removeAttribute("hidden");
-      menuEl.style.display = "block";
-    }
-
-    const menuW = menuEl.offsetWidth || 240;
-    let left = rect.left;
-    const maxLeft = Math.max(8, window.innerWidth - menuW - 8);
-    if (left > maxLeft) left = maxLeft;
-
-    menuEl.style.left = `${Math.round(left)}px`;
-    menuEl.style.top  = `${Math.round(rect.bottom + gap)}px`;
-
-    // Restore display control (hidden attribute will be set by open/close functions).
-    if (wasHidden) {
-      menuEl.style.display = prevDisplay;
-      menuEl.setAttribute("hidden", "");
-    }
-  }
-
-  function portalMenuClose(menuEl){
-    if (!menuEl) return;
-    if (menuEl.dataset.portalized !== "1") return;
-
-    // Restore to original DOM location.
-    const parent = menuEl._portalParent;
-    const next = menuEl._portalNextSibling;
-    if (parent) {
-      if (next) parent.insertBefore(menuEl, next);
-      else parent.appendChild(menuEl);
-    }
-
-    delete menuEl._portalParent;
-    delete menuEl._portalNextSibling;
-    delete menuEl.dataset.portalized;
-    delete menuEl.dataset.portalParentId;
-
-    // Reset positioning so CSS can take over if needed.
-    menuEl.style.position = "";
-    menuEl.style.left = "";
-    menuEl.style.top = "";
-    menuEl.style.zIndex = "";
-  }
-
   function setStatesSelectedUI(){
     const has = state.states && state.states.size > 0;
     if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
@@ -245,23 +164,40 @@ async function init(){
 
   function closeStateMenu(){
     if (!stateMenu) return;
-    portalMenuClose(stateMenu);
     stateMenu.hidden = true;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
   }
 
   function positionStateMenu(){
-  // If the menu is open, keep it anchored to the trigger.
-  if (!stateMenu || stateMenu.hidden) return;
-  portalMenuOpen(stateMenu, stateBtn);
-}
+    if (!stateMenu || !stateBtn) return;
+
+    // Ensure it can overlay even if pills row is scroll-clipped
+    stateMenu.style.position = "fixed";
+    stateMenu.style.zIndex = "1000";
+
+    const btnRect = stateBtn.getBoundingClientRect();
+
+    // Use computed width after un-hiding (so offsetWidth is valid)
+    const menuW = stateMenu.offsetWidth || 240;
+    const gutter = 8;
+
+    let left = btnRect.left;
+    const maxLeft = window.innerWidth - menuW - gutter;
+    if (left > maxLeft) left = maxLeft;
+    if (left < gutter) left = gutter;
+
+    const top = btnRect.bottom + 8;
+
+    stateMenu.style.left = `${left}px`;
+    stateMenu.style.top = `${top}px`;
+  }
 
   function openStateMenu(){
     if (!stateMenu) return;
     stateMenu.hidden = false;
     if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
-    // Portal & position after it becomes measurable
-    requestAnimationFrame(() => portalMenuOpen(stateMenu, stateBtn));
+    // Position after it becomes measurable
+    requestAnimationFrame(positionStateMenu);
   }
 
   function render(){
@@ -515,7 +451,7 @@ async function init(){
   }
 
   try{
-    status.textContent = "Loadingâ€¦";
+    status.textContent = "Loading…";
     allRows = await loadCSV("data/directory.csv");
 
     // Load Events data (Events view)
@@ -661,21 +597,36 @@ async function init(){
     const openMatDot   = document.getElementById("openMatDot");
 
     function setOpenMatUI(){
-      const on = state.openMatMode === "all" || state.openMatMode === "sat" || state.openMatMode === "sun";
+      const on = state.openMat === "all" || state.openMat === "sat" || state.openMat === "sun";
       if (openMatBtn) openMatBtn.classList.toggle("pill--selected", on);
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
 
     function closeOpenMatMenu(){
       if (!openMatMenu) return;
-      portalMenuClose(openMatMenu);
       openMatMenu.hidden = true;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
     }
 
     function positionOpenMatMenu(){
       if (!openMatMenu || !openMatBtn) return;
-      portalMenuOpen(openMatMenu, openMatBtn);
+
+      openMatMenu.style.position = "fixed";
+      openMatMenu.style.zIndex = "1000";
+
+      const btnRect = openMatBtn.getBoundingClientRect();
+      const menuW = openMatMenu.offsetWidth || 240;
+      const gutter = 8;
+
+      let left = btnRect.left;
+      const maxLeft = window.innerWidth - menuW - gutter;
+      if (left > maxLeft) left = maxLeft;
+      if (left < gutter) left = gutter;
+
+      const top = btnRect.bottom + 8;
+
+      openMatMenu.style.left = `${left}px`;
+      openMatMenu.style.top = `${top}px`;
     }
 
     function openOpenMatMenu(){
@@ -683,11 +634,10 @@ async function init(){
       openMatMenu.hidden = false;
       if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
 
-      portalMenuOpen(openMatMenu, openMatBtn);
-
-      // Sync checkbox state from current mode (exclusive selection)
-      const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
-      boxes.forEach(b => { b.checked = (b.value === state.openMatMode); });
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
+      });
 
       requestAnimationFrame(positionOpenMatMenu);
     }
@@ -703,32 +653,23 @@ async function init(){
     }
 
     if (openMatMenu) {
-      const boxes = Array.from(openMatMenu.querySelectorAll('input[type="checkbox"]'));
+      openMatMenu.addEventListener("change", (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "radio") return;
 
-      boxes.forEach(box => {
-        box.addEventListener("change", () => {
-          // Exclusive selection like a radio group, but with checkbox visuals.
-          if (box.checked) {
-            boxes.forEach(b => { if (b !== box) b.checked = false; });
-            setOpenMatMode(box.value);
-          } else {
-            // Unchecking the active box clears the mode
-            setOpenMatMode("");
-          }
-
-          setOpenMatUI();
-          // Re-render with filters applied
-          render();
-        });
+        state.openMat = el.value;
+        setOpenMatUI();
+        render();
       });
     }
 
     if (openMatClear) {
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
-        clearOpenMat();
+        state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="checkbox"]').forEach(b => b.checked = false);
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
         }
         setOpenMatUI();
         render();
