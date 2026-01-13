@@ -2,6 +2,8 @@
 // Shared controller for all filter pills (States, Open Mat, Guests, etc.)
 // Handles: open/close, fixed positioning, outside click, Escape, resize/scroll reposition.
 
+let __pillSelectCurrent = null;
+
 export function createPillSelect({
   btn,
   menu,
@@ -41,6 +43,11 @@ export function createPillSelect({
   }
 
   function openMenu(){
+    if (__pillSelectCurrent && __pillSelectCurrent !== api) {
+      __pillSelectCurrent.close();
+    }
+    __pillSelectCurrent = api;
+
     open = true;
     setAria();
 
@@ -58,6 +65,7 @@ export function createPillSelect({
   function closeMenu(){
     if (!open) return;
     open = false;
+    if (__pillSelectCurrent === api) __pillSelectCurrent = null;
     setAria();
 
     window.removeEventListener("resize", onResize);
@@ -106,9 +114,11 @@ export function createPillSelect({
   setAria();
   if (typeof updateSelectedUI === "function") updateSelectedUI();
 
-  return {
+  const api = {
     open: openMenu,
     close: closeMenu,
     isOpen: () => open,
   };
+
+  return api;
 }
