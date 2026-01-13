@@ -83,27 +83,27 @@
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="openMatMenu" class="menu" role="menu" aria-label="OpenMat options" hidden>
-        <div class="menu__header">
-          <div class="menu__title">OpenMat</div>
-          <button class="menu__clear" id="clearOpenMat" type="button">Clear</button>
+          <div id="openMatMenu" class="menu" role="menu" aria-label="OpenMat menu" hidden>
+            <div class="menu__header">
+              <div class="menu__title">OpenMat</div>
+              <button id="openMatClear" class="menu__clear" type="button">Clear</button>
+            </div>
+            <div class="menu__list">
+              <label class="menu__item">
+                <input type="radio" name="openMat" value="all" />
+                <span>All</span>
+              </label>
+              <label class="menu__item">
+                <input type="radio" name="openMat" value="sat" />
+                <span>Saturday</span>
+              </label>
+              <label class="menu__item">
+                <input type="radio" name="openMat" value="sun" />
+                <span>Sunday</span>
+              </label>
+</div>
+          </div>
         </div>
-        <div class="menu__list" id="openMatList">
-          <label class="menu__item">
-            <input type="checkbox" id="omAll" value="all" />
-            <span>All</span>
-          </label>
-          <label class="menu__item">
-            <input type="checkbox" id="omSat" value="sat" />
-            <span>Saturday</span>
-          </label>
-          <label class="menu__item">
-            <input type="checkbox" id="omSun" value="sun" />
-            <span>Sunday</span>
-          </label>
-        </div>
-      </div>
-    </div>
 
         <!-- Pill 4: Guests (placeholder for now) -->
         <div class="pillSelect" data-filter="guests">
