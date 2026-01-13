@@ -64,7 +64,7 @@
   display: none;
 }
 
-/* Hide the browser-provided search cancel â€œXâ€ so we only use our own clear button */
+/* Hide the browser-provided search cancel Ã¢â‚¬Å“XÃ¢â‚¬Â so we only use our own clear button */
 .pill__input[type="search"]::-webkit-search-cancel-button{
   -webkit-appearance: none;
   appearance: none;
@@ -257,10 +257,6 @@
   transform: translateX(0%);
   transition: transform var(--viewTransition, 260ms) ease;
 }
-body[data-view="events"] .viewToggle__thumb{
-  transform: translateX(100%);
-}
-
 /* View slider */
 .viewShell{
   overflow: hidden;
@@ -271,9 +267,6 @@ body[data-view="events"] .viewToggle__thumb{
   transform: translateX(0%);
   transition: transform var(--viewTransition, 260ms) ease;
   will-change: transform;
-}
-body[data-view="events"] .viewSlider{
-  transform: translateX(-50%);
 }
 .viewPanel{
   width: 50%;
@@ -302,7 +295,7 @@ body{
 }
 
 /* =========================================
-   View toggle – improved contrast & clarity
+   View toggle â€“ improved contrast & clarity
    ========================================= */
 
 /* Darker neutral track so inactive side recedes */
@@ -328,4 +321,3 @@ body{
     0 6px 14px rgba(0,0,0,0.22),
     0 1px 2px rgba(0,0,0,0.12);
 }
-
