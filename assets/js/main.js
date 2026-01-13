@@ -150,25 +150,195 @@ async function init(){
   const searchInput = document.getElementById("searchInput");
   const searchClear = document.getElementById("searchClear");
 
-  // States pill elements
-  const stateBtn   = document.getElementById("stateBtn");
-  const stateMenu  = document.getElementById("stateMenu");
-  const stateList  = document.getElementById("stateList");
-  const stateClear = document.getElementById("stateClear");
-  const stateDot   = document.getElementById("stateDot");
+  
+  // ---------------------------------------------------------
+  // PILL FILTER SYSTEM (shared base behavior for ALL pills)
+  // ---------------------------------------------------------
 
-  function setStatesSelectedUI(){
-    const has = state.states && state.states.size > 0;
-    if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
-    if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
+  const searchInput = document.getElementById("searchInput");
+  const searchClear = document.getElementById("searchClear");
+
+  // INDEX pills
+  const stateBtn      = document.getElementById("stateBtn");
+  const stateMenu     = document.getElementById("stateMenu");
+  const stateList     = document.getElementById("stateList");
+  const stateClear    = document.getElementById("stateClear");
+
+  const openMatBtn    = document.getElementById("openMatBtn");
+  const openMatMenu   = document.getElementById("openMatMenu");
+  const openMatClear  = document.getElementById("openMatClear");
+
+  const guestsBtn     = document.getElementById("guestsBtn");
+  const guestsMenu    = document.getElementById("guestsMenu");
+  const guestsClear   = document.getElementById("guestsClear");
+
+  // EVENTS pills (placeholders)
+  const eventsPill1Btn   = document.getElementById("eventsPill1Btn");
+  const eventsPill1Menu  = document.getElementById("eventsPill1Menu");
+  const eventsPill1Clear = document.getElementById("eventsPill1Clear");
+
+  const eventsPill2Btn   = document.getElementById("eventsPill2Btn");
+  const eventsPill2Menu  = document.getElementById("eventsPill2Menu");
+  const eventsPill2Clear = document.getElementById("eventsPill2Clear");
+
+  const eventsPill3Btn   = document.getElementById("eventsPill3Btn");
+  const eventsPill3Menu  = document.getElementById("eventsPill3Menu");
+  const eventsPill3Clear = document.getElementById("eventsPill3Clear");
+
+  function buildStatesMenu(){
+    if (!stateList) return;
+
+    const uniqueStates = Array.from(
+      new Set(allRows.map(r => String(r.STATE ?? "").trim()).filter(Boolean))
+    ).sort((a,b) => a.localeCompare(b));
+
+    stateList.innerHTML = "";
+
+    for (const code of uniqueStates){
+      const label = document.createElement("label");
+      label.className = "menu__item";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = code;
+      cb.checked = state.states.has(code);
+
+      const span = document.createElement("span");
+      span.textContent = code;
+
+      label.appendChild(cb);
+      label.appendChild(span);
+      stateList.appendChild(label);
+    }
   }
+
+  // Setup all dropdown pills using ONE base controller + small per-pill config.
+  const pillDefs = [
+    {
+      key: "states",
+      btn: stateBtn,
+      menu: stateMenu,
+      clearBtn: stateClear,
+      dotId: "stateDot",
+      hasSelection: () => state.states.size > 0,
+      onOpen: () => {
+        // Make sure the list exists and reflects latest selections
+        buildStatesMenu();
+      },
+      onMenuChange: (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "checkbox") return;
+
+        if (el.checked) state.states.add(el.value);
+        else state.states.delete(el.value);
+
+        render();
+      },
+      onClear: () => {
+        state.states.clear();
+        if (stateList){
+          stateList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+        render();
+      }
+    },
+    {
+      key: "openMat",
+      btn: openMatBtn,
+      menu: openMatMenu,
+      clearBtn: openMatClear,
+      dotId: "openMatDot",
+      hasSelection: () => state.openMat !== "",
+      onOpen: () => {
+        // Single-select, checkbox-style UI
+        openMatMenu?.querySelectorAll('input[name="openMat"]').forEach((cb) => {
+          if (cb instanceof HTMLInputElement) cb.checked = (cb.value === state.openMat);
+        });
+      },
+      onMenuChange: (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.name !== "openMat") return;
+
+        // enforce single-select while keeping checkbox visual style
+        if (el.checked){
+          openMatMenu?.querySelectorAll('input[name="openMat"]').forEach((cb) => {
+            if (cb instanceof HTMLInputElement && cb !== el) cb.checked = false;
+          });
+          state.openMat = el.value;
+        } else {
+          state.openMat = "";
+        }
+
+        render();
+      },
+      onClear: () => {
+        state.openMat = "";
+        openMatMenu?.querySelectorAll('input[name="openMat"]').forEach((cb) => {
+          if (cb instanceof HTMLInputElement) cb.checked = false;
+        });
+        render();
+      }
+    },
+    {
+      key: "guests",
+      btn: guestsBtn,
+      menu: guestsMenu,
+      clearBtn: guestsClear,
+      dotId: "guestsDot",
+      hasSelection: () => state.guests.size > 0,
+      onClear: () => {
+        state.guests.clear();
+        render();
+      }
+    },
+
+    // EVENTS view (placeholder pills; structure identical)
+    {
+      key: "eventsDate",
+      btn: eventsPill1Btn,
+      menu: eventsPill1Menu,
+      clearBtn: eventsPill1Clear,
+      dotId: "eventsPill1Dot",
+      hasSelection: () => !!state.eventsDate,
+      onClear: () => { state.eventsDate = ""; renderEvents?.(); }
+    },
+    {
+      key: "eventsType",
+      btn: eventsPill2Btn,
+      menu: eventsPill2Menu,
+      clearBtn: eventsPill2Clear,
+      dotId: "eventsPill2Dot",
+      hasSelection: () => !!state.eventsType,
+      onClear: () => { state.eventsType = ""; renderEvents?.(); }
+    },
+    {
+      key: "eventsWhere",
+      btn: eventsPill3Btn,
+      menu: eventsPill3Menu,
+      clearBtn: eventsPill3Clear,
+      dotId: "eventsPill3Dot",
+      hasSelection: () => !!state.eventsWhere,
+      onClear: () => { state.eventsWhere = ""; renderEvents?.(); }
+    },
+  ];
+
+  const pillInstances = pillDefs.map(def => createPillSelect(def));
+
+  function updateAllPillIndicators(){
+    for (const inst of pillInstances){
+      try { inst.updateSelectedUI(); } catch(e) {}
+    }
+  }
+
 
   function render(){
     const filtered = applyFilters(allRows, state);
     renderGroups(root, filtered);
     status.textContent = `${filtered.length} gyms`;
-    setStatesSelectedUI();
-  }
+    updateAllPillIndicators();
+}
 
   // -----------------------------
   // EVENTS: render in INDEX style
@@ -491,21 +661,19 @@ async function init(){
 
     // ---- States pill wiring ----
     buildStatesMenu();
-    setStatesSelectedUI();
+    updateAllPillIndicators();
+if (stateBtn && stateMenu) {
+      stateBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !stateMenu.hidden;
+        if (isOpen) closeStateMenu();
+        else openStateMenu();
+      });
+    }
 
-    // States pill controller (shared base behavior)
-    const statePill = createPillSelect({
-      btn: stateBtn,
-      menu: stateMenu,
-      clearBtn: stateClear,
-      onOpen: () => {
-        // Sync checkbox checks from current state on open
-        if (!stateList) return;
-        stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-          cb.checked = state.states.has(cb.value);
-        });
-      },
-      onMenuChange: (e) => {
+    if (stateList) {
+      stateList.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
         if (el.type !== "checkbox") return;
@@ -514,29 +682,47 @@ async function init(){
         else state.states.delete(el.value);
 
         render();
-        setStatesSelectedUI();
-      },
-      updateSelectedUI: setStatesSelectedUI,
-    });
+      });
+    }
 
     if (stateClear) {
       stateClear.addEventListener("click", (e) => {
         e.preventDefault();
         state.states.clear();
+
         if (stateList) {
-          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
+          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+            cb.checked = false;
+          });
         }
+
         render();
-        setStatesSelectedUI();
       });
     }
 
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!stateMenu || stateMenu.hidden) return;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#stateMenu") || target.closest("#stateBtn")) return;
+      closeStateMenu();
+    });
 
-    
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeStateMenu();
+    });
 
+    // Keep menu positioned on resize/scroll while open
+    window.addEventListener("resize", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
+    });
+    window.addEventListener("scroll", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
+    }, { passive: true });
 
-
-    // ----     // OpenMat pill controller (shared base behavior)
+    // ---- OpenMat pill wiring ----
     const openMatBtn   = document.getElementById("openMatBtn");
     const openMatMenu  = document.getElementById("openMatMenu");
     const openMatClear = document.getElementById("openMatClear");
@@ -548,36 +734,98 @@ async function init(){
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
 
-    const openMatPill = createPillSelect({
-      btn: openMatBtn,
-      menu: openMatMenu,
-      clearBtn: openMatClear,
-      onOpen: () => {
-        // Sync radio checks from current state on open
-        openMatMenu?.querySelectorAll('input[type="checkbox"][name="openMat"]').forEach((r) => {
-          r.checked = (r.value === state.openMat);
-        });
-      },
-      onMenuChange: (e) => {
+    function closeOpenMatMenu(){
+      if (!openMatMenu) return;
+      openMatMenu.hidden = true;
+      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function positionOpenMatMenu(){
+      if (!openMatMenu || !openMatBtn) return;
+
+      openMatMenu.style.position = "fixed";
+      openMatMenu.style.zIndex = "1000";
+
+      const btnRect = openMatBtn.getBoundingClientRect();
+      const menuW = openMatMenu.offsetWidth || 240;
+      const gutter = 8;
+
+      let left = btnRect.left;
+      const maxLeft = window.innerWidth - menuW - gutter;
+      if (left > maxLeft) left = maxLeft;
+      if (left < gutter) left = gutter;
+
+      const top = btnRect.bottom + 8;
+
+      openMatMenu.style.left = `${left}px`;
+      openMatMenu.style.top = `${top}px`;
+    }
+
+    function openOpenMatMenu(){
+      if (!openMatMenu) return;
+      openMatMenu.hidden = false;
+      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
+
+      // Sync checked state from current filter value
+      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
+        r.checked = (r.value === state.openMat);
+      });
+
+      requestAnimationFrame(positionOpenMatMenu);
+    }
+
+    if (openMatBtn && openMatMenu) {
+      openMatBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !openMatMenu.hidden;
+        if (isOpen) closeOpenMatMenu();
+        else openOpenMatMenu();
+      });
+    }
+
+    if (openMatMenu) {
+      openMatMenu.addEventListener("change", (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
         if (el.type !== "radio") return;
+
         state.openMat = el.value;
         setOpenMatUI();
         render();
-      },
-      updateSelectedUI: setOpenMatUI,
-    });
+      });
+    }
 
     if (openMatClear) {
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
         state.openMat = "";
-        openMatMenu?.querySelectorAll('input[type="checkbox"][name="openMat"]').forEach((r) => (r.checked = false));
+        if (openMatMenu) {
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
+        }
         setOpenMatUI();
         render();
       });
     }
+
+    document.addEventListener("click", (e) => {
+      if (!openMatMenu || openMatMenu.hidden) return;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#openMatMenu") || target.closest("#openMatBtn")) return;
+      closeOpenMatMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeOpenMatMenu();
+    });
+
+    window.addEventListener("resize", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+    });
+    window.addEventListener("scroll", () => {
+      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
+    }, { passive: true });
 
     setOpenMatUI();
 
