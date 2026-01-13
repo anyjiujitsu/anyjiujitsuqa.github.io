@@ -1,20 +1,8 @@
-function isSatToken(t){
-  return /^sat\.?$/.test(t) || t === "saturday";
-}
-function isSunToken(t){
-  return /^sun\.?$/.test(t) || t === "sunday";
-}
-function isOpenMatToken(t){
-  const normalized = t.replace(/\s+/g, " ").trim();
-  return normalized === "open mat" || t === "openmat" || t === "open-mat";
-}
-
 export function applyFilters(rows, state){
   const raw = (state?.search ?? "").trim().toLowerCase();
   const stateSet = state?.states ?? new Set();
-  const omMode = (state?.openMatMode ?? "").toLowerCase();
+  const om = state?.openMat ?? ""; // "", "all", "sat", "sun"
 
-  // Split by commas → AND across terms
   const terms = raw
     .split(",")
     .map(t => t.trim())
@@ -24,41 +12,83 @@ export function applyFilters(rows, state){
   const wantsSun = terms.some(isSunToken);
   const wantsOpenMat = terms.some(isOpenMatToken);
 
-  const textTerms = terms.filter(t => !isSatToken(t) && !isSunToken(t) && !isOpenMatToken(t));
+  const textTerms = terms.filter(t =>
+    !isSatToken(t) && !isSunToken(t) && !isOpenMatToken(t)
+  );
 
   return rows.filter(r => {
-    // --- STATES pill ---
-    if (stateSet.size > 0) {
-      const rowState = String(r.STATE ?? "").toUpperCase().trim();
-      if (!stateSet.has(rowState)) return false;
-    }
+    // States pill
+    if (stateSet.size > 0 && !stateSet.has(getField(r, ["STATE"]))) return false;
 
-    // Normalize open mat presence from SAT/SUN columns (NOT OTA)
-    const hasSat = String(r.SAT ?? "").trim() !== "";
-    const hasSun = String(r.SUN ?? "").trim() !== "";
+    // SAT/SUN presence
+    const satVal = getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]);
+    const sunVal = getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]);
+    const hasSat = satVal.trim() !== "";
+    const hasSun = sunVal.trim() !== "";
 
-    // --- OpenMat pill modes ---
-    if (omMode === "all" && !(hasSat || hasSun)) return false;
-    if (omMode === "sat" && !hasSat) return false;
-    if (omMode === "sun" && !hasSun) return false;
+    // OpenMat pill modes
+    if (om === "all" && !(hasSat || hasSun)) return false;
+    if (om === "sat" && !hasSat) return false;
+    if (om === "sun" && !hasSun) return false;
 
-    // --- Special keyword rules via search bar ---
+    // Search bar special tokens
     if (wantsSat && !hasSat) return false;
     if (wantsSun && !hasSun) return false;
     if (wantsOpenMat && !(hasSat || hasSun)) return false;
 
-    // --- Text search terms ---
+    // Text terms: OR match (keep the behavior you wanted for comma tokens)
     if (textTerms.length > 0) {
-      const haystack = String(
-        r.searchText ??
-        `${r.STATE ?? ""} ${r.CITY ?? ""} ${r.NAME ?? ""} ${r.IG ?? ""} ${r.SAT ?? ""} ${r.SUN ?? ""} ${r.OTA ?? ""}`
-      ).toLowerCase();
-
+      const haystack = buildHaystack(r);
+      let matched = false;
       for (const t of textTerms) {
-        if (!haystack.includes(t)) return false;
+        if (haystack.includes(t)) { matched = true; break; }
       }
+      if (!matched) return false;
     }
 
     return true;
   });
+}
+
+function getField(row, keys){
+  for (const k of keys) {
+    if (row && row[k] != null) return String(row[k]);
+  }
+  const lowerWanted = new Set(keys.map(k => k.toLowerCase()));
+  for (const actualKey of Object.keys(row || {})) {
+    if (lowerWanted.has(actualKey.toLowerCase())) {
+      return String(row[actualKey] ?? "");
+    }
+  }
+  return "";
+}
+
+function buildHaystack(r){
+  const searchText = r?.searchText;
+  if (typeof searchText === "string" && searchText.trim() !== "") {
+    return searchText.toLowerCase();
+  }
+  const parts = [
+    getField(r, ["STATE"]),
+    getField(r, ["CITY"]),
+    getField(r, ["NAME"]),
+    getField(r, ["IG"]),
+    getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]),
+    getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]),
+    getField(r, ["OTA", "ota"]),
+  ];
+  return parts.join(" ").toLowerCase();
+}
+
+function isSatToken(t){
+  return /^sat\.?$/.test(t) || t === "saturday";
+}
+
+function isSunToken(t){
+  return /^sun\.?$/.test(t) || t === "sunday";
+}
+
+function isOpenMatToken(t){
+  const normalized = t.replace(/\s+/g, " ").trim();
+  return normalized === "open mat" || normalized === "open-mat" || normalized === "openmat";
 }
