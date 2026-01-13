@@ -1,6 +1,6 @@
 import { loadCSV } from "./data.js";
-import { state } from "./state2.js";
-import { applyFilters } from "./filters2.js";
+import { state } from "./state.js";
+import { applyFilters } from "./filters.js";
 import { renderGroups } from "./render.js";
 import { createPillSelect } from "./pillSelect.js";
 
