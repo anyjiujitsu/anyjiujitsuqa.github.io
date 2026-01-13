@@ -1,7 +1,8 @@
 import { loadCSV } from "./data.js";
-import { state } from "./state.js";
-import { applyFilters } from "./filters.js";
+import { state } from "./state2.js";
+import { applyFilters } from "./filters2.js";
 import { renderGroups } from "./render.js";
+import { createPillSelect } from "./pillSelect.js";
 
 let allRows = [];
 
@@ -160,44 +161,6 @@ async function init(){
     const has = state.states && state.states.size > 0;
     if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
     if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
-  }
-
-  function closeStateMenu(){
-    if (!stateMenu) return;
-    stateMenu.hidden = true;
-    if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
-  }
-
-  function positionStateMenu(){
-    if (!stateMenu || !stateBtn) return;
-
-    // Ensure it can overlay even if pills row is scroll-clipped
-    stateMenu.style.position = "fixed";
-    stateMenu.style.zIndex = "1000";
-
-    const btnRect = stateBtn.getBoundingClientRect();
-
-    // Use computed width after un-hiding (so offsetWidth is valid)
-    const menuW = stateMenu.offsetWidth || 240;
-    const gutter = 8;
-
-    let left = btnRect.left;
-    const maxLeft = window.innerWidth - menuW - gutter;
-    if (left > maxLeft) left = maxLeft;
-    if (left < gutter) left = gutter;
-
-    const top = btnRect.bottom + 8;
-
-    stateMenu.style.left = `${left}px`;
-    stateMenu.style.top = `${top}px`;
-  }
-
-  function openStateMenu(){
-    if (!stateMenu) return;
-    stateMenu.hidden = false;
-    if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
-    // Position after it becomes measurable
-    requestAnimationFrame(positionStateMenu);
   }
 
   function render(){
@@ -526,22 +489,23 @@ async function init(){
       });
     }
 
-    // ---- States pill wiring ----
+    // ---- States pill wiring (unified) ----
     buildStatesMenu();
     setStatesSelectedUI();
 
-    if (stateBtn && stateMenu) {
-      stateBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isOpen = !stateMenu.hidden;
-        if (isOpen) closeStateMenu();
-        else openStateMenu();
-      });
-    }
-
-    if (stateList) {
-      stateList.addEventListener("change", (e) => {
+    const statePill = createPillSelect({
+      btn: stateBtn,
+      menu: stateMenu,
+      clearBtn: stateClear,
+      onOpen: () => {
+        // Sync checkbox checks to current state
+        if (stateList) {
+          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+            cb.checked = state.states.has(cb.value);
+          });
+        }
+      },
+      onMenuChange: (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
         if (el.type !== "checkbox") return;
@@ -549,48 +513,28 @@ async function init(){
         if (el.checked) state.states.add(el.value);
         else state.states.delete(el.value);
 
+        setStatesSelectedUI();
         render();
-      });
-    }
+      },
+      updateSelectedUI: setStatesSelectedUI
+    });
 
     if (stateClear) {
       stateClear.addEventListener("click", (e) => {
         e.preventDefault();
-        state.states.clear();
+        e.stopPropagation();
 
+        state.states.clear();
         if (stateList) {
-          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-            cb.checked = false;
-          });
+          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
         }
 
+        setStatesSelectedUI();
         render();
       });
     }
 
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!stateMenu || stateMenu.hidden) return;
-      const target = e.target;
-      if (!(target instanceof Element)) return;
-      if (target.closest("#stateMenu") || target.closest("#stateBtn")) return;
-      closeStateMenu();
-    });
-
-    // Close on Escape
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeStateMenu();
-    });
-
-    // Keep menu positioned on resize/scroll while open
-    window.addEventListener("resize", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
-    });
-    window.addEventListener("scroll", () => {
-      if (stateMenu && !stateMenu.hidden) positionStateMenu();
-    }, { passive: true });
-
-    // ---- OpenMat pill wiring ----
+    // ---- OpenMat pill wiring (unified) ----
     const openMatBtn   = document.getElementById("openMatBtn");
     const openMatMenu  = document.getElementById("openMatMenu");
     const openMatClear = document.getElementById("openMatClear");
@@ -602,58 +546,19 @@ async function init(){
       if (openMatDot) openMatDot.style.display = on ? "inline-block" : "none";
     }
 
-    function closeOpenMatMenu(){
-      if (!openMatMenu) return;
-      openMatMenu.hidden = true;
-      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "false");
-    }
-
-    function positionOpenMatMenu(){
-      if (!openMatMenu || !openMatBtn) return;
-
-      openMatMenu.style.position = "fixed";
-      openMatMenu.style.zIndex = "1000";
-
-      const btnRect = openMatBtn.getBoundingClientRect();
-      const menuW = openMatMenu.offsetWidth || 240;
-      const gutter = 8;
-
-      let left = btnRect.left;
-      const maxLeft = window.innerWidth - menuW - gutter;
-      if (left > maxLeft) left = maxLeft;
-      if (left < gutter) left = gutter;
-
-      const top = btnRect.bottom + 8;
-
-      openMatMenu.style.left = `${left}px`;
-      openMatMenu.style.top = `${top}px`;
-    }
-
-    function openOpenMatMenu(){
-      if (!openMatMenu) return;
-      openMatMenu.hidden = false;
-      if (openMatBtn) openMatBtn.setAttribute("aria-expanded", "true");
-
-      // Sync checked state from current filter value
-      openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => {
-        r.checked = (r.value === state.openMat);
-      });
-
-      requestAnimationFrame(positionOpenMatMenu);
-    }
-
-    if (openMatBtn && openMatMenu) {
-      openMatBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isOpen = !openMatMenu.hidden;
-        if (isOpen) closeOpenMatMenu();
-        else openOpenMatMenu();
-      });
-    }
-
-    if (openMatMenu) {
-      openMatMenu.addEventListener("change", (e) => {
+    const openMatPill = createPillSelect({
+      btn: openMatBtn,
+      menu: openMatMenu,
+      clearBtn: openMatClear,
+      onOpen: () => {
+        // Sync radio checks to current state
+        if (openMatMenu) {
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach((r) => {
+            r.checked = (r.value === state.openMat);
+          });
+        }
+      },
+      onMenuChange: (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
         if (el.type !== "radio") return;
@@ -661,38 +566,28 @@ async function init(){
         state.openMat = el.value;
         setOpenMatUI();
         render();
-      });
-    }
+      },
+      updateSelectedUI: setOpenMatUI
+    });
+
+    // Initial
+    setOpenMatUI();
 
     if (openMatClear) {
       openMatClear.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
+
         state.openMat = "";
         if (openMatMenu) {
-          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach(r => r.checked = false);
+          openMatMenu.querySelectorAll('input[type="radio"][name="openMat"]').forEach((r) => (r.checked = false));
         }
+
         setOpenMatUI();
         render();
       });
     }
 
-    document.addEventListener("click", (e) => {
-      if (!openMatMenu || openMatMenu.hidden) return;
-      const target = e.target;
-      if (!(target instanceof Element)) return;
-      if (target.closest("#openMatMenu") || target.closest("#openMatBtn")) return;
-      closeOpenMatMenu();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeOpenMatMenu();
-    });
-
-    window.addEventListener("resize", () => {
-      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
-    });
-    window.addEventListener("scroll", () => {
-      if (openMatMenu && !openMatMenu.hidden) positionOpenMatMenu();
     }, { passive: true });
 
     setOpenMatUI();
