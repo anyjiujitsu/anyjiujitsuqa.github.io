@@ -6,6 +6,10 @@ import { createPillSelect } from "./pillSelect.js";
 
 let allRows = [];
 
+// DEBUG: force OpenMat pill selected on load (set to false after testing)
+const DEBUG_FORCE_OPENMAT = true;
+const DEBUG_OPENMAT_VALUE = "all"; // "all" | "sat" | "sun"
+
 async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
@@ -587,7 +591,11 @@ async function init(){
     status.textContent = "Loading…";
     allRows = await loadCSV("data/directory.csv");
 
-    // Load Events data (Events view)
+    
+    if (DEBUG_FORCE_OPENMAT) {
+      state.openMat = DEBUG_OPENMAT_VALUE;
+    }
+// Load Events data (Events view)
     let allEvents = [];
     async function loadFirstAvailable(paths){
       let lastErr = null;
