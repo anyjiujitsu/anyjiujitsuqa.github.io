@@ -6,10 +6,6 @@ import { createPillSelect } from "./pillSelect.js";
 
 let allRows = [];
 
-// DEBUG: force OpenMat pill selected on load (set to false after testing)
-const DEBUG_FORCE_OPENMAT = true;
-const DEBUG_OPENMAT_VALUE = "all"; // "all" | "sat" | "sun"
-
 async function init(){
   const status = document.getElementById("status");
   const root = document.getElementById("groupsRoot");
@@ -159,6 +155,7 @@ async function init(){
   // PILL FILTER SYSTEM (shared base behavior for ALL pills)
   // ---------------------------------------------------------
 
+  // Search
   const searchInput = document.getElementById("searchInput");
   const searchClear = document.getElementById("searchClear");
 
@@ -176,7 +173,7 @@ async function init(){
   const guestsMenu    = document.getElementById("guestsMenu");
   const guestsClear   = document.getElementById("guestsClear");
 
-  // EVENTS pills (placeholders)
+  // EVENTS pills
   const eventsPill1Btn   = document.getElementById("eventsPill1Btn");
   const eventsPill1Menu  = document.getElementById("eventsPill1Menu");
   const eventsPill1Clear = document.getElementById("eventsPill1Clear");
@@ -216,19 +213,15 @@ async function init(){
     }
   }
 
-  // Setup all dropdown pills using ONE base controller + small per-pill config.
   const pillDefs = [
+    // INDEX
     {
-      key: "states",
       btn: stateBtn,
       menu: stateMenu,
       clearBtn: stateClear,
       dotId: "stateDot",
       hasSelection: () => state.states.size > 0,
-      onOpen: () => {
-        // Make sure the list exists and reflects latest selections
-        buildStatesMenu();
-      },
+      onOpen: () => buildStatesMenu(),
       onMenuChange: (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement)) return;
@@ -241,21 +234,16 @@ async function init(){
       },
       onClear: () => {
         state.states.clear();
-        if (stateList){
-          stateList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        }
         render();
       }
     },
     {
-      key: "openMat",
       btn: openMatBtn,
       menu: openMatMenu,
       clearBtn: openMatClear,
       dotId: "openMatDot",
       hasSelection: () => state.openMat !== "",
       onOpen: () => {
-        // Single-select, checkbox-style UI
         openMatMenu?.querySelectorAll('input[name="openMat"]').forEach((cb) => {
           if (cb instanceof HTMLInputElement) cb.checked = (cb.value === state.openMat);
         });
@@ -265,7 +253,6 @@ async function init(){
         if (!(el instanceof HTMLInputElement)) return;
         if (el.name !== "openMat") return;
 
-        // enforce single-select while keeping checkbox visual style
         if (el.checked){
           openMatMenu?.querySelectorAll('input[name="openMat"]').forEach((cb) => {
             if (cb instanceof HTMLInputElement && cb !== el) cb.checked = false;
@@ -286,7 +273,6 @@ async function init(){
       }
     },
     {
-      key: "guests",
       btn: guestsBtn,
       menu: guestsMenu,
       clearBtn: guestsClear,
@@ -298,33 +284,30 @@ async function init(){
       }
     },
 
-    // EVENTS view (placeholder pills; structure identical)
+    // EVENTS (behavior identical; logic placeholders)
     {
-      key: "eventsDate",
       btn: eventsPill1Btn,
       menu: eventsPill1Menu,
       clearBtn: eventsPill1Clear,
       dotId: "eventsPill1Dot",
       hasSelection: () => !!state.eventsDate,
-      onClear: () => { state.eventsDate = ""; renderEvents?.(); }
+      onClear: () => { state.eventsDate = ""; }
     },
     {
-      key: "eventsType",
       btn: eventsPill2Btn,
       menu: eventsPill2Menu,
       clearBtn: eventsPill2Clear,
       dotId: "eventsPill2Dot",
       hasSelection: () => !!state.eventsType,
-      onClear: () => { state.eventsType = ""; renderEvents?.(); }
+      onClear: () => { state.eventsType = ""; }
     },
     {
-      key: "eventsWhere",
       btn: eventsPill3Btn,
       menu: eventsPill3Menu,
       clearBtn: eventsPill3Clear,
       dotId: "eventsPill3Dot",
       hasSelection: () => !!state.eventsWhere,
-      onClear: () => { state.eventsWhere = ""; renderEvents?.(); }
+      onClear: () => { state.eventsWhere = ""; }
     },
   ];
 
@@ -591,11 +574,7 @@ async function init(){
     status.textContent = "Loading…";
     allRows = await loadCSV("data/directory.csv");
 
-    
-    if (DEBUG_FORCE_OPENMAT) {
-      state.openMat = DEBUG_OPENMAT_VALUE;
-    }
-// Load Events data (Events view)
+    // Load Events data (Events view)
     let allEvents = [];
     async function loadFirstAvailable(paths){
       let lastErr = null;
