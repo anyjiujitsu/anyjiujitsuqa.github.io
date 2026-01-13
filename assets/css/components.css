@@ -257,6 +257,7 @@
   transform: translateX(0%);
   transition: transform var(--viewTransition, 260ms) ease;
 }
+
 /* View slider */
 .viewShell{
   overflow: hidden;
