@@ -1,6 +1,7 @@
 // main.js
 // Demo bootstrap showing unified pill architecture and indicator behavior.
 
+import './pills_bootstrap.js';
 import { initStatePill } from './state.js';
 import { initFilterPills } from './filters.js';
 
