@@ -1,20 +1,28 @@
-export const state = {
-  search: "",
+// state.js
+// States pill definition using the shared base controller in pillSelect.js
 
-  // INDEX view
-  states: new Set(),
-  openMat: "", // "", "all", "sat", "sun"
-  guests: new Set(),
+import { createSelectPill } from './pillSelect.js';
 
-  // EVENTS view (placeholders)
-  eventsDate: "",
-  eventsType: "",
-  eventsWhere: "",
-};
+const STATE_OPTIONS = [
+  { label: 'MA', value: 'MA' },
+  { label: 'NH', value: 'NH' },
+  { label: 'RI', value: 'RI' },
+  { label: 'CT', value: 'CT' },
+  { label: 'VT', value: 'VT' },
+  { label: 'ME', value: 'ME' },
+];
 
-export function setSearch(v){ state.search = v; }
-export function toggleState(code){
-  if (state.states.has(code)) state.states.delete(code);
-  else state.states.add(code);
+/**
+ * @param {HTMLElement} mount - element that receives the pill + panel
+ * @param {Function} onChange - called whenever selection changes
+ */
+export function initStatePill(mount, onChange) {
+  return createSelectPill({
+    key: 'state',
+    label: 'States',
+    mount,
+    options: STATE_OPTIONS,
+    mode: 'multi',
+    onChange,
+  });
 }
-export function clearStates(){ state.states.clear(); }
