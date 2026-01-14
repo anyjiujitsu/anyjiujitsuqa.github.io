@@ -2,215 +2,317 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>ANY N.E. – GYM INDEX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unified Pill Architecture Demo</title>
+  <style>
+    :root {
+      --bg: #0b0f10;
+      --panel: #0f1517;
+      --text: #e9f1f1;
+      --muted: rgba(233,241,241,.65);
+      --line: rgba(233,241,241,.12);
+      --pill: rgba(233,241,241,.08);
+      --pillHover: rgba(233,241,241,.12);
+      --accent: #25d366; /* green indicator */
+    }
 
-  <link rel="stylesheet" href="assets/css/tokens.css" />
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/layout.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(37, 211, 102, .08), transparent 55%), var(--bg);
+      color: var(--text);
+    }
 
-  <script type="module" src="assets/js/main.js?v=20260113-3"></script>
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 18px 16px 48px;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(15,21,23,.85);
+      backdrop-filter: blur(10px);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title h1 {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: .02em;
+    }
+
+    .title .sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search {
+      width: 260px;
+      max-width: 45vw;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      outline: none;
+      background: rgba(233,241,241,.06);
+      color: var(--text);
+    }
+
+    .btn {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(233,241,241,.06);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .btn:hover { background: rgba(233,241,241,.10); }
+
+    .pillbar {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--pill);
+      cursor: pointer;
+      user-select: none;
+      min-height: 38px;
+    }
+    .pill:hover { background: var(--pillHover); }
+
+    .pill__label {
+      font-size: 12px;
+      letter-spacing: .02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .pill__caret {
+      font-size: 12px;
+      opacity: .9;
+    }
+
+    .pill__clear {
+      margin-left: 2px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .pill__clear:hover { color: var(--text); }
+
+    /* Indicator dot auto-created by BasePillController */
+    .pill__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-left: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, .15);
+      opacity: 0;
+      transform: scale(.8);
+      transition: opacity .12s ease, transform .12s ease;
+    }
+
+    /* shared indicator behavior via hasSelection */
+    .pill--has-selection .pill__label { font-weight: 800; }
+    .pill--has-selection .pill__dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .pill-panel {
+      position: absolute;
+      z-index: 50;
+      margin-top: 8px;
+      min-width: 220px;
+      background: rgba(15,21,23,.96);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.45);
+    }
+
+    /* panel is inserted after pill in DOM; anchor it visually */
+    .pill + .pill-panel {
+      position: relative;
+      top: -2px;
+      left: 0;
+    }
+
+    .pill-panel__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px 10px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 8px;
+    }
+
+    .pill-panel__title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .pill-panel__count {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill-panel__list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 2px;
+    }
+
+    .pill-panel__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: rgba(233,241,241,.04);
+    }
+    .pill-panel__item:hover {
+      border-color: rgba(233,241,241,.12);
+      background: rgba(233,241,241,.07);
+    }
+
+    .pill-panel__item span {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .content {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(15,21,23,.65);
+    }
+
+    .month {
+      margin-top: 10px;
+    }
+
+    .month__label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 10px 6px;
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(233,241,241,.04);
+    }
+
+    .card__left { display: flex; flex-direction: column; gap: 6px; }
+    .badge {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(233,241,241,.08);
+      border: 1px solid var(--line);
+      font-size: 11px;
+      letter-spacing: .04em;
+    }
+
+    .card__title { font-size: 14px; font-weight: 750; }
+    .card__meta { font-size: 12px; color: var(--muted); }
+
+    .card__right { text-align: right; display: flex; flex-direction: column; gap: 6px; }
+    .card__date { font-size: 12px; font-weight: 700; }
+    .card__time { font-size: 12px; color: var(--muted); }
+
+    #emptyState {
+      padding: 22px 10px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      .topbar { flex-direction: column; align-items: stretch; }
+      .actions { width: 100%; }
+      .search { width: 100%; max-width: none; }
+      .pillbar { gap: 8px; }
+      .card { flex-direction: column; }
+      .card__right { text-align: left; }
+    }
+  </style>
 </head>
-
 <body>
-  <div class="app" id="app">
-    <!-- Header Area -->
-    <header class="header" id="header">
-      <div class="header__inner">
-        <h1 class="header__title" id="viewTitle" aria-label="Current view">INDEX</h1>
-
-        <!-- If you don’t have the logo yet, keep this as text or hide it -->
-        <div class="header__logo" aria-label="ANY logo">
-          <!-- <img src="assets/img/any-logo.png" alt="ANY" /> -->
-          <span class="header__logoText">ANY</span>
-        </div>
-      
-      <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
-        <button class="viewToggle__tab" id="tabIndex" role="tab" aria-selected="true" type="button">Index</button>
-        <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="false" type="button">Events</button>
-        <div class="viewToggle__thumb" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h1>Unified Pill Architecture</h1>
+        <div class="sub">All pills use one shared base controller. Green dot is driven by <code>hasSelection</code>.</div>
       </div>
-</div>
-    </header>
-
-    <!-- Navigation Bar Area -->
-    
-    <div class="viewShell" id="viewShell">
-      <div class="viewSlider" id="viewSlider">
-        <!-- INDEX VIEW -->
-        <div class="viewPanel" id="viewIndex" aria-label="Index">
-<nav class="filters" id="filters" aria-label="Filters">
-      <div class="filters__inner">
-        <!-- Pill 1: Search -->
-        <div class="pill pill--search">
-          <span class="pill__icon" aria-hidden="true">🔎</span>
-          <input
-            id="searchInput"
-            class="pill__input"
-            type="text"
-            inputmode="search"
-            autocomplete="off"
-            autocapitalize="none"
-            spellcheck="false"
-            placeholder='Filter (e.g., "sunday", "maine", "gym")'
-          />
-          <button id="searchClear" class="pill__clear" type="button" aria-label="Clear search">×</button>
-        </div>
-
-        <!-- Pill 2: States -->
-        <div class="pillSelect" data-filter="state">
-          <button id="stateBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="stateLabel">States</span>
-            <span class="pill__dot" id="stateDot" aria-hidden="true"></span>
-            <span class="pill__caret" aria-hidden="true">▾</span>
-          </button>
-
-          <div id="stateMenu" class="menu" role="menu" aria-label="States menu" hidden>
-            <div class="menu__header">
-              <div class="menu__title">States</div>
-              <button id="stateClear" class="menu__clear" type="button">Clear</button>
-            </div>
-            <div id="stateList" class="menu__list"></div>
-          </div>
-        </div>
-
-        <!-- Pill 3: OpenMat -->
-        <div class="pillSelect" data-filter="openMat">
-          <button id="openMatBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="openMatLabel">OpenMat</span>
-            <span class="pill__dot" id="openMatDot" aria-hidden="true"></span>
-            <span class="pill__caret" aria-hidden="true">▾</span>
-          </button>
-
-          <div id="openMatMenu" class="menu" role="menu" aria-label="OpenMat menu" hidden>
-            <div class="menu__header">
-              <div class="menu__title">OpenMat</div>
-              <button id="openMatClear" class="menu__clear" type="button">Clear</button>
-            </div>
-            <div class="menu__list">
-              <label class="menu__item">
-                <input type="checkbox" name="openMat" value="all" />
-                <span>All</span>
-              </label>
-              <label class="menu__item">
-                <input type="checkbox" name="openMat" value="sat" />
-                <span>Saturday</span>
-              </label>
-              <label class="menu__item">
-                <input type="checkbox" name="openMat" value="sun" />
-                <span>Sunday</span>
-              </label>
-</div>
-          </div>
-        </div>
-
-        <!-- Pill 4: Guests (placeholder for now) -->
-        <div class="pillSelect" data-filter="guests">
-          <button id="guestsBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="guestsLabel">Guests</span>
-            <span class="pill__dot" id="guestsDot" aria-hidden="true"></span>
-            <span class="pill__caret" aria-hidden="true">▾</span>
-          </button>
-
-          <div id="guestsMenu" class="menu" role="menu" aria-label="Guests menu" hidden>
-            <div class="menu__header">
-              <div class="menu__title">Guests</div>
-              <button id="guestsClear" class="menu__clear" type="button">Clear</button>
-            </div>
-            <div class="menu__list">
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Data Table Area -->
-    <main class="content" id="content" aria-label="Directory">
-      <div class="content__inner">
-        <div id="status" class="status" aria-live="polite"></div>
-        <div id="groupsRoot"></div>
-      </div>
-    </main>
-        </div>
-
-    <!-- EVENTS VIEW -->
-    
-    <!-- EVENTS VIEW -->
-    <div class="viewPanel" id="viewEvents" aria-label="Events">
-      <nav class="filters" aria-label="Events filters">
-        <div class="filters__inner">
-          <!-- Events Search -->
-          <div class="pill pill--search">
-            <span class="pill__icon" aria-hidden="true">🔎</span>
-            <input id="eventsSearchInput" class="pill__input" type="text" inputmode="search"
-                   autocomplete="off" autocapitalize="none" spellcheck="false"
-                   placeholder='Search events' />
-            <button id="eventsSearchClear" class="pill__clear" type="button" aria-label="Clear">×</button>
-          </div>
-
-          <!-- Events Filter 1 -->
-          <div class="pillSelect" data-filter="eventsPill1">
-            <button id="eventsPill1Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">DATE</span>
-              <span class="pill__dot" id="eventsPill1Dot" aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill1Menu" class="menu" role="menu" aria-label="Date menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">DATE</div>
-                <button id="eventsPill1Clear" class="menu__clear" type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-
-          <!-- Events Filter 2 -->
-          <div class="pillSelect" data-filter="eventsPill2">
-            <button id="eventsPill2Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">TYPE</span>
-              <span class="pill__dot" id="eventsPill2Dot" aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill2Menu" class="menu" role="menu" aria-label="Type menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">TYPE</div>
-                <button id="eventsPill2Clear" class="menu__clear" type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-
-          <!-- Events Filter 3 -->
-          <div class="pillSelect" data-filter="eventsPill3">
-            <button id="eventsPill3Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">WHERE</span>
-              <span class="pill__dot" id="eventsPill3Dot" aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill3Menu" class="menu" role="menu" aria-label="Where menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">WHERE</div>
-                <button id="eventsPill3Clear" class="menu__clear" type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main class="content" aria-label="Events">
-        <div class="content__inner">
-          <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
-          <div id="eventsRoot"></div>
-        </div>
-      </main>
-    </div>
-
+      <div class="actions">
+        <input id="searchInput" class="search" placeholder="Search events, gyms, cities…" />
+        <button id="clearAll" class="btn" type="button">Clear All</button>
       </div>
     </div>
 
+    <div id="pillMount" class="pillbar" aria-label="Filters"></div>
+
+    <div class="content">
+      <div id="emptyState" hidden>No results. Try clearing filters.</div>
+      <div id="eventList"></div>
+    </div>
   </div>
+
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
