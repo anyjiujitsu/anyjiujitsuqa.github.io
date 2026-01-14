@@ -60,16 +60,16 @@
 
         <!-- Pill 2: States -->
         <div class="pillSelect" data-filter="state">
-          <button id="stateBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="stateLabel">States</span>
-            <span class="pill__dot" id="stateDot" aria-hidden="true"></span>
+          <button id="stateBtn" class="pill pill--select filter-pill" data-pill="states" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="stateLabel" data-pill-title>States</span>
+            <span class="pill__dot" id="stateDot" data-pill-indicator aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="stateMenu" class="menu" role="menu" aria-label="States menu" hidden>
+          <div id="stateMenu" class="menu" data-pill-panel role="menu" aria-label="States menu" hidden>
             <div class="menu__header">
               <div class="menu__title">States</div>
-              <button id="stateClear" class="menu__clear" type="button">Clear</button>
+              <button id="stateClear" class="menu__clear" data-pill-clear type="button">Clear</button>
             </div>
             <div id="stateList" class="menu__list"></div>
           </div>
@@ -77,16 +77,16 @@
 
         <!-- Pill 3: OpenMat -->
         <div class="pillSelect" data-filter="openMat">
-          <button id="openMatBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="openMatLabel">OpenMat</span>
-            <span class="pill__dot" id="openMatDot" aria-hidden="true"></span>
+          <button id="openMatBtn" class="pill pill--select filter-pill" data-pill="openMat" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="openMatLabel" data-pill-title>OpenMat</span>
+            <span class="pill__dot" id="openMatDot" data-pill-indicator aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="openMatMenu" class="menu" role="menu" aria-label="OpenMat menu" hidden>
+          <div id="openMatMenu" class="menu" data-pill-panel role="menu" aria-label="OpenMat menu" hidden>
             <div class="menu__header">
               <div class="menu__title">OpenMat</div>
-              <button id="openMatClear" class="menu__clear" type="button">Clear</button>
+              <button id="openMatClear" class="menu__clear" data-pill-clear type="button">Clear</button>
             </div>
             <div class="menu__list">
               <label class="menu__item">
@@ -107,16 +107,16 @@
 
         <!-- Pill 4: Guests (placeholder for now) -->
         <div class="pillSelect" data-filter="guests">
-          <button id="guestsBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="guestsLabel">Guests</span>
-            <span class="pill__dot" id="guestsDot" aria-hidden="true"></span>
+          <button id="guestsBtn" class="pill pill--select filter-pill" data-pill="guests" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="guestsLabel" data-pill-title>Guests</span>
+            <span class="pill__dot" id="guestsDot" data-pill-indicator aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="guestsMenu" class="menu" role="menu" aria-label="Guests menu" hidden>
+          <div id="guestsMenu" class="menu" data-pill-panel role="menu" aria-label="Guests menu" hidden>
             <div class="menu__header">
               <div class="menu__title">Guests</div>
-              <button id="guestsClear" class="menu__clear" type="button">Clear</button>
+              <button id="guestsClear" class="menu__clear" data-pill-clear type="button">Clear</button>
             </div>
             <div class="menu__list">
               <div class="menu__empty">Coming soon</div>
@@ -152,15 +152,15 @@
 
           <!-- Events Filter 1 -->
           <div class="pillSelect" data-filter="eventsPill1">
-            <button id="eventsPill1Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">DATE</span>
-              <span class="pill__dot" id="eventsPill1Dot" aria-hidden="true"></span>
+            <button id="eventsPill1Btn" class="pill pill--select filter-pill" data-pill="eventsPill1" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label" data-pill-title>DATE</span>
+              <span class="pill__dot" id="eventsPill1Dot" data-pill-indicator aria-hidden="true"></span>
               <span class="pill__caret" aria-hidden="true">▾</span>
             </button>
-            <div id="eventsPill1Menu" class="menu" role="menu" aria-label="Date menu" hidden>
+            <div id="eventsPill1Menu" class="menu" data-pill-panel role="menu" aria-label="Date menu" hidden>
               <div class="menu__header">
                 <div class="menu__title">DATE</div>
-                <button id="eventsPill1Clear" class="menu__clear" type="button">Clear</button>
+                <button id="eventsPill1Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
               </div>
               <div class="menu__empty">Coming soon</div>
             </div>
@@ -168,15 +168,15 @@
 
           <!-- Events Filter 2 -->
           <div class="pillSelect" data-filter="eventsPill2">
-            <button id="eventsPill2Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">TYPE</span>
-              <span class="pill__dot" id="eventsPill2Dot" aria-hidden="true"></span>
+            <button id="eventsPill2Btn" class="pill pill--select filter-pill" data-pill="eventsPill2" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label" data-pill-title>TYPE</span>
+              <span class="pill__dot" id="eventsPill2Dot" data-pill-indicator aria-hidden="true"></span>
               <span class="pill__caret" aria-hidden="true">▾</span>
             </button>
-            <div id="eventsPill2Menu" class="menu" role="menu" aria-label="Type menu" hidden>
+            <div id="eventsPill2Menu" class="menu" data-pill-panel role="menu" aria-label="Type menu" hidden>
               <div class="menu__header">
                 <div class="menu__title">TYPE</div>
-                <button id="eventsPill2Clear" class="menu__clear" type="button">Clear</button>
+                <button id="eventsPill2Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
               </div>
               <div class="menu__empty">Coming soon</div>
             </div>
@@ -184,15 +184,15 @@
 
           <!-- Events Filter 3 -->
           <div class="pillSelect" data-filter="eventsPill3">
-            <button id="eventsPill3Btn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label">WHERE</span>
-              <span class="pill__dot" id="eventsPill3Dot" aria-hidden="true"></span>
+            <button id="eventsPill3Btn" class="pill pill--select filter-pill" data-pill="eventsPill3" type="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="pill__label" data-pill-title>WHERE</span>
+              <span class="pill__dot" id="eventsPill3Dot" data-pill-indicator aria-hidden="true"></span>
               <span class="pill__caret" aria-hidden="true">▾</span>
             </button>
-            <div id="eventsPill3Menu" class="menu" role="menu" aria-label="Where menu" hidden>
+            <div id="eventsPill3Menu" class="menu" data-pill-panel role="menu" aria-label="Where menu" hidden>
               <div class="menu__header">
                 <div class="menu__title">WHERE</div>
-                <button id="eventsPill3Clear" class="menu__clear" type="button">Clear</button>
+                <button id="eventsPill3Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
               </div>
               <div class="menu__empty">Coming soon</div>
             </div>
@@ -214,4 +214,3 @@
   </div>
 </body>
 </html>
-<script type="module" src="./main.js"></script>
