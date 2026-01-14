@@ -1,94 +1,48 @@
-export function applyFilters(rows, state){
-  const raw = (state?.search ?? "").trim().toLowerCase();
-  const stateSet = state?.states ?? new Set();
-  const om = state?.openMat ?? ""; // "", "all", "sat", "sun"
+// filters.js
+// All non-state pills built with the SAME shared controller.
 
-  const terms = raw
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
+import { createSelectPill } from './pillSelect.js';
 
-  const wantsSat = terms.some(isSatToken);
-  const wantsSun = terms.some(isSunToken);
-  const wantsOpenMat = terms.some(isOpenMatToken);
+export function initFilterPills(mount, onChange) {
+  const pills = {};
 
-  const textTerms = terms.filter(t =>
-    !isSatToken(t) && !isSunToken(t) && !isOpenMatToken(t)
-  );
-
-  return rows.filter(r => {
-    // States pill
-    if (stateSet.size > 0 && !stateSet.has(getField(r, ["STATE"]))) return false;
-
-    // SAT/SUN presence
-    const satVal = getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]);
-    const sunVal = getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]);
-    const hasSat = satVal.trim() !== "";
-    const hasSun = sunVal.trim() !== "";
-
-    // OpenMat pill modes
-    if (om === "all" && !(hasSat || hasSun)) return false;
-    if (om === "sat" && !hasSat) return false;
-    if (om === "sun" && !hasSun) return false;
-
-    // Search bar special tokens
-    if (wantsSat && !hasSat) return false;
-    if (wantsSun && !hasSun) return false;
-    if (wantsOpenMat && !(hasSat || hasSun)) return false;
-
-    // Text terms: OR match (keep the behavior you wanted for comma tokens)
-    if (textTerms.length > 0) {
-      const haystack = buildHaystack(r);
-      let matched = false;
-      for (const t of textTerms) {
-        if (haystack.includes(t)) { matched = true; break; }
-      }
-      if (!matched) return false;
-    }
-
-    return true;
+  pills.openMat = createSelectPill({
+    key: 'openMat',
+    label: 'Open Mat',
+    mount,
+    options: [
+      { label: 'Only Open Mats', value: 'only' },
+    ],
+    mode: 'single',
+    onChange,
   });
-}
 
-function getField(row, keys){
-  for (const k of keys) {
-    if (row && row[k] != null) return String(row[k]);
-  }
-  const lowerWanted = new Set(keys.map(k => k.toLowerCase()));
-  for (const actualKey of Object.keys(row || {})) {
-    if (lowerWanted.has(actualKey.toLowerCase())) {
-      return String(row[actualKey] ?? "");
-    }
-  }
-  return "";
-}
+  pills.guests = createSelectPill({
+    key: 'guests',
+    label: 'Guests',
+    mount,
+    options: [
+      { label: 'Women’s Only', value: 'women' },
+      { label: 'Beginner Friendly', value: 'beginner' },
+      { label: 'Gi', value: 'gi' },
+      { label: 'No-Gi', value: 'nogi' },
+    ],
+    mode: 'multi',
+    onChange,
+  });
 
-function buildHaystack(r){
-  const searchText = r?.searchText;
-  if (typeof searchText === "string" && searchText.trim() !== "") {
-    return searchText.toLowerCase();
-  }
-  const parts = [
-    getField(r, ["STATE"]),
-    getField(r, ["CITY"]),
-    getField(r, ["NAME"]),
-    getField(r, ["IG"]),
-    getField(r, ["SAT", "Sat", "SATURDAY", "Saturday"]),
-    getField(r, ["SUN", "Sun", "SUNDAY", "Sunday"]),
-    getField(r, ["OTA", "ota"]),
-  ];
-  return parts.join(" ").toLowerCase();
-}
+  pills.years = createSelectPill({
+    key: 'years',
+    label: 'Years',
+    mount,
+    options: [
+      { label: '2026', value: '2026' },
+      { label: '2025', value: '2025' },
+      { label: '2024', value: '2024' },
+    ],
+    mode: 'multi',
+    onChange,
+  });
 
-function isSatToken(t){
-  return /^sat\.?$/.test(t) || t === "saturday";
-}
-
-function isSunToken(t){
-  return /^sun\.?$/.test(t) || t === "sunday";
-}
-
-function isOpenMatToken(t){
-  const normalized = t.replace(/\s+/g, " ").trim();
-  return normalized === "open mat" || normalized === "open-mat" || normalized === "openmat";
+  return pills;
 }
