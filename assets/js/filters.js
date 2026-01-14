@@ -1,48 +1,17 @@
-// filters.js
-// All non-state pills built with the SAME shared controller.
+// assets/js/filters.js
+// Registry for unified pill controllers (shared architecture).
 
-import { createSelectPill } from './pillSelect.js';
+const pills = new Map();
 
-export function initFilterPills(mount, onChange) {
-  const pills = {};
+export function registerPill(key, controller) {
+  pills.set(key, controller);
+  return controller;
+}
 
-  pills.openMat = createSelectPill({
-    key: 'openMat',
-    label: 'Open Mat',
-    mount,
-    options: [
-      { label: 'Only Open Mats', value: 'only' },
-    ],
-    mode: 'single',
-    onChange,
-  });
+export function getPill(key) {
+  return pills.get(key);
+}
 
-  pills.guests = createSelectPill({
-    key: 'guests',
-    label: 'Guests',
-    mount,
-    options: [
-      { label: 'Women’s Only', value: 'women' },
-      { label: 'Beginner Friendly', value: 'beginner' },
-      { label: 'Gi', value: 'gi' },
-      { label: 'No-Gi', value: 'nogi' },
-    ],
-    mode: 'multi',
-    onChange,
-  });
-
-  pills.years = createSelectPill({
-    key: 'years',
-    label: 'Years',
-    mount,
-    options: [
-      { label: '2026', value: '2026' },
-      { label: '2025', value: '2025' },
-      { label: '2024', value: '2024' },
-    ],
-    mode: 'multi',
-    onChange,
-  });
-
-  return pills;
+export function refreshAllPillIndicators() {
+  for (const ctrl of pills.values()) ctrl.renderIndicator();
 }
