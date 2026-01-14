@@ -1,189 +1,258 @@
-// assets/js/pillSelect.js
-// Shared dropdown pill controller (INDEX + EVENTS).
-// Contract:
-// - Same open/close behavior for every pill
-// - Same positioning (portaled to <body> to avoid transformed parent issues)
-// - Same indicator behavior (dot is ensured/created if missing)
-// - Only one pill menu open at a time
+// pillSelect.js
+// Shared base controller for ALL pill filters.
+// Provides: open/close, selection management, hasSelection, and green indicator dot auto-creation.
 
-function getRegistry(){
-  window.__pillSelectRegistry = window.__pillSelectRegistry || new Set();
-  window.__pillSelectCloseAll = window.__pillSelectCloseAll || (() => {
-    for (const fn of window.__pillSelectRegistry) { try { fn(); } catch(e) {} }
-  });
-  return window.__pillSelectRegistry;
-}
+export class BasePillController {
+  /**
+   * @param {Object} cfg
+   * @param {HTMLElement} cfg.root - The pill root element (button-like)
+   * @param {HTMLElement} [cfg.panel] - Optional dropdown panel
+   * @param {string} cfg.key - filter key
+   * @param {Function} [cfg.onChange] - called when selection changes
+   * @param {Function} [cfg.onOpen] - called when opened
+   * @param {Function} [cfg.onClose] - called when closed
+   */
+  constructor(cfg) {
+    this.root = cfg.root;
+    this.panel = cfg.panel || null;
+    this.key = cfg.key;
+    this._selection = new Set();
+    this._onChange = cfg.onChange || (() => {});
+    this._onOpen = cfg.onOpen || (() => {});
+    this._onClose = cfg.onClose || (() => {});
 
-export function ensurePillDot(btn, dotId){
-  if (!btn) return null;
-
-  let dot = document.getElementById(dotId);
-  if (dot) return dot;
-
-  dot = document.createElement("span");
-  dot.id = dotId;
-  dot.className = "pill__dot";
-  dot.setAttribute("aria-hidden", "true");
-  dot.style.display = "none";
-
-  const caret = btn.querySelector(".pill__caret");
-  if (caret && caret.parentNode === btn) btn.insertBefore(dot, caret);
-  else btn.appendChild(dot);
-
-  return dot;
-}
-
-export function createPillSelect({
-  btn,
-  menu,
-  clearBtn,
-  dotId,
-  hasSelection,
-  onOpen,
-  onMenuChange,
-  onClear,
-}){
-  if (!btn || !menu) {
-    return { open(){}, close(){}, isOpen(){ return false; }, updateSelectedUI(){} };
+    this._wireBaseInteractions();
+    this._ensureIndicatorDot();
+    this._syncVisualState();
   }
 
-  let open = false;
-  let originalParent = null;
-  let originalNextSibling = null;
-
-  const dot = dotId ? ensurePillDot(btn, dotId) : null;
-
-  function updateSelectedUI(){
-    const selected = typeof hasSelection === "function" ? !!hasSelection() : false;
-    btn.classList.toggle("pill--selected", selected);
-    if (dot) dot.style.display = selected ? "inline-block" : "none";
+  // --- public API ---
+  get hasSelection() {
+    return this._selection.size > 0;
   }
 
-  function attachToBody(){
-    if (menu.parentElement === document.body) return;
-    originalParent = menu.parentElement;
-    originalNextSibling = menu.nextSibling;
-    document.body.appendChild(menu);
+  get selection() {
+    return Array.from(this._selection);
   }
 
-  function restoreFromBody(){
-    if (!originalParent) return;
-    if (originalNextSibling && originalNextSibling.parentNode === originalParent) {
-      originalParent.insertBefore(menu, originalNextSibling);
-    } else {
-      originalParent.appendChild(menu);
+  setSelection(values = []) {
+    this._selection = new Set(values.filter(v => v != null && `${v}`.trim() !== ''));
+    this._syncVisualState();
+    this._onChange(this);
+  }
+
+  toggleValue(value) {
+    const v = `${value}`;
+    if (this._selection.has(v)) this._selection.delete(v);
+    else this._selection.add(v);
+    this._syncVisualState();
+    this._onChange(this);
+  }
+
+  clear() {
+    if (!this.hasSelection) return;
+    this._selection.clear();
+    this._syncVisualState();
+    this._onChange(this);
+  }
+
+  open() {
+    if (!this.panel) return;
+    this.root.setAttribute('aria-expanded', 'true');
+    this.panel.hidden = false;
+    this.panel.classList.add('pill-panel--open');
+    this._onOpen(this);
+  }
+
+  close() {
+    if (!this.panel) return;
+    this.root.setAttribute('aria-expanded', 'false');
+    this.panel.hidden = true;
+    this.panel.classList.remove('pill-panel--open');
+    this._onClose(this);
+  }
+
+  toggleOpen() {
+    if (!this.panel) return;
+    const isOpen = this.root.getAttribute('aria-expanded') === 'true';
+    isOpen ? this.close() : this.open();
+  }
+
+  // --- internals ---
+  _wireBaseInteractions() {
+    // Root behaves like a button.
+    this.root.setAttribute('role', 'button');
+    this.root.setAttribute('tabindex', '0');
+    if (!this.root.hasAttribute('aria-expanded')) this.root.setAttribute('aria-expanded', 'false');
+
+    // Toggle dropdown only if a panel exists.
+    const onActivate = (e) => {
+      // Allow clear button inside pill without toggling.
+      if (e.target && e.target.closest && e.target.closest('[data-pill-clear]')) return;
+      if (!this.panel) return;
+      this.toggleOpen();
+    };
+
+    this.root.addEventListener('click', onActivate);
+    this.root.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onActivate(e);
+      }
+      if (e.key === 'Escape') {
+        this.close();
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!this.panel) return;
+      const within = this.root.contains(e.target) || this.panel.contains(e.target);
+      if (!within) this.close();
+    });
+  }
+
+  _ensureIndicatorDot() {
+    // Auto-create dot element once. This is the shared indicator behavior.
+    let dot = this.root.querySelector('.pill__dot');
+    if (!dot) {
+      dot = document.createElement('span');
+      dot.className = 'pill__dot';
+      dot.setAttribute('aria-hidden', 'true');
+      this.root.appendChild(dot);
     }
-    originalParent = null;
-    originalNextSibling = null;
   }
 
-  function setAria(){
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    menu.hidden = !open;
+  _syncVisualState() {
+    // Shared indicator logic: dot visible + bold label when hasSelection.
+    this.root.classList.toggle('pill--has-selection', this.hasSelection);
+
+    const clearBtn = this.root.querySelector('[data-pill-clear]');
+    if (clearBtn) {
+      clearBtn.hidden = !this.hasSelection;
+      clearBtn.setAttribute('aria-hidden', (!this.hasSelection).toString());
+    }
+
+    // If panel has checkboxes/radios, reflect selection.
+    if (this.panel) {
+      const inputs = this.panel.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+      inputs.forEach(input => {
+        const v = `${input.value}`;
+        input.checked = this._selection.has(v);
+      });
+
+      const count = this.panel.querySelector('[data-pill-count]');
+      if (count) count.textContent = this.hasSelection ? `${this._selection.size}` : '';
+    }
   }
+}
 
-  function position(){
-    menu.style.setProperty("position", "fixed", "important");
-    menu.style.setProperty("z-index", "1000", "important");
-    menu.style.transform = "none";
-    menu.style.right = "auto";
-    menu.style.bottom = "auto";
-    menu.style.margin = "0";
+/**
+ * Factory for consistent pill DOM + controller.
+ * @param {Object} cfg
+ * @param {string} cfg.key
+ * @param {string} cfg.label
+ * @param {HTMLElement} cfg.mount
+ * @param {Array<{label:string,value:string}>} [cfg.options]
+ * @param {'multi'|'single'} [cfg.mode]
+ * @param {Function} [cfg.onChange]
+ */
+export function createSelectPill(cfg) {
+  const mode = cfg.mode || 'multi';
+  const root = document.createElement('div');
+  root.className = 'pill';
+  root.dataset.pillKey = cfg.key;
 
-    const btnRect = btn.getBoundingClientRect();
-    const menuW = menu.offsetWidth || 240;
-    const gutter = 8;
+  const label = document.createElement('span');
+  label.className = 'pill__label';
+  label.textContent = cfg.label;
 
-    let left = btnRect.left;
-    const maxLeft = window.innerWidth - menuW - gutter;
-    if (left > maxLeft) left = maxLeft;
-    if (left < gutter) left = gutter;
+  const caret = document.createElement('span');
+  caret.className = 'pill__caret';
+  caret.setAttribute('aria-hidden', 'true');
+  caret.textContent = '▾';
 
-    const top = btnRect.bottom + 8;
+  const clear = document.createElement('button');
+  clear.className = 'pill__clear';
+  clear.type = 'button';
+  clear.hidden = true;
+  clear.dataset.pillClear = '1';
+  clear.setAttribute('aria-label', `Clear ${cfg.label}`);
+  clear.textContent = 'Clear';
 
-    menu.style.setProperty("left", `${left}px`, "important");
-    menu.style.setProperty("top", `${top}px`, "important");
-  }
+  root.appendChild(label);
+  root.appendChild(caret);
+  root.appendChild(clear);
 
-  function onResize(){ if (open) position(); }
-  function onScroll(){ if (open) position(); }
+  const panel = document.createElement('div');
+  panel.className = 'pill-panel';
+  panel.hidden = true;
 
-  function onDocClick(e){
-    if (!open) return;
-    const target = e.target;
-    if (!(target instanceof Element)) return;
-    if (target.closest(`#${menu.id}`) || target.closest(`#${btn.id}`)) return;
-    closeMenu();
-  }
+  const header = document.createElement('div');
+  header.className = 'pill-panel__header';
+  const title = document.createElement('div');
+  title.className = 'pill-panel__title';
+  title.textContent = cfg.label;
+  const count = document.createElement('div');
+  count.className = 'pill-panel__count';
+  count.dataset.pillCount = '1';
+  header.appendChild(title);
+  header.appendChild(count);
 
-  function onKeyDown(e){
-    if (e.key === "Escape") closeMenu();
-  }
+  const list = document.createElement('div');
+  list.className = 'pill-panel__list';
 
-  function openMenu(){
-    try { window.__pillSelectCloseAll?.(); } catch(e) {}
+  (cfg.options || []).forEach(opt => {
+    const row = document.createElement('label');
+    row.className = 'pill-panel__item';
 
-    open = true;
-    attachToBody();
-    setAria();
+    const input = document.createElement('input');
+    input.type = mode === 'single' ? 'radio' : 'checkbox';
+    input.name = `pill-${cfg.key}`;
+    input.value = opt.value;
 
-    requestAnimationFrame(() => {
-      if (typeof onOpen === "function") onOpen();
-      position();
-      setTimeout(position, 0);
-    });
+    const text = document.createElement('span');
+    text.textContent = opt.label;
 
-    window.addEventListener("resize", onResize, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("click", onDocClick);
-    document.addEventListener("keydown", onKeyDown);
-  }
+    row.appendChild(input);
+    row.appendChild(text);
+    list.appendChild(row);
+  });
 
-  function closeMenu(){
-    if (!open) return;
-    open = false;
-    setAria();
-    restoreFromBody();
+  panel.appendChild(header);
+  panel.appendChild(list);
 
-    window.removeEventListener("resize", onResize);
-    window.removeEventListener("scroll", onScroll);
-    document.removeEventListener("click", onDocClick);
-    document.removeEventListener("keydown", onKeyDown);
-  }
+  cfg.mount.appendChild(root);
+  cfg.mount.appendChild(panel);
 
-  function toggleMenu(e){
-    e?.preventDefault?.();
-    e?.stopPropagation?.();
-    if (open) closeMenu();
-    else openMenu();
-  }
+  const controller = new BasePillController({
+    root,
+    panel,
+    key: cfg.key,
+    onChange: cfg.onChange,
+  });
 
-  btn.addEventListener("click", toggleMenu);
+  // Clear button uses shared API.
+  clear.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    controller.clear();
+    controller.close();
+  });
 
-  if (typeof onMenuChange === "function"){
-    menu.addEventListener("change", (e) => onMenuChange(e));
-  }
+  // Input changes route through shared API.
+  panel.addEventListener('change', (e) => {
+    const t = e.target;
+    if (!(t instanceof HTMLInputElement)) return;
 
-  if (clearBtn){
-    clearBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof onClear === "function") onClear();
-      updateSelectedUI();
-      closeMenu();
-    });
-  }
+    if (mode === 'single') {
+      controller.setSelection(t.checked ? [t.value] : []);
+      controller.close();
+      return;
+    }
 
-  const reg = getRegistry();
-  reg.add(closeMenu);
+    controller.toggleValue(t.value);
+  });
 
-  setAria();
-  updateSelectedUI();
-
-  return {
-    open: openMenu,
-    close: closeMenu,
-    isOpen: () => open,
-    updateSelectedUI,
-  };
+  return controller;
 }
