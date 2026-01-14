@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
 
-  <script type="module" src="assets/js/main.js?v=20260113-3"></script>
+  <script type="module" src="assets/js/main.js?v=20260110-1"></script>
 </head>
 
 <body>
@@ -18,29 +18,18 @@
     <!-- Header Area -->
     <header class="header" id="header">
       <div class="header__inner">
-        <h1 class="header__title" id="viewTitle" aria-label="Current view">INDEX</h1>
+        <h1 class="header__title" aria-label="Index">INDEX</h1>
 
         <!-- If you don’t have the logo yet, keep this as text or hide it -->
         <div class="header__logo" aria-label="ANY logo">
           <!-- <img src="assets/img/any-logo.png" alt="ANY" /> -->
           <span class="header__logoText">ANY</span>
         </div>
-      
-      <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
-        <button class="viewToggle__tab" id="tabIndex" role="tab" aria-selected="true" type="button">Index</button>
-        <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="false" type="button">Events</button>
-        <div class="viewToggle__thumb" aria-hidden="true"></div>
       </div>
-</div>
     </header>
 
     <!-- Navigation Bar Area -->
-    
-    <div class="viewShell" id="viewShell">
-      <div class="viewSlider" id="viewSlider">
-        <!-- INDEX VIEW -->
-        <div class="viewPanel" id="viewIndex" aria-label="Index">
-<nav class="filters" id="filters" aria-label="Filters">
+    <nav class="filters" id="filters" aria-label="Filters">
       <div class="filters__inner">
         <!-- Pill 1: Search -->
         <div class="pill pill--search">
@@ -60,16 +49,16 @@
 
         <!-- Pill 2: States -->
         <div class="pillSelect" data-filter="state">
-          <button id="stateBtn" class="pill pill--select filter-pill" data-pill="states" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="stateLabel" data-pill-title>States</span>
-            <span class="pill__dot" id="stateDot" data-pill-indicator aria-hidden="true"></span>
+          <button id="stateBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="stateLabel">States</span>
+            <span class="pill__dot" id="stateDot" aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="stateMenu" class="menu" data-pill-panel role="menu" aria-label="States menu" hidden>
+          <div id="stateMenu" class="menu" role="menu" aria-label="States menu" hidden>
             <div class="menu__header">
               <div class="menu__title">States</div>
-              <button id="stateClear" class="menu__clear" data-pill-clear type="button">Clear</button>
+              <button id="stateClear" class="menu__clear" type="button">Clear</button>
             </div>
             <div id="stateList" class="menu__list"></div>
           </div>
@@ -77,46 +66,46 @@
 
         <!-- Pill 3: OpenMat -->
         <div class="pillSelect" data-filter="openMat">
-          <button id="openMatBtn" class="pill pill--select filter-pill" data-pill="openMat" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="openMatLabel" data-pill-title>OpenMat</span>
-            <span class="pill__dot" id="openMatDot" data-pill-indicator aria-hidden="true"></span>
+          <button id="openMatBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="openMatLabel">OpenMat</span>
+            <span class="pill__dot" id="openMatDot" aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="openMatMenu" class="menu" data-pill-panel role="menu" aria-label="OpenMat menu" hidden>
+          <div id="openMatMenu" class="menu" role="menu" aria-label="OpenMat menu" hidden>
             <div class="menu__header">
               <div class="menu__title">OpenMat</div>
-              <button id="openMatClear" class="menu__clear" data-pill-clear type="button">Clear</button>
+              <button id="openMatClear" class="menu__clear" type="button">Clear</button>
             </div>
             <div class="menu__list">
               <label class="menu__item">
-                <input type="checkbox" name="openMat" value="all" />
+                <input type="radio" name="openMat" value="" checked />
                 <span>All</span>
               </label>
               <label class="menu__item">
-                <input type="checkbox" name="openMat" value="sat" />
-                <span>Saturday</span>
+                <input type="radio" name="openMat" value="Y" />
+                <span>OTA = Y</span>
               </label>
               <label class="menu__item">
-                <input type="checkbox" name="openMat" value="sun" />
-                <span>Sunday</span>
+                <input type="radio" name="openMat" value="N" />
+                <span>OTA ≠ Y</span>
               </label>
-</div>
+            </div>
           </div>
         </div>
 
         <!-- Pill 4: Guests (placeholder for now) -->
         <div class="pillSelect" data-filter="guests">
-          <button id="guestsBtn" class="pill pill--select filter-pill" data-pill="guests" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill__label" id="guestsLabel" data-pill-title>Guests</span>
-            <span class="pill__dot" id="guestsDot" data-pill-indicator aria-hidden="true"></span>
+          <button id="guestsBtn" class="pill pill--select" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill__label" id="guestsLabel">Guests</span>
+            <span class="pill__dot" id="guestsDot" aria-hidden="true"></span>
             <span class="pill__caret" aria-hidden="true">▾</span>
           </button>
 
-          <div id="guestsMenu" class="menu" data-pill-panel role="menu" aria-label="Guests menu" hidden>
+          <div id="guestsMenu" class="menu" role="menu" aria-label="Guests menu" hidden>
             <div class="menu__header">
               <div class="menu__title">Guests</div>
-              <button id="guestsClear" class="menu__clear" data-pill-clear type="button">Clear</button>
+              <button id="guestsClear" class="menu__clear" type="button">Clear</button>
             </div>
             <div class="menu__list">
               <div class="menu__empty">Coming soon</div>
@@ -133,84 +122,9 @@
         <div id="groupsRoot"></div>
       </div>
     </main>
-        </div>
-
-    <!-- EVENTS VIEW -->
-    
-    <!-- EVENTS VIEW -->
-    <div class="viewPanel" id="viewEvents" aria-label="Events">
-      <nav class="filters" aria-label="Events filters">
-        <div class="filters__inner">
-          <!-- Events Search -->
-          <div class="pill pill--search">
-            <span class="pill__icon" aria-hidden="true">🔎</span>
-            <input id="eventsSearchInput" class="pill__input" type="text" inputmode="search"
-                   autocomplete="off" autocapitalize="none" spellcheck="false"
-                   placeholder='Search events' />
-            <button id="eventsSearchClear" class="pill__clear" type="button" aria-label="Clear">×</button>
-          </div>
-
-          <!-- Events Filter 1 -->
-          <div class="pillSelect" data-filter="eventsPill1">
-            <button id="eventsPill1Btn" class="pill pill--select filter-pill" data-pill="eventsPill1" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label" data-pill-title>DATE</span>
-              <span class="pill__dot" id="eventsPill1Dot" data-pill-indicator aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill1Menu" class="menu" data-pill-panel role="menu" aria-label="Date menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">DATE</div>
-                <button id="eventsPill1Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-
-          <!-- Events Filter 2 -->
-          <div class="pillSelect" data-filter="eventsPill2">
-            <button id="eventsPill2Btn" class="pill pill--select filter-pill" data-pill="eventsPill2" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label" data-pill-title>TYPE</span>
-              <span class="pill__dot" id="eventsPill2Dot" data-pill-indicator aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill2Menu" class="menu" data-pill-panel role="menu" aria-label="Type menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">TYPE</div>
-                <button id="eventsPill2Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-
-          <!-- Events Filter 3 -->
-          <div class="pillSelect" data-filter="eventsPill3">
-            <button id="eventsPill3Btn" class="pill pill--select filter-pill" data-pill="eventsPill3" type="button" aria-haspopup="menu" aria-expanded="false">
-              <span class="pill__label" data-pill-title>WHERE</span>
-              <span class="pill__dot" id="eventsPill3Dot" data-pill-indicator aria-hidden="true"></span>
-              <span class="pill__caret" aria-hidden="true">▾</span>
-            </button>
-            <div id="eventsPill3Menu" class="menu" data-pill-panel role="menu" aria-label="Where menu" hidden>
-              <div class="menu__header">
-                <div class="menu__title">WHERE</div>
-                <button id="eventsPill3Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
-              </div>
-              <div class="menu__empty">Coming soon</div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main class="content" aria-label="Events">
-        <div class="content__inner">
-          <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
-          <div id="eventsRoot"></div>
-        </div>
-      </main>
-    </div>
-
-      </div>
-    </div>
-
   </div>
+
+  <script type="module" src="assets/js/main.js?v=20260110-1"></script>
 </body>
 </html>
+
