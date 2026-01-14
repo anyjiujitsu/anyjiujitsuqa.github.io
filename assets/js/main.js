@@ -1,182 +1,199 @@
-// main.js
-// Demo bootstrap showing unified pill architecture and indicator behavior.
+import { loadCSV } from "./data.js";
+import { state } from "./state.js";
+import { applyFilters } from "./filters.js";
+import { renderGroups } from "./render.js";
 
-import './pills_bootstrap.js';
-import { initStatePill } from './state.js';
-import { initFilterPills } from './filters.js';
+let allRows = [];
 
-const SAMPLE_EVENTS = [
-  { date: '2026-01-24', time: '11:00 AM', title: "Women’s Only Open Mat", state: 'NH', city: 'Nashua', gym: 'Gate City MMA', type: 'Open Mat', tags: ['women', 'nogi'] },
-  { date: '2026-02-02', time: '7:00 PM', title: 'Community Open Mat', state: 'MA', city: 'Somerville', gym: 'Example BJJ', type: 'Open Mat', tags: ['gi', 'beginner'] },
-  { date: '2026-02-15', time: '12:00 PM', title: 'Guest Seminar', state: 'RI', city: 'Providence', gym: 'Ocean State BJJ', type: 'Seminar', tags: ['nogi'] },
-  { date: '2026-03-10', time: '6:30 PM', title: 'Open Mat Night', state: 'CT', city: 'Hartford', gym: 'River City Grappling', type: 'Open Mat', tags: ['gi'] },
-];
+async function init(){
+  const status = document.getElementById("status");
+  const root = document.getElementById("groupsRoot");
 
-const els = {
-  pillMount: document.querySelector('#pillMount'),
-  search: document.querySelector('#searchInput'),
-  clearAll: document.querySelector('#clearAll'),
-  list: document.querySelector('#eventList'),
-  empty: document.querySelector('#emptyState'),
-};
+  // Search elements
+  const searchInput = document.getElementById("searchInput");
+  const searchClear = document.getElementById("searchClear");
 
-let statePill;
-let otherPills;
+  // States pill elements
+  const stateBtn   = document.getElementById("stateBtn");
+  const stateMenu  = document.getElementById("stateMenu");
+  const stateList  = document.getElementById("stateList");
+  const stateClear = document.getElementById("stateClear");
+  const stateDot   = document.getElementById("stateDot");
 
-function getFilters() {
-  const state = new Set(statePill.selection);
-  const openMatOnly = otherPills.openMat.selection[0] === 'only';
-  const guests = new Set(otherPills.guests.selection);
-  const years = new Set(otherPills.years.selection);
-  const q = (els.search.value || '').trim().toLowerCase();
-
-  return { state, openMatOnly, guests, years, q };
-}
-
-function applyFilters(events) {
-  const f = getFilters();
-  return events.filter(ev => {
-    if (f.state.size && !f.state.has(ev.state)) return false;
-
-    if (f.openMatOnly && ev.type.toLowerCase() !== 'open mat') return false;
-
-    if (f.years.size) {
-      const y = ev.date.slice(0, 4);
-      if (!f.years.has(y)) return false;
-    }
-
-    if (f.guests.size) {
-      // All selected tags must be present (AND) to make behavior predictable.
-      for (const tag of f.guests) {
-        if (!ev.tags.includes(tag)) return false;
-      }
-    }
-
-    if (f.q) {
-      const blob = `${ev.title} ${ev.gym} ${ev.city} ${ev.state} ${ev.type}`.toLowerCase();
-      if (!blob.includes(f.q)) return false;
-    }
-
-    return true;
-  });
-}
-
-function groupByMonth(events) {
-  const map = new Map();
-  for (const ev of events) {
-    const monthKey = ev.date.slice(0, 7); // YYYY-MM
-    if (!map.has(monthKey)) map.set(monthKey, []);
-    map.get(monthKey).push(ev);
+  function setStatesSelectedUI(){
+    const has = state.states && state.states.size > 0;
+    if (stateBtn) stateBtn.classList.toggle("pill--selected", has);
+    if (stateDot) stateDot.style.display = has ? "inline-block" : "none";
   }
-  // sort month keys and events by date
-  const keys = Array.from(map.keys()).sort();
-  return keys.map(k => ({ month: k, items: map.get(k).sort((a, b) => a.date.localeCompare(b.date)) }));
-}
 
-function render() {
-  const filtered = applyFilters(SAMPLE_EVENTS);
-  const groups = groupByMonth(filtered);
-
-  els.list.innerHTML = '';
-
-  if (!filtered.length) {
-    els.empty.hidden = false;
-    return;
+  function closeStateMenu(){
+    if (!stateMenu) return;
+    stateMenu.hidden = true;
+    if (stateBtn) stateBtn.setAttribute("aria-expanded", "false");
   }
-  els.empty.hidden = true;
 
-  for (const g of groups) {
-    const section = document.createElement('section');
-    section.className = 'month';
+  function positionStateMenu(){
+    if (!stateMenu || !stateBtn) return;
 
-    const h = document.createElement('div');
-    h.className = 'month__label';
-    h.textContent = monthLabel(g.month);
+    // Ensure it can overlay even if pills row is scroll-clipped
+    stateMenu.style.position = "fixed";
+    stateMenu.style.zIndex = "1000";
 
-    const cards = document.createElement('div');
-    cards.className = 'cards';
+    const btnRect = stateBtn.getBoundingClientRect();
 
-    for (const ev of g.items) {
-      cards.appendChild(renderCard(ev));
+    // Use computed width after un-hiding (so offsetWidth is valid)
+    const menuW = stateMenu.offsetWidth || 240;
+    const gutter = 8;
+
+    let left = btnRect.left;
+    const maxLeft = window.innerWidth - menuW - gutter;
+    if (left > maxLeft) left = maxLeft;
+    if (left < gutter) left = gutter;
+
+    const top = btnRect.bottom + 8;
+
+    stateMenu.style.left = `${left}px`;
+    stateMenu.style.top = `${top}px`;
+  }
+
+  function openStateMenu(){
+    if (!stateMenu) return;
+    stateMenu.hidden = false;
+    if (stateBtn) stateBtn.setAttribute("aria-expanded", "true");
+    // Position after it becomes measurable
+    requestAnimationFrame(positionStateMenu);
+  }
+
+  function render(){
+    const filtered = applyFilters(allRows, state);
+    renderGroups(root, filtered);
+    status.textContent = `${filtered.length} gyms`;
+    setStatesSelectedUI();
+  }
+
+  function buildStatesMenu(){
+    if (!stateList) return;
+
+    const uniqueStates = Array.from(
+      new Set(
+        allRows
+          .map(r => String(r.STATE ?? "").trim())
+          .filter(Boolean)
+      )
+    ).sort((a,b) => a.localeCompare(b));
+
+    stateList.innerHTML = "";
+
+    for (const code of uniqueStates){
+      const label = document.createElement("label");
+      label.className = "menu__item";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = code;
+      cb.checked = state.states.has(code);
+
+      const span = document.createElement("span");
+      span.textContent = code;
+
+      label.appendChild(cb);
+      label.appendChild(span);
+      stateList.appendChild(label);
+    }
+  }
+
+  try{
+    status.textContent = "Loading…";
+    allRows = await loadCSV("data/directory.csv");
+
+    // ---- Search wiring ----
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        state.search = searchInput.value || "";
+        render();
+      });
     }
 
-    section.appendChild(h);
-    section.appendChild(cards);
-    els.list.appendChild(section);
+    if (searchClear) {
+      searchClear.addEventListener("click", () => {
+        if (!searchInput) return;
+        searchInput.value = "";
+        state.search = "";
+        searchInput.focus();
+        render();
+      });
+    }
+
+    // ---- States pill wiring ----
+    buildStatesMenu();
+    setStatesSelectedUI();
+
+    if (stateBtn && stateMenu) {
+      stateBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = !stateMenu.hidden;
+        if (isOpen) closeStateMenu();
+        else openStateMenu();
+      });
+    }
+
+    if (stateList) {
+      stateList.addEventListener("change", (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement)) return;
+        if (el.type !== "checkbox") return;
+
+        if (el.checked) state.states.add(el.value);
+        else state.states.delete(el.value);
+
+        render();
+      });
+    }
+
+    if (stateClear) {
+      stateClear.addEventListener("click", (e) => {
+        e.preventDefault();
+        state.states.clear();
+
+        if (stateList) {
+          stateList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+            cb.checked = false;
+          });
+        }
+
+        render();
+      });
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!stateMenu || stateMenu.hidden) return;
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#stateMenu") || target.closest("#stateBtn")) return;
+      closeStateMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeStateMenu();
+    });
+
+    // Keep menu positioned on resize/scroll while open
+    window.addEventListener("resize", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
+    });
+    window.addEventListener("scroll", () => {
+      if (stateMenu && !stateMenu.hidden) positionStateMenu();
+    }, { passive: true });
+
+    render();
+
+  } catch(err){
+    console.error(err);
+    status.textContent = "Failed to load data";
   }
-}
-
-function monthLabel(yyyyMm) {
-  const [y, m] = yyyyMm.split('-').map(Number);
-  const d = new Date(y, m - 1, 1);
-  return d.toLocaleString(undefined, { month: 'long', year: 'numeric' });
-}
-
-function renderCard(ev) {
-  const card = document.createElement('div');
-  card.className = 'card';
-
-  const left = document.createElement('div');
-  left.className = 'card__left';
-
-  const type = document.createElement('div');
-  type.className = 'badge';
-  type.textContent = ev.type;
-
-  const title = document.createElement('div');
-  title.className = 'card__title';
-  title.textContent = ev.title;
-
-  const meta = document.createElement('div');
-  meta.className = 'card__meta';
-  meta.textContent = `${ev.gym} • ${ev.city}, ${ev.state}`;
-
-  left.appendChild(type);
-  left.appendChild(title);
-  left.appendChild(meta);
-
-  const right = document.createElement('div');
-  right.className = 'card__right';
-  const date = document.createElement('div');
-  date.className = 'card__date';
-  date.textContent = prettyDate(ev.date);
-  const time = document.createElement('div');
-  time.className = 'card__time';
-  time.textContent = ev.time;
-  right.appendChild(date);
-  right.appendChild(time);
-
-  card.appendChild(left);
-  card.appendChild(right);
-
-  return card;
-}
-
-function prettyDate(iso) {
-  const [y, m, d] = iso.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  return dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function anyPillChanged() {
-  render();
-}
-
-function clearAll() {
-  statePill.clear();
-  Object.values(otherPills).forEach(p => p.clear());
-  els.search.value = '';
-  render();
-}
-
-function init() {
-  statePill = initStatePill(els.pillMount, anyPillChanged);
-  otherPills = initFilterPills(els.pillMount, anyPillChanged);
-
-  els.search.addEventListener('input', () => render());
-  els.clearAll.addEventListener('click', clearAll);
-
-  render();
 }
 
 init();
