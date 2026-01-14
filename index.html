@@ -3,315 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Unified Pill Architecture Demo</title>
+  <title>Unified Pill Architecture (SAFE scaffold)</title>
+
+  <!--
+    WHY YOUR PAGE LOOKED "SO WRONG":
+    You published the previous index.html demo scaffold, which replaced your real app page.
+    This file is intentionally SAFE: it does NOT try to recreate your full site.
+    Use it only to confirm pills+indicator work, OR revert your real index.html and keep only the JS files.
+
+    To integrate into your real page:
+      1) Keep YOUR existing index.html/layout.
+      2) Add: <script type="module" src="./main.js"></script>
+      3) Ensure each pill element has: class="filter-pill" data-pill="states" (etc.)
+  -->
+
   <style>
-    :root {
-      --bg: #0b0f10;
-      --panel: #0f1517;
-      --text: #e9f1f1;
-      --muted: rgba(233,241,241,.65);
-      --line: rgba(233,241,241,.12);
-      --pill: rgba(233,241,241,.08);
-      --pillHover: rgba(233,241,241,.12);
-      --accent: #25d366; /* green indicator */
+    :root { --accent:#25d366; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; padding: 28px; }
+    .filter-pill{
+      display:inline-flex; align-items:center;
+      padding: 10px 14px; border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.15);
+      background: rgba(0,0,0,.04);
+      cursor:pointer; user-select:none;
     }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: radial-gradient(1200px 800px at 20% 0%, rgba(37, 211, 102, .08), transparent 55%), var(--bg);
-      color: var(--text);
-    }
-
-    .wrap {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 18px 16px 48px;
-    }
-
-    .topbar {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 14px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(15,21,23,.85);
-      backdrop-filter: blur(10px);
-    }
-
-    .title {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .title h1 {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0;
-      letter-spacing: .02em;
-    }
-
-    .title .sub {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .search {
-      width: 260px;
-      max-width: 45vw;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      outline: none;
-      background: rgba(233,241,241,.06);
-      color: var(--text);
-    }
-
-    .btn {
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(233,241,241,.06);
-      color: var(--text);
-      cursor: pointer;
-    }
-    .btn:hover { background: rgba(233,241,241,.10); }
-
-    .pillbar {
-      margin-top: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .pill {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--pill);
-      cursor: pointer;
-      user-select: none;
-      min-height: 38px;
-    }
-    .pill:hover { background: var(--pillHover); }
-
-    .pill__label {
-      font-size: 12px;
-      letter-spacing: .02em;
-      color: var(--text);
-      white-space: nowrap;
-    }
-
-    .pill__caret {
-      font-size: 12px;
-      opacity: .9;
-    }
-
-    .pill__clear {
-      margin-left: 2px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-size: 12px;
-      cursor: pointer;
-      padding: 0;
-    }
-    .pill__clear:hover { color: var(--text); }
-
-    /* Indicator dot auto-created by BasePillController */
-    .pill__dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-left: 2px;
-      background: var(--accent);
-      box-shadow: 0 0 0 3px rgba(37, 211, 102, .15);
-      opacity: 0;
-      transform: scale(.8);
-      transition: opacity .12s ease, transform .12s ease;
-    }
-
-    /* shared indicator behavior via hasSelection */
-    .pill--has-selection .pill__label { font-weight: 800; }
-    .pill--has-selection .pill__dot {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .pill-panel {
-      position: absolute;
-      z-index: 50;
-      margin-top: 8px;
-      min-width: 220px;
-      background: rgba(15,21,23,.96);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.45);
-    }
-
-    /* panel is inserted after pill in DOM; anchor it visually */
-    .pill + .pill-panel {
-      position: relative;
-      top: -2px;
-      left: 0;
-    }
-
-    .pill-panel__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4px 6px 10px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 8px;
-    }
-
-    .pill-panel__title {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .02em;
-    }
-
-    .pill-panel__count {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .pill-panel__list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 2px;
-    }
-
-    .pill-panel__item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      background: rgba(233,241,241,.04);
-    }
-    .pill-panel__item:hover {
-      border-color: rgba(233,241,241,.12);
-      background: rgba(233,241,241,.07);
-    }
-
-    .pill-panel__item span {
-      font-size: 12px;
-      color: var(--text);
-    }
-
-    .content {
-      margin-top: 18px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(15,21,23,.65);
-    }
-
-    .month {
-      margin-top: 10px;
-    }
-
-    .month__label {
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 10px 6px;
-    }
-
-    .cards {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .card {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(233,241,241,.04);
-    }
-
-    .card__left { display: flex; flex-direction: column; gap: 6px; }
-    .badge {
-      display: inline-flex;
-      align-self: flex-start;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(233,241,241,.08);
-      border: 1px solid var(--line);
-      font-size: 11px;
-      letter-spacing: .04em;
-    }
-
-    .card__title { font-size: 14px; font-weight: 750; }
-    .card__meta { font-size: 12px; color: var(--muted); }
-
-    .card__right { text-align: right; display: flex; flex-direction: column; gap: 6px; }
-    .card__date { font-size: 12px; font-weight: 700; }
-    .card__time { font-size: 12px; color: var(--muted); }
-
-    #emptyState {
-      padding: 22px 10px;
-      color: var(--muted);
-      text-align: center;
-      font-size: 13px;
-    }
-
-    @media (max-width: 640px) {
-      .topbar { flex-direction: column; align-items: stretch; }
-      .actions { width: 100%; }
-      .search { width: 100%; max-width: none; }
-      .pillbar { gap: 8px; }
-      .card { flex-direction: column; }
-      .card__right { text-align: left; }
-    }
+    .pill-title{ font-weight: 600; }
+    button{ margin-left: 10px; padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(0,0,0,.15); background: rgba(0,0,0,.04); cursor:pointer; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="title">
-        <h1>Unified Pill Architecture</h1>
-        <div class="sub">All pills use one shared base controller. Green dot is driven by <code>hasSelection</code>.</div>
-      </div>
-      <div class="actions">
-        <input id="searchInput" class="search" placeholder="Search events, gyms, cities…" />
-        <button id="clearAll" class="btn" type="button">Clear All</button>
-      </div>
-    </div>
-
-    <div id="pillMount" class="pillbar" aria-label="Filters"></div>
-
-    <div class="content">
-      <div id="emptyState" hidden>No results. Try clearing filters.</div>
-      <div id="eventList"></div>
-    </div>
+  <div class="filter-pill" data-pill="states">
+    <span class="pill-title" data-pill-title>States</span>
   </div>
+
+  <button type="button" data-clear-all>Clear All</button>
 
   <script type="module" src="./main.js"></script>
 </body>
