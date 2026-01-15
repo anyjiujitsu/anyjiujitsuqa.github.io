@@ -1,4 +1,9 @@
+/* tokens111.css â€” FULL override-ready tokens file (fixes accidental '...' truncation)
+   Includes permanent compact mobile density rules to approximate the previous 50% iOS zoom feel at 100% zoom.
+*/
+
 :root{
+  /* Colors */
   --bg: #ebebeb;
   --green: #234c31;
   --row: #e2e4e4;
@@ -8,32 +13,32 @@
   --text: #111;
   --muted: rgba(0,0,0,0.55);
 
+  /* Radii */
   --radius: 14px;
   --radiusPill: 999px;
 
+  /* Layout */
   --pagePad: 14px;
   --maxW: 900px;
 
-  /* Header */
-  --titleSize: 56px;        /* mobile first */
-  --titleTracking: -0.04em;
-
-  /* Pills */
+  /* Type + component sizing (base) */
+  --titleSize: 58px;
   --pillH: 36px;
   --pillFont: 14px;
   --pillPadX: 12px;
 
-  /* Table */
+  /* Group + rows */
   --groupLabelFont: 12px;
   --rowFont: 14px;
 
   /* Indicator dot */
   --dotSize: 10px;
 }
+
+/* Permanent compact mobile density (all views) */
 @media (max-width: 430px){
   :root{
-    /* Permanent compact mobile density (match ~50% iOS zoom feel at 100% zoom) */
-    --pagePad: 8px;
+    --pagePad: 10px;
 
     /* Header */
     --titleSize: 44px;
@@ -41,22 +46,21 @@
     /* Pills / search */
     --pillH: 30px;
     --pillFont: 12px;
-    --pillPadX: 8px;
+    --pillPadX: 10px;
 
     /* Group + rows */
     --groupLabelFont: 10px;
     --rowFont: 12.5px;
 
-    /* Card feel */
+    /* Slightly flatter */
     --radius: 10px;
     --shadow: rgba(0,0,0,0.12);
 
-    /* Indicator dot */
     --dotSize: 9px;
   }
 }
 
-
+/* Wider screens */
 @media (min-width: 900px){
   :root{
     --pagePad: 24px;
