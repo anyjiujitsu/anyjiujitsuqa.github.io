@@ -1,5 +1,3 @@
-// main103.js — Event grouping fix (Month-Year)
-
 import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js";
 import { state, setView, setIndexQuery, setEventsQuery } from "./state.js";
 import { filterDirectory, filterEvents } from "./filters.js";
@@ -13,6 +11,7 @@ function $(id){ return document.getElementById(id); }
 function setTransition(ms){
   document.body.style.setProperty("--viewTransition", ms + "ms");
 }
+
 function applyProgress(p){
   const clamped = Math.max(0, Math.min(1, p));
   document.body.style.setProperty("--viewProgress", String(clamped));
@@ -22,33 +21,139 @@ function applyProgress(p){
   }
   return clamped;
 }
+
 function setViewUI(view){
   setView(view);
+
   $("tabEvents")?.setAttribute("aria-selected", view === "events" ? "true" : "false");
   $("tabIndex")?.setAttribute("aria-selected", view === "index" ? "true" : "false");
-  $("viewTitle").textContent = (view === "events") ? "EVENTS" : "INDEX";
+
+  const title = $("viewTitle");
+  if(title) title.textContent = (view === "events") ? "EVENTS" : "INDEX";
+
   document.title = (view === "events") ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
+
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
 }
 
 function wireViewToggle(){
-  $("tabEvents")?.addEventListener("click", () => setViewUI("events"));
-  $("tabIndex")?.addEventListener("click", () => setViewUI("index"));
+  const tabEvents = $("tabEvents");
+  const tabIndex  = $("tabIndex");
+  const viewToggle = $("viewToggle");
+  const viewShell  = $("viewShell");
+
+  tabEvents?.addEventListener("click", () => setViewUI("events"));
+  tabIndex?.addEventListener("click", () => setViewUI("index"));
+
+  if(viewToggle){
+    let dragging = false;
+    let pointerId = null;
+
+    viewToggle.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      pointerId = e.pointerId;
+      viewToggle.setPointerCapture(pointerId);
+      setTransition(0);
+
+      const rect = viewToggle.getBoundingClientRect();
+      const padding = 4;
+      const trackW = rect.width - padding * 2;
+      const thumbW = trackW / 2;
+      const travel = trackW - thumbW;
+
+      const x = e.clientX - rect.left - padding;
+      const p = (x - thumbW / 2) / travel;
+      applyProgress(p);
+    });
+
+    viewToggle.addEventListener("pointermove", (e) => {
+      if(!dragging || e.pointerId !== pointerId) return;
+
+      const rect = viewToggle.getBoundingClientRect();
+      const padding = 4;
+      const trackW = rect.width - padding * 2;
+      const thumbW = trackW / 2;
+      const travel = trackW - thumbW;
+
+      const x = e.clientX - rect.left - padding;
+      const p = (x - thumbW / 2) / travel;
+      applyProgress(p);
+    });
+
+    const endDrag = (e) => {
+      if(!dragging) return;
+      if(e && pointerId != null && e.pointerId !== pointerId) return;
+
+      dragging = false;
+      pointerId = null;
+
+      setTransition(260);
+      const p = Number(getComputedStyle(document.body).getPropertyValue("--viewProgress")) || 0;
+      setViewUI(p >= 0.5 ? "index" : "events");
+    };
+
+    viewToggle.addEventListener("pointerup", endDrag);
+    viewToggle.addEventListener("pointercancel", endDrag);
+    viewToggle.addEventListener("lostpointercapture", endDrag);
+  }
+
+  if(viewShell){
+    let startX = 0, startY = 0, startP = 0;
+
+    viewShell.addEventListener("touchstart", (e) => {
+      if(e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startP = Number(getComputedStyle(document.body).getPropertyValue("--viewProgress")) || 0;
+      setTransition(0);
+    }, { passive: true });
+
+    viewShell.addEventListener("touchmove", (e) => {
+      if(e.touches.length !== 1) return;
+      const x = e.touches[0].clientX;
+      const y = e.touches[0].clientY;
+
+      const dx = x - startX;
+      const dy = y - startY;
+
+      if(Math.abs(dy) > Math.abs(dx)) return;
+
+      const delta = -dx / window.innerWidth;
+      applyProgress(startP + delta);
+    }, { passive: true });
+
+    viewShell.addEventListener("touchend", () => {
+      setTransition(260);
+      const p = Number(getComputedStyle(document.body).getPropertyValue("--viewProgress")) || 0;
+      setViewUI(p >= 0.5 ? "index" : "events");
+    }, { passive: true });
+  }
 }
 
 function wireSearch(){
   const idxIn = $("searchInput");
   const evIn  = $("eventsSearchInput");
 
-  idxIn?.addEventListener("input",(e)=>{ setIndexQuery(e.target.value); render(); });
-  evIn?.addEventListener("input",(e)=>{ setEventsQuery(e.target.value); render(); });
-
-  $("searchClear")?.addEventListener("click",()=>{
-    setIndexQuery(""); if(idxIn) idxIn.value=""; render();
+  idxIn?.addEventListener("input",(e)=>{
+    setIndexQuery(e.target.value);
+    render();
   });
-  $("eventsSearchClear")?.addEventListener("click",()=>{
-    setEventsQuery(""); if(evIn) evIn.value=""; render();
+  evIn?.addEventListener("input",(e)=>{
+    setEventsQuery(e.target.value);
+    render();
+  });
+
+  $("searchClear")?.addEventListener("click", ()=>{
+    setIndexQuery("");
+    if(idxIn) idxIn.value = "";
+    render();
+  });
+
+  $("eventsSearchClear")?.addEventListener("click", ()=>{
+    setEventsQuery("");
+    if(evIn) evIn.value = "";
+    render();
   });
 }
 
@@ -65,7 +170,9 @@ function render(){
 async function init(){
   wireViewToggle();
   wireSearch();
-  setViewUI(state.view || "events");
+
+  if(!state.view) state.view = "events";
+  setViewUI(state.view);
 
   $("status").textContent = "Loading…";
   $("eventsStatus").textContent = "Loading…";
@@ -81,4 +188,8 @@ async function init(){
   render();
 }
 
-init();
+init().catch((err)=>{
+  console.error(err);
+  $("status").textContent = "Failed to load data";
+  $("eventsStatus").textContent = "Failed to load data";
+});
