@@ -1,324 +1,227 @@
-/* Header */
+/* components113.css â€” full override-ready component styles.
+   Key goal: all sizing comes from tokens so mobile density actually changes.
+*/
+
+/* HEADER */
 .header__title{
   margin: 0;
-  font-weight: 900;
   font-size: var(--titleSize);
   letter-spacing: var(--titleTracking);
-  text-transform: uppercase;
+  line-height: 0.9;
+  font-weight: 900;
   color: var(--green);
-  line-height: 0.95;
+  text-transform: uppercase;
 }
+
 .header__logo{
   display:flex;
-  align-items:center;
-  justify-content:flex-end;
+  align-items:flex-end;
+  justify-content:center;
+  min-width: 56px;
 }
+
 .header__logoText{
-  font-weight: 900;
+  font-weight: 800;
   color: var(--green);
-  opacity: 0.9;
+  letter-spacing: 0.10em;
 }
 
-/* Pills */
-.pill{
-  height: var(--pillH);
-  display:flex;
-  align-items:center;
-  gap: 8px;
-  padding: 0 var(--pillPadX);
-  border-radius: var(--radiusPill);
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.16);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-  font-size: var(--pillFont);
-  color: rgba(0,0,0,0.65);
-  white-space: nowrap;
-  flex: 0 0 auto;
-}
-
-.pill--search{
-  min-width: 260px;
-}
-
-.pill__icon{ opacity: 0.55; }
-.pill__input{
-  border:0;
-  outline:none;
-  background: transparent;
-  width: 100%;
-  min-width: 120px;
-  font-size: var(--pillFont);
-  line-height: 1;
-  color: #1f2a1f;
-}
-.pill__input::placeholder{
-  color: rgba(0,0,0,0.42);
-}
-/* Hide browser-provided search UI (iOS Safari/Chrome) so only our custom X shows */
-.pill__input::-webkit-search-cancel-button,
-.pill__input::-webkit-search-decoration,
-.pill__input::-webkit-search-results-button,
-.pill__input::-webkit-search-results-decoration{
-  -webkit-appearance: none;
-  appearance: none;
-  display: none;
-}
-
-/* Hide the browser-provided search cancel Ã¢â‚¬Å“XÃ¢â‚¬Â so we only use our own clear button */
-.pill__input[type="search"]::-webkit-search-cancel-button{
-  -webkit-appearance: none;
-  appearance: none;
-  display: none;
-}
-.pill__input[type="search"]::-webkit-search-decoration{
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.pill__clear{
-  border:0;
-  background: transparent;
-  padding: 0;
-  font-size: 18px;
-  line-height: 1;
-  color: rgba(0,0,0,0.55);
-  cursor: pointer;
-}
-
-.pill--select{
-  min-width: 116px;
-  justify-content: space-between;
-}
-
-.pill__caret{ opacity: 0.7; }
-
-/* selection dot */
-.pill__dot{
-  width: var(--dotSize);
-  height: var(--dotSize);
-  border-radius: 50%;
-  display:none;
-  margin-left: 8px;
-  background-color: #28a745;
-  box-shadow:
-    0 0 4px rgba(40,167,69,0.9),
-    0 0 8px rgba(40,167,69,0.7),
-    0 0 14px rgba(40,167,69,0.5);
-}
-.pill--selected .pill__dot{ display:inline-block; }
-
-/* Menus */
-.pillSelect{ position: relative; }
-.menu{
-  position:absolute;
-  top: calc(var(--pillH) + 8px);
-  left: 0;
-  width: 240px;
-  max-height: 340px;
-  overflow:auto;
-  background:#fff;
-  border: 1px solid rgba(0,0,0,0.14);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-  padding: 10px;
-  z-index: 100;
-}
-.menu__header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding: 2px 2px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  margin-bottom: 10px;
-}
-.menu__title{
-  font-weight: 700;
-  color: #1f2a1f;
-  font-size: 13px;
-}
-.menu__clear{
-  border:0;
-  background: transparent;
-  cursor: pointer;
-  color: rgba(0,0,0,0.55);
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 10px;
-}
-.menu__clear:hover{ background: rgba(0,0,0,0.05); }
-
-.menu__list{ display:flex; flex-direction:column; gap: 8px; }
-.menu__item{
-  display:flex;
-  gap: 10px;
-  align-items:center;
-  font-size: 13px;
-  padding: 4px 6px;
-  border-radius: 10px;
-}
-.menu__item:hover{ background: rgba(0,0,0,0.04); }
-.menu__empty{ color: rgba(0,0,0,0.55); font-size: 13px; padding: 6px; }
-
-/* Groups + Table */
-.group{
-  margin: 16px 0 18px;
-}
-.group__label{
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(0,0,0,0.55);
-  font-size: var(--groupLabelFont);
-  margin: 0 0 10px 2px;
-}
-
-.table{
-  background: var(--row);
-  border-radius: 10px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-  overflow: hidden;
-}
-
-.row{
-  display:grid;
-  grid-template-columns: 1.4fr 1fr 0.8fr;
-  gap: 10px;
-  padding: 12px 12px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-.row:last-child{ border-bottom: none; }
-
-.cell__name{
-  font-weight: 800;
-}
-.cell__ig{
-  color: rgba(0,0,0,0.55);
-  font-size: 13px;
-  margin-top: 2px;
-}
-.cell__city{
-  font-weight: 700;
-}
-.cell__state{
-  color: rgba(0,0,0,0.55);
-  font-size: 13px;
-  margin-top: 2px;
-}
-.cell__days{
-  text-align: right;
-  font-weight: 800;
-}
-.cell__ota{
-  text-align: right;
-  color: rgba(0,0,0,0.55);
-  font-size: 13px;
-  margin-top: 2px;
-}
-
-
-/* View toggle */
+/* VIEW TOGGLE (tabs) */
 .viewToggle{
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(0,0,0,0.10);
   border-radius: 999px;
-  padding: 4px;
-  background: rgba(255,255,255,0.85);
-  border: 1px solid rgba(0,0,0,0.12);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  padding: 6px;
+  gap: 6px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   user-select: none;
+  touch-action: pan-y;
 }
+
 .viewToggle__tab{
   position: relative;
   z-index: 2;
   border: 0;
   background: transparent;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-radius: 999px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 12px;
-  color: rgba(0,0,0,0.60);
-  cursor: pointer;
+  color: rgba(0,0,0,0.45);
 }
-.viewToggle__tab[aria-selected="true"]{
-  color: #1f2a1f;
-}
+
+.viewToggle__tab[aria-selected="true"]{ color: #111; }
+
 .viewToggle__thumb{
   position: absolute;
-  inset: 4px;
-  width: calc(50% - 4px);
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
   border-radius: 999px;
   background: #fff;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-  transform: translateX(0%);
-  transition: transform var(--viewTransition, 260ms) ease;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.16);
+  transform: translateX(calc(var(--viewProgress, 0) * 100%));
+  transition: transform 220ms ease;
 }
 
-/* View slider */
-.viewShell{
-  overflow: hidden;
-}
+/* SLIDER */
+.viewShell{ overflow: hidden; }
 .viewSlider{
-  display: flex;
+  display:flex;
   width: 200%;
-  transform: translateX(0%);
-  transition: transform var(--viewTransition, 260ms) ease;
+  transform: translateX(calc(var(--viewProgress, 0) * -50%));
+  transition: transform 240ms ease;
   will-change: transform;
 }
-.viewPanel{
-  width: 50%;
-  flex: 0 0 50%;
+.viewPanel{ width: 50%; min-width: 50%; }
+
+/* FILTER PILLS */
+.pillSelect{ position: relative; }
+
+.pill{
+  height: var(--pillH);
+  border-radius: var(--radiusPill);
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.12);
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  padding: 0 var(--pillPadX);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.10);
+  flex: 0 0 auto;
 }
 
-/* Slider progress driven by CSS variable (0 = Index, 1 = Events) */
-body{
-  --viewProgress: 0;
-}
-.viewToggle__thumb{
-  transform: translateX(calc(100% * var(--viewProgress)));
-}
-.viewSlider{
-  transform: translateX(calc(-50% * var(--viewProgress)));
+.pill--search{ min-width: 250px; }
+
+.pill__icon{ font-size: 14px; opacity: 0.7; }
+
+/* keep 16px so iOS doesn't auto-zoom on focus */
+.pill__input{
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 16px;
 }
 
-/* Ensure slider + thumb transitions are controlled by JS via --viewTransition */
-.viewToggle__thumb{
-  transition: transform var(--viewTransition, 260ms) ease;
-  touch-action: pan-y;
-}
-.viewSlider{
-  transition: transform var(--viewTransition, 260ms) ease;
-  touch-action: pan-y;
-}
-
-/* =========================================
-   View toggle â€“ improved contrast & clarity
-   ========================================= */
-
-/* Darker neutral track so inactive side recedes */
-.viewToggle{
-  background: #e4e6ea; /* soft neutral grey */
-  border: 1px solid rgba(0,0,0,0.15);
+.pill__clear{
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  opacity: 0.55;
+  padding: 0 4px;
 }
 
-/* Inactive labels */
-.viewToggle__tab{
+.pill__label{
+  font-size: var(--pillFont);
+  font-weight: 700;
   color: rgba(0,0,0,0.55);
+  white-space: nowrap;
 }
 
-/* Active label */
-.viewToggle__tab[aria-selected="true"]{
-  color: #111;
+.pill__caret{ font-size: 10px; opacity: 0.55; margin-left: 2px; }
+
+.pill__dot{
+  width: var(--dotSize);
+  height: var(--dotSize);
+  border-radius: 999px;
+  margin-left: 6px;
+  background: transparent;
+  box-shadow: none;
 }
 
-/* Active thumb */
-.viewToggle__thumb{
-  background: #ffffff;
-  box-shadow:
-    0 6px 14px rgba(0,0,0,0.22),
-    0 1px 2px rgba(0,0,0,0.12);
+.filter-pill[data-has-selection="true"] .pill__dot{
+  background: #31d06a;
+  box-shadow: 0 0 10px rgba(49,208,106,0.85);
+}
+
+/* MENUS (JS positions using viewport coords) */
+.menu{
+  position: fixed;
+  z-index: 1000;
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 14px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+  padding: 10px;
+  min-width: 240px;
+}
+
+.menu__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 4px 6px 10px;
+}
+
+.menu__title{ font-weight: 800; letter-spacing: 0.08em; font-size: 12px; opacity: 0.7; }
+.menu__clear{ border:0; background:transparent; font-weight:800; font-size: 12px; color: var(--green); }
+
+.menu__list{ display:flex; flex-direction:column; gap: 6px; padding: 6px; max-height: 50vh; overflow:auto; }
+.menu__item{ display:flex; align-items:center; gap: 10px; font-size: 14px; }
+.menu__item input{ width: 16px; height: 16px; }
+.menu__empty{ padding: 10px; color: rgba(0,0,0,0.5); font-size: 13px; }
+
+/* GROUPS */
+.group{ margin-top: 14px; }
+
+.group__label{
+  font-size: var(--groupLabelFont);
+  letter-spacing: 0.22em;
+  font-weight: 800;
+  color: rgba(0,0,0,0.45);
+  text-transform: uppercase;
+  margin: 14px 0 8px;
+}
+
+/* TABLE / ROWS */
+.table{
+  background: var(--row);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 10px 22px var(--shadow);
+}
+
+.row{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 10px;
+  padding: 11px 13px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  font-size: var(--rowFont);
+}
+
+.row:first-child{ border-top: 0; }
+
+.cell__name{ font-weight: 800; }
+.cell__ig{ font-size: calc(var(--rowFont) - 2px); color: rgba(0,0,0,0.55); margin-top: 2px; }
+
+.cell__city{ font-weight: 800; }
+.cell__state{ font-size: calc(var(--rowFont) - 2px); color: rgba(0,0,0,0.55); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.cell__days{ font-weight: 800; text-align: right; }
+.cell__ota{ font-size: calc(var(--rowFont) - 2px); color: rgba(0,0,0,0.55); margin-top: 2px; text-align: right; }
+
+/* MOBILE: tighter spacing + ensure header fits */
+@media (max-width: 430px){
+  .header__logo{ min-width: 44px; }
+  .header__logoText{ font-size: 12px; }
+
+  .viewToggle{ padding: 5px; gap: 5px; }
+  .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
+
+  .pill{ gap: 6px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
+  .pill--search{ min-width: 220px; }
+
+  .table{ box-shadow: 0 8px 16px var(--shadow); }
+  .row{ padding: 9px 11px; gap: 8px; }
 }
