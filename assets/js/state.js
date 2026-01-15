@@ -1,8 +1,8 @@
-// STEP 0 — Skeleton Reset
+// STEP 0 — Skeleton Reset (Iteration 100)
 // State is plain data. No DOM access in this file.
 
 export const state = {
-  view: "index", // "index" | "events"
+  view: "events", // default now matches spec: Events first (View A)
 
   // View B (Index)
   index: {
@@ -18,12 +18,12 @@ export const state = {
     q: "",
     year: new Set(),
     state: new Set(),
-    type: new Set(),
+    type: new Set(), // used for Event pill later
   },
 };
 
 export function setView(v){
-  state.view = (v === "events") ? "events" : "index";
+  state.view = (v === "index") ? "index" : "events";
 }
 
 export function setIndexQuery(q){ state.index.q = String(q ?? ""); }
