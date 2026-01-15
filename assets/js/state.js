@@ -1,21 +1,45 @@
+// STEP 0 — Skeleton Reset
+// State is plain data. No DOM access in this file.
+
 export const state = {
-  search: "",
-  states: new Set(),
-  openMat: "", // "", "Y", "N"
-  guests: new Set(), // placeholder
+  view: "index", // "index" | "events"
+
+  // View B (Index)
+  index: {
+    q: "",
+    // pills intentionally inactive in STEP 0
+    states: new Set(),
+    openMat: "", // "all" | "sat" | "sun" | ""
+    guests: new Set(), // "welcomed" etc.
+  },
+
+  // View A (Events)
+  events: {
+    q: "",
+    year: new Set(),
+    state: new Set(),
+    type: new Set(),
+  },
 };
 
-export function setSearch(v){ state.search = v; }
-export function setOpenMat(v){ state.openMat = v; }
-
-export function toggleState(code){
-  if(state.states.has(code)) state.states.delete(code);
-  else state.states.add(code);
+export function setView(v){
+  state.view = (v === "events") ? "events" : "index";
 }
 
-export function clearStates(){ state.states.clear(); }
-export function clearGuests(){ state.guests.clear(); }
+export function setIndexQuery(q){ state.index.q = String(q ?? ""); }
+export function setEventsQuery(q){ state.events.q = String(q ?? ""); }
 
-export function hasAnySelection(){
-  return state.search.trim().length > 0 || state.states.size > 0 || state.openMat !== "" || state.guests.size > 0;
+// Helper used later for indicator dots
+export function hasIndexSelections(){
+  return state.index.q.trim().length > 0 ||
+    state.index.states.size > 0 ||
+    state.index.openMat !== "" ||
+    state.index.guests.size > 0;
+}
+
+export function hasEventsSelections(){
+  return state.events.q.trim().length > 0 ||
+    state.events.year.size > 0 ||
+    state.events.state.size > 0 ||
+    state.events.type.size > 0;
 }
