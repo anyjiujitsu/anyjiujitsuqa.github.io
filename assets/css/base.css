@@ -22,17 +22,3 @@ button, input{
   color: var(--muted);
   font-size: 13px;
 }
-
-/* --- iOS Safari: prevent input focus zoom (requires >=16px font-size) --- */
-input,
-textarea,
-select {
-  font-size: 16px;
-}
-
-/* specifically ensure search inputs never drop below 16px */
-.search input,
-.searchInput,
-input[type="search"] {
-  font-size: 16px;
-}
