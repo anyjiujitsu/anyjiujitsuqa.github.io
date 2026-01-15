@@ -30,6 +30,20 @@
   /* Indicator dot */
   --dotSize: 10px;
 }
+@media (max-width: 430px){
+  :root{
+    /* Mobile compact tuning â€” reduce need to pinch-zoom out */
+    --pagePad: 10px;
+    --titleSize: 44px;
+    --pillH: 32px;
+    --pillFont: 13px;
+    --pillPadX: 10px;
+    --groupLabelFont: 11px;
+    --rowFont: 13px;
+    --dotSize: 10px; /* keep dot legible */
+  }
+}
+
 @media (min-width: 900px){
   :root{
     --pagePad: 24px;
@@ -39,4 +53,3 @@
     --rowFont: 14px;
   }
 }
-
