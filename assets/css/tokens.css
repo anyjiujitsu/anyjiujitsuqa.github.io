@@ -15,7 +15,7 @@
   --maxW: 900px;
 
   /* Header */
-  --titleSize: 58px;
+  --titleSize: 56px;        /* mobile first */
   --titleTracking: -0.04em;
 
   /* Pills */
@@ -23,38 +23,13 @@
   --pillFont: 14px;
   --pillPadX: 12px;
 
-  /* Groups + rows */
+  /* Table */
   --groupLabelFont: 12px;
   --rowFont: 14px;
 
   /* Indicator dot */
   --dotSize: 10px;
 }
-
-/* Permanent compact mobile density */
-@media (max-width: 430px){
-  :root{
-    --pagePad: 6px;
-
-    /* Header */
-    --titleSize: 36px;
-
-    /* Pills */
-    --pillH: 26px;
-    --pillFont: 11px;
-    --pillPadX: 7px;
-
-    /* Groups + rows */
-    --groupLabelFont: 9px;
-    --rowFont: 11.5px;
-
-    --radius: 8px;
-    --shadow: rgba(0,0,0,0.12);
-
-    --dotSize: 8px;
-  }
-}
-
 @media (min-width: 900px){
   :root{
     --pagePad: 24px;
