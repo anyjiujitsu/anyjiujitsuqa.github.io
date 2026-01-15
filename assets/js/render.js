@@ -1,27 +1,9 @@
-export function renderStateMenu(stateListEl, allStates, selectedSet){
-  stateListEl.innerHTML = "";
-  for(const code of allStates){
-    const label = document.createElement("label");
-    label.className = "menu__item";
+// STEP 0 — Skeleton Reset
+// Render only. No state mutation.
 
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.value = code;
-    input.checked = selectedSet.has(code);
-
-    const span = document.createElement("span");
-    span.textContent = code;
-
-    label.appendChild(input);
-    label.appendChild(span);
-    stateListEl.appendChild(label);
-  }
-}
-
-export function renderGroups(root, rows){
-  const grouped = groupByState(rows);
-
+export function renderDirectoryGroups(root, rows){
   root.innerHTML = "";
+  const grouped = groupBy(rows, r => r.STATE || "—");
 
   for(const [stateCode, list] of grouped){
     const group = document.createElement("section");
@@ -35,7 +17,7 @@ export function renderGroups(root, rows){
     table.className = "table";
 
     for(const r of list){
-      table.appendChild(renderRow(r));
+      table.appendChild(renderDirectoryRow(r));
     }
 
     group.appendChild(label);
@@ -44,7 +26,7 @@ export function renderGroups(root, rows){
   }
 }
 
-function renderRow(r){
+function renderDirectoryRow(r){
   const row = document.createElement("div");
   row.className = "row";
 
@@ -81,13 +63,69 @@ function composeDays(r){
   return parts.join("  ");
 }
 
-function groupByState(rows){
+export function renderEventsGroups(root, rows){
+  // In STEP 0, Events are grouped by STATE like your spec.
+  root.innerHTML = "";
+  const grouped = groupBy(rows, r => (r.STATE || "UNKNOWN").toString().trim() || "UNKNOWN");
+
+  for(const [stateName, list] of grouped){
+    const group = document.createElement("section");
+    group.className = "group";
+
+    const label = document.createElement("div");
+    label.className = "group__label";
+    label.textContent = stateName;
+
+    const table = document.createElement("div");
+    table.className = "table";
+
+    // Minimal “2-line” event row in STEP 0, matching the compact look from your screenshot.
+    for(const r of list){
+      table.appendChild(renderEventRow(r));
+    }
+
+    group.appendChild(label);
+    group.appendChild(table);
+    root.appendChild(group);
+  }
+}
+
+function renderEventRow(r){
+  const row = document.createElement("div");
+  row.className = "row";
+
+  // Use same 3-column structure; keep conservative so CSS keeps it stable.
+  const a = document.createElement("div");
+  a.innerHTML = `
+    <div class="cell__name">${escapeHtml(r.TITLE || r.NAME || "Event")}</div>
+    <div class="cell__ig">${escapeHtml(r.WHERE || "")}</div>
+  `;
+
+  const b = document.createElement("div");
+  b.innerHTML = `
+    <div class="cell__city">${escapeHtml(r.CITY || "")}</div>
+    <div class="cell__state">${escapeHtml(r.STATE || "")}</div>
+  `;
+
+  const c = document.createElement("div");
+  c.innerHTML = `
+    <div class="cell__days">${escapeHtml(r.TYPE || "")}</div>
+    <div class="cell__ota">${escapeHtml(r.DATE || "")}</div>
+  `;
+
+  row.appendChild(a);
+  row.appendChild(b);
+  row.appendChild(c);
+  return row;
+}
+
+function groupBy(rows, keyFn){
   const m = new Map();
   for(const r of rows){
-    if(!m.has(r.STATE)) m.set(r.STATE, []);
-    m.get(r.STATE).push(r);
+    const k = String(keyFn(r) ?? "—");
+    if(!m.has(k)) m.set(k, []);
+    m.get(k).push(r);
   }
-  // stable order
   return [...m.entries()].sort((a,b)=> a[0].localeCompare(b[0]));
 }
 
@@ -99,4 +137,3 @@ function escapeHtml(s){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-
