@@ -1,7 +1,19 @@
+// state102.js — single source of truth (both views)
+
 export const state = {
-  view: "events",
-  index: { q: "", states: new Set(), openMat: "", guests: new Set() },
-  events: { q: "", year: new Set(), state: new Set(), type: new Set() },
+  view: "events", // View A first (Events)
+  index: {
+    q: "",
+    states: new Set(),
+    openMat: "", // "all"|"sat"|"sun"|""
+    guests: new Set(), // "welcomed"
+  },
+  events: {
+    q: "",
+    year: new Set(),
+    state: new Set(),
+    type: new Set(),
+  }
 };
 
 export function setView(v){ state.view = (v === "index") ? "index" : "events"; }
