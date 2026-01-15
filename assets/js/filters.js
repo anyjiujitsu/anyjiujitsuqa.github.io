@@ -1,44 +1,81 @@
-// filters102.js — natural language search only (no pills yet)
+// filters105.js — Search v2
+// - Case-insensitive
+// - Punctuation trimmed
+// - Comma-separated terms are ANDed (intersection): "2025, comp" => must match BOTH
+// - View A (Events) additionally matches group labels like "November 2025" derived from DATE
 
 function norm(s){
   return String(s ?? "")
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s,]+/gu, " ") // keep comma as term separator
+    // keep commas for splitting; remove other punctuation
+    .replace(/[^\p{L}\p{N}\s,]+/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function terms(q){
-  return norm(q).split(",").map(t=>t.trim()).filter(Boolean);
+function clauses(q){
+  return norm(q)
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
 }
 
-function hasText(hay, t){
-  return norm(hay).includes(t);
+function includesAllWords(hay, needle){
+  // needle may include spaces; require all words to be present (AND within clause)
+  const words = norm(needle).split(" ").filter(Boolean);
+  if(!words.length) return true;
+  const h = norm(hay);
+  return words.every(w => h.includes(w));
 }
 
+function monthYearLabel(dateStr){
+  const str = String(dateStr ?? "").trim();
+  if(!str) return "";
+  // Prefer MM/DD/YYYY (or M/D/YYYY) to avoid locale issues
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  let d = null;
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    const yy = Number(m[3]);
+    d = new Date(yy, mm-1, dd);
+  } else {
+    const tmp = new Date(str);
+    d = isNaN(tmp) ? null : tmp;
+  }
+  if(!d || isNaN(d)) return "";
+  return d.toLocaleString("en-US", { month: "long", year: "numeric" }).toLowerCase();
+}
+
+// ------------------ INDEX ------------------
 export function filterDirectory(rows, state){
-  const ts = terms(state.index.q);
-  if(!ts.length) return rows;
+  const cs = clauses(state.index.q);
+  if(!cs.length) return rows;
 
   return rows.filter(r=>{
-    return ts.some(t=>{
-      if(t === "sat" || t === "saturday") return !!(r.SAT && String(r.SAT).trim());
-      if(t === "sun" || t === "sunday") return !!(r.SUN && String(r.SUN).trim());
-      if(t === "open mat") return !!((r.SAT && String(r.SAT).trim()) || (r.SUN && String(r.SUN).trim()));
+    return cs.every(c=>{
+      // Special tokens (each clause can be a token or a normal text clause)
+      if(c === "sat" || c === "saturday") return !!(r.SAT && String(r.SAT).trim());
+      if(c === "sun" || c === "sunday") return !!(r.SUN && String(r.SUN).trim());
+      if(c === "open mat") return !!((r.SAT && String(r.SAT).trim()) || (r.SUN && String(r.SUN).trim()));
 
-      // text search across row
       const hay = r.searchText ?? `${r.STATE} ${r.CITY} ${r.NAME} ${r.IG} ${r.SAT} ${r.SUN} ${r.OTA}`;
-      return hasText(hay, t);
+      return includesAllWords(hay, c);
     });
   });
 }
 
+// ------------------ EVENTS ------------------
 export function filterEvents(rows, state){
-  const ts = terms(state.events.q);
-  if(!ts.length) return rows;
+  const cs = clauses(state.events.q);
+  if(!cs.length) return rows;
 
   return rows.filter(r=>{
-    const hay = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
-    return ts.some(t=> hasText(hay, t));
+    // Build a haystack that includes the computed month/year group label.
+    const group = monthYearLabel(r.DATE);
+    const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
+    const hay = `${base} ${group}`;
+
+    return cs.every(c => includesAllWords(hay, c));
   });
 }
