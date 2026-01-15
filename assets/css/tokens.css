@@ -32,17 +32,30 @@
 }
 @media (max-width: 430px){
   :root{
-    /* Mobile compact tuning â€” reduce need to pinch-zoom out */
-    --pagePad: 10px;
+    /* Permanent compact mobile density (match ~50% iOS zoom feel at 100% zoom) */
+    --pagePad: 8px;
+
+    /* Header */
     --titleSize: 44px;
-    --pillH: 32px;
-    --pillFont: 13px;
-    --pillPadX: 10px;
-    --groupLabelFont: 11px;
-    --rowFont: 13px;
-    --dotSize: 10px; /* keep dot legible */
+
+    /* Pills / search */
+    --pillH: 30px;
+    --pillFont: 12px;
+    --pillPadX: 8px;
+
+    /* Group + rows */
+    --groupLabelFont: 10px;
+    --rowFont: 12.5px;
+
+    /* Card feel */
+    --radius: 10px;
+    --shadow: rgba(0,0,0,0.12);
+
+    /* Indicator dot */
+    --dotSize: 9px;
   }
 }
+
 
 @media (min-width: 900px){
   :root{
