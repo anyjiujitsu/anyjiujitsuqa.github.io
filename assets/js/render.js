@@ -1,9 +1,220 @@
-// render103.js — Events grouped by Month-Year, Index grouped by State
+// render104.js — Restore original DOM/CSS contract + Events grouped by Month-Year
+// Exports MUST match main.js imports: renderDirectoryGroups, renderEventsGroups
 
-function el(tag, cls){
-  const n = document.createElement(tag);
-  if(cls) n.className = cls;
-  return n;
+export function renderStateMenu(stateListEl, allStates, selectedSet){
+  if(!stateListEl) return;
+  stateListEl.innerHTML = "";
+  for(const code of allStates){
+    const label = document.createElement("label");
+    label.className = "menu__item";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = code;
+    input.checked = selectedSet.has(code);
+
+    const span = document.createElement("span");
+    span.textContent = code;
+
+    label.appendChild(input);
+    label.appendChild(span);
+    stateListEl.appendChild(label);
+  }
+}
+
+// -------------------- INDEX (group by STATE) --------------------
+export function renderDirectoryGroups(root, rows){
+  if(!root) return;
+  const grouped = groupByKey(rows, (r)=> (r.STATE || "—").toUpperCase());
+  root.innerHTML = "";
+
+  for(const [labelText, list] of grouped){
+    const group = document.createElement("section");
+    group.className = "group";
+
+    const label = document.createElement("div");
+    label.className = "group__label";
+    label.textContent = labelText;
+
+    const table = document.createElement("div");
+    table.className = "table";
+
+    for(const r of list){
+      table.appendChild(renderIndexRow(r));
+    }
+
+    group.appendChild(label);
+    group.appendChild(table);
+    root.appendChild(group);
+  }
+}
+
+function renderIndexRow(r){
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const a = document.createElement("div");
+  a.innerHTML = `
+    <div class="cell__name">${escapeHtml(r.NAME)}</div>
+    <div class="cell__ig">${escapeHtml(r.IG)}</div>
+  `;
+
+  const b = document.createElement("div");
+  b.innerHTML = `
+    <div class="cell__city">${escapeHtml(r.CITY)}</div>
+    <div class="cell__state">${escapeHtml(r.STATE)}</div>
+  `;
+
+  const c = document.createElement("div");
+  c.innerHTML = `
+    <div class="cell__days">${escapeHtml(composeDays(r))}</div>
+    <div class="cell__ota">OTA: ${escapeHtml(r.OTA || "—")}</div>
+  `;
+
+  row.appendChild(a);
+  row.appendChild(b);
+  row.appendChild(c);
+  return row;
+}
+
+function composeDays(r){
+  const parts = [];
+  if(r.SAT) parts.push(`Sat. ${r.SAT}`);
+  else parts.push("Sat.");
+  if(r.SUN) parts.push(`Sun. ${r.SUN}`);
+  else parts.push("Sun.");
+  return parts.join("  ");
+}
+
+// -------------------- EVENTS (group by MONTH YEAR) --------------------
+export function renderEventsGroups(root, rows){
+  if(!root) return;
+
+  const grouped = groupEventsByMonth(rows);
+  root.innerHTML = "";
+
+  for(const [labelText, list] of grouped){
+    const group = document.createElement("section");
+    group.className = "group";
+
+    const label = document.createElement("div");
+    label.className = "group__label";
+    label.textContent = labelText;
+
+    const table = document.createElement("div");
+    table.className = "table";
+
+    // sort within group by date ascending (unknowns last)
+    const sorted = [...list].sort((a,b)=>{
+      const da = parseEventDate(a.DATE)?.getTime() ?? Number.POSITIVE_INFINITY;
+      const db = parseEventDate(b.DATE)?.getTime() ?? Number.POSITIVE_INFINITY;
+      return da - db;
+    });
+
+    for(const r of sorted){
+      table.appendChild(renderEventRow(r));
+    }
+
+    group.appendChild(label);
+    group.appendChild(table);
+    root.appendChild(group);
+  }
+}
+
+function renderEventRow(r){
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const a = document.createElement("div");
+  a.innerHTML = `
+    <div class="cell__name">${escapeHtml(r.TYPE || "—")}</div>
+    <div class="cell__ig">${escapeHtml(r.GYM || r.WHERE || "—")}</div>
+  `;
+
+  const b = document.createElement("div");
+  b.innerHTML = `
+    <div class="cell__city">${escapeHtml(r.CITY || "—")}</div>
+    <div class="cell__state">${escapeHtml(r.STATE || "—")}</div>
+  `;
+
+  const c = document.createElement("div");
+  c.innerHTML = `
+    <div class="cell__days">${escapeHtml(r.DATE || "")}</div>
+    <div class="cell__ota">${escapeHtml(r.YEAR || "")}</div>
+  `;
+
+  row.appendChild(a);
+  row.appendChild(b);
+  row.appendChild(c);
+  return row;
+}
+
+function groupEventsByMonth(rows){
+  const m = new Map();
+
+  for(const r of rows){
+    const d = parseEventDate(r.DATE);
+    const key = d ? formatMonthYear(d) : "Unknown Date";
+    if(!m.has(key)) m.set(key, []);
+    m.get(key).push(r);
+  }
+
+  // sort groups by their earliest valid date (descending). Unknown last.
+  const entries = [...m.entries()].sort((a,b)=>{
+    if(a[0] === "Unknown Date") return 1;
+    if(b[0] === "Unknown Date") return -1;
+
+    const da = minDateIn(a[1]);
+    const db = minDateIn(b[1]);
+    const ta = da ? da.getTime() : -Infinity;
+    const tb = db ? db.getTime() : -Infinity;
+    return tb - ta;
+  });
+
+  return entries;
+}
+
+function minDateIn(list){
+  let best = null;
+  for(const r of list){
+    const d = parseEventDate(r.DATE);
+    if(!d) continue;
+    if(!best || d < best) best = d;
+  }
+  return best;
+}
+
+function parseEventDate(s){
+  const str = String(s ?? "").trim();
+  if(!str) return null;
+
+  // Accept MM/DD/YYYY (or M/D/YYYY)
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    const yy = Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+
+function formatMonthYear(d){
+  return d.toLocaleString("en-US", { month: "long", year: "numeric" });
+}
+
+// -------------------- shared helpers --------------------
+function groupByKey(rows, keyFn){
+  const m = new Map();
+  for(const r of rows){
+    const k = keyFn(r);
+    if(!m.has(k)) m.set(k, []);
+    m.get(k).push(r);
+  }
+  return [...m.entries()].sort((a,b)=> a[0].localeCompare(b[0]));
 }
 
 function escapeHtml(s){
@@ -13,112 +224,4 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-}
-
-// ---------- INDEX (by STATE) ----------
-function groupByState(rows){
-  const m = new Map();
-  for(const r of rows){
-    const k = (r.STATE || "—").toUpperCase();
-    if(!m.has(k)) m.set(k, []);
-    m.get(k).push(r);
-  }
-  return [...m.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
-}
-
-export function renderDirectoryGroups(root, rows){
-  if(!root) return;
-  root.innerHTML = "";
-  const groups = groupByState(rows);
-
-  for(const [stateCode, items] of groups){
-    const g = el("section","group");
-    const h = el("div","group__header");
-    const t = el("div","group__title");
-    t.textContent = stateCode;
-    h.appendChild(t);
-    g.appendChild(h);
-
-    const list = el("div","rows");
-    for(const r of items){
-      const row = el("div","row");
-      row.innerHTML = `
-        <div class="row__main">
-          <div class="row__name">${escapeHtml(r.NAME)}</div>
-          <div class="row__meta">${escapeHtml(r.CITY)} • ${escapeHtml(r.IG)}</div>
-        </div>
-        <div class="row__cols">
-          <div class="row__col">${escapeHtml(r.SAT)}</div>
-          <div class="row__col">${escapeHtml(r.SUN)}</div>
-          <div class="row__col">${escapeHtml(r.OTA)}</div>
-        </div>
-      `;
-      list.appendChild(row);
-    }
-    g.appendChild(list);
-    root.appendChild(g);
-  }
-}
-
-// ---------- EVENTS (by MONTH YEAR) ----------
-function parseDate(d){
-  const dt = new Date(d);
-  return isNaN(dt) ? null : dt;
-}
-
-function monthKey(d){
-  return d.toLocaleString("en-US",{month:"long", year:"numeric"});
-}
-
-function groupByMonth(rows){
-  const m = new Map();
-  for(const r of rows){
-    const dt = parseDate(r.DATE);
-    const key = dt ? monthKey(dt) : "Unknown Date";
-    if(!m.has(key)) m.set(key, []);
-    m.get(key).push(r);
-  }
-
-  // sort by actual date descending
-  return [...m.entries()].sort((a,b)=>{
-    if(a[0]==="Unknown Date") return 1;
-    if(b[0]==="Unknown Date") return -1;
-    const da = parseDate(a[1][0].DATE);
-    const db = parseDate(b[1][0].DATE);
-    return db - da;
-  });
-}
-
-export function renderEventsGroups(root, rows){
-  if(!root) return;
-  root.innerHTML = "";
-
-  const groups = groupByMonth(rows);
-
-  for(const [label, items] of groups){
-    const g = el("section","group");
-    const h = el("div","group__header");
-    const t = el("div","group__title");
-    t.textContent = label;
-    h.appendChild(t);
-    g.appendChild(h);
-
-    const list = el("div","rows");
-    for(const r of items){
-      const row = el("div","row");
-      row.innerHTML = `
-        <div class="row__main">
-          <div class="row__name">${escapeHtml(r.TYPE || "—")}</div>
-          <div class="row__meta">${escapeHtml(r.GYM || "—")} • ${escapeHtml(r.CITY || "—")} • ${escapeHtml(r.STATE || "")}</div>
-        </div>
-        <div class="row__cols">
-          <div class="row__col">${escapeHtml(r.DATE || "")}</div>
-          <div class="row__col">${escapeHtml(r.YEAR || "")}</div>
-        </div>
-      `;
-      list.appendChild(row);
-    }
-    g.appendChild(list);
-    root.appendChild(g);
-  }
 }
