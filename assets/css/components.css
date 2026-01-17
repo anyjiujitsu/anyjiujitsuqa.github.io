@@ -56,8 +56,8 @@
 .header__logo img{
   display: block;
   width: auto;
-  max-width: 110px;
-  max-height: 28px;
+  max-width: 130px;
+  max-height: 32px;
   object-fit: contain;
 }
 
