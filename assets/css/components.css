@@ -13,61 +13,19 @@
   text-transform: uppercase;
 }
 
-/*
-  HEADER BRAND STACK
-  Goal: the ANY logo sits ABOVE the page title (stacked), aligned to the same left edge as the title,
-  while the view toggle stays on the right. Implemented with CSS grid to avoid HTML changes.
-*/
-.header__inner{
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  align-items: start;
-  column-gap: 16px;
-}
-
-/* Left column, row 1 */
 .header__logo{
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  min-width: unset;
-  margin: 0 0 4px 0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  min-width: 56px;
 }
 
-/* Left column, row 2 */
-.header__title{
-  grid-column: 1;
-  grid-row: 2;
-}
-
-/* Right column spans both rows */
-.viewToggle{
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  justify-self: end;
-  align-self: center;
-}
-
-/* Keep the logo as a small "mark" */
-.header__logo img{
-  display: block;
-  width: auto;
-  max-width: 130px;
-  max-height: 32px;
-  object-fit: contain;
-}
-
-/* If the text placeholder is ever used again, keep it compact */
 .header__logoText{
+  font-size: var(--logoMarkSize);
+  line-height: 1;
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
-  font-size: 14px;
-  line-height: 1;
 }
 
 /* VIEW TOGGLE (tabs) */
@@ -388,25 +346,4 @@ input[type="search"]{ font-size:16px; }
   }
   .pill{ gap: 2px; }
   .pill__caret{ font-size: 6.6px; margin-left: 1px; }
-}
-
-/* --- Iter135: restore Fixture header font + prevent logo blow-ups --- */
-.header__title{
-  font-family: "Fixture", "Fixture Display", Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* If the header logo is an <img>, cap its rendered size so it can never take over the page. */
-.header__logo img{
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 84px;
-  max-height: 34px;
-}
-
-@media (max-width: 430px){
-  .header__logo img{
-    max-width: 64px;
-    max-height: 26px;
-  }
 }
