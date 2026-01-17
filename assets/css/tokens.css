@@ -14,6 +14,9 @@
   --pagePad: 14px;
   --maxW: 900px;
 
+  /* Sticky stack offsets (header height approximation) */
+  --headerStickyOffset: 84px; /* desktop/tablet */
+
   /* Header */
   --titleSize: 58px;
   --titleTracking: -0.04em;
@@ -34,6 +37,7 @@
 /* Permanent compact mobile density */
 @media (max-width: 430px){
   :root{
+    --headerStickyOffset: 54px; /* mobile */
     /* Permanent compact mobile density (iter120) Ã¢â‚¬â€ stronger */
     --pagePad: 3px;
 
