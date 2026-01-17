@@ -15,9 +15,16 @@
 
 .header__logo{
   display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  min-width: 56px;
+  align-items:flex-start;
+  justify-content:flex-start;
+  min-width: 0;
+}
+
+/* Ensure the logo never explodes in size */
+.header__logo img{
+  width: 56px;
+  height: auto;
+  display: block;
 }
 
 .header__logoText{
@@ -344,13 +351,4 @@ input[type="search"]{ font-size:16px; }
   }
   .pill{ gap: 2px; }
   .pill__caret{ font-size: 6.6px; margin-left: 1px; }
-}
-/* iter131: align logo centered above header title */
-.header__inner{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.header__logo{
-  margin-bottom: 6px;
 }
