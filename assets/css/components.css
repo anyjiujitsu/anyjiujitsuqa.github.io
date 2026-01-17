@@ -13,47 +13,59 @@
   text-transform: uppercase;
 }
 
-.header__logo{
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  min-width: 56px;
+/*
+  HEADER BRAND STACK
+  Goal: the ANY logo sits ABOVE the page title (stacked), aligned to the same left edge as the title,
+  while the view toggle stays on the right. Implemented with CSS grid to avoid HTML changes.
+*/
+.header__inner{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: start;
+  column-gap: 16px;
 }
 
+/* Left column, row 1 */
+.header__logo{
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  min-width: unset;
+  margin: 0 0 4px 0;
+}
+
+/* Left column, row 2 */
+.header__title{
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/* Right column spans both rows */
+.viewToggle{
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  align-self: center;
+}
+
+/* Keep the logo as a small "mark" */
+.header__logo img{
+  display: block;
+  width: auto;
+  max-width: 110px;
+  max-height: 28px;
+  object-fit: contain;
+}
+
+/* If the text placeholder is ever used again, keep it compact */
 .header__logoText{
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
-}
-
-/*
-  HEADER LOGO ALIGNMENT (all breakpoints)
-  Goal: keep the ANY logo as a small mark positioned visually LEFT and ABOVE the big page title,
-  without impacting the view toggle layout.
-*/
-.header__inner{ position: relative; }
-
-/* Take the logo out of the flex flow so title stays left and view toggle stays right */
-.header__logo{
-  position: absolute;
-  left: 0;
-  top: 0;
-  min-width: unset; /* override earlier */
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-/* Slightly larger than before, but still "mark" sized */
-.header__logo img{
-  display:block;
-  width: auto;
-  max-width: 84px;
-  max-height: 34px;
-  object-fit: contain;
-}
-
-/* If you're temporarily using the text placeholder, keep it compact */
-.header__logoText{
   font-size: 14px;
   line-height: 1;
 }
