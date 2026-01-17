@@ -34,11 +34,10 @@
 /* Permanent compact mobile density */
 @media (max-width: 430px){
   :root{
-    /* Permanent compact mobile density (iter118) â€” stronger */
     --pagePad: 4px;
 
     /* Header */
-    --titleSize: 32px;
+    --titleSize: 30px;
 
     /* Pills */
     --pillH: 22px;
@@ -55,9 +54,6 @@
     --dotSize: 7px;
   }
 }
-
-
-
 @media (min-width: 900px){
   :root{
     --pagePad: 24px;
