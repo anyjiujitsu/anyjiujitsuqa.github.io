@@ -6,7 +6,7 @@
 .header{
   position: sticky;
   top: 0;
-  z-index: 60;
+  z-index: 50;
   background: var(--bg);
   padding-top: env(safe-area-inset-top);
 }
@@ -14,7 +14,7 @@
 .header__inner{
   max-width: var(--maxW);
   margin: 0 auto;
-  padding: 10px var(--pagePad) 0px;
+  padding: 10px var(--pagePad) 6px;
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
@@ -23,8 +23,8 @@
 
 .filters{
   position: sticky;
-  top: calc(env(safe-area-inset-top) + var(--headerStickyOffset));
-  z-index: 55;
+  top: calc(env(safe-area-inset-top) + 0px);
+  z-index: 40;
   background: var(--green);
   box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
@@ -45,10 +45,4 @@
   max-width: var(--maxW);
   margin: 0 auto;
   padding: 12px var(--pagePad) 48px;
-}
-
-/* iter129: header text sits flush to filters; filters remain sticky under header */
-@media (max-width: 430px){
-  .header__inner{ padding-bottom: 0px; }
-  .filters__inner{ padding-top: 0px; padding-bottom: 8px; }
 }
