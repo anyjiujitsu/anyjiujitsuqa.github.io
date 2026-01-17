@@ -1,3 +1,32 @@
+/*
+  Base styles
+
+  Fixture display font (for the big EVENTS / INDEX header text)
+  -----------------------------------------------------------
+  To make this render consistently for all users, add these files:
+
+    assets/fonts/Fixture-Black.woff2
+    assets/fonts/Fixture-Bold.woff2
+
+  (You must supply these files yourself due to font licensing.)
+*/
+
+@font-face {
+  font-family: 'Fixture';
+  src: url('../fonts/Fixture-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fixture';
+  src: url('../fonts/Fixture-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 *{ box-sizing: border-box; }
 html, body{ margin:0; padding:0; }
 body{
