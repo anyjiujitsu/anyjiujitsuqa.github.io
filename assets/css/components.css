@@ -26,6 +26,38 @@
   letter-spacing: 0.10em;
 }
 
+/*
+  HEADER LOGO ALIGNMENT (all breakpoints)
+  Goal: keep the ANY logo as a small mark positioned visually LEFT and ABOVE the big page title,
+  without impacting the view toggle layout.
+*/
+.header__inner{ position: relative; }
+
+/* Take the logo out of the flex flow so title stays left and view toggle stays right */
+.header__logo{
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: unset; /* override earlier */
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Slightly larger than before, but still "mark" sized */
+.header__logo img{
+  display:block;
+  width: auto;
+  max-width: 84px;
+  max-height: 34px;
+  object-fit: contain;
+}
+
+/* If you're temporarily using the text placeholder, keep it compact */
+.header__logoText{
+  font-size: 14px;
+  line-height: 1;
+}
+
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
   position: relative;
@@ -356,13 +388,13 @@ input[type="search"]{ font-size:16px; }
   display: block;
   width: auto;
   height: auto;
-  max-width: 60px;
-  max-height: 24px;
+  max-width: 84px;
+  max-height: 34px;
 }
 
 @media (max-width: 430px){
   .header__logo img{
-    max-width: 44px;
-    max-height: 18px;
+    max-width: 64px;
+    max-height: 26px;
   }
 }
