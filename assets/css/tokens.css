@@ -18,6 +18,7 @@
   --titleSize: 58px;
   --titleTracking: -0.04em;
 
+  --logoMarkSize: 18px;
   /* Pills */
   --pillH: 36px;
   --pillFont: 14px;
@@ -40,6 +41,7 @@
     /* Header */
     --titleSize: 30px;
 
+    --logoMarkSize: 13px;
     /* Pills */
     --pillH: 20px;
     --pillFont: 9.5px;
@@ -62,6 +64,7 @@
   :root{
     --pagePad: 24px;
     --titleSize: 72px;
+    --logoMarkSize: 20px;
     --pillH: 40px;
     --pillFont: 14px;
     --rowFont: 14px;
