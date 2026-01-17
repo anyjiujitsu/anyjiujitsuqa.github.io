@@ -5,6 +5,8 @@
 /* HEADER */
 .header__title{
   margin: 0;
+  /* Match the reference (index245.html): use Fixture for the big header text */
+  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: var(--titleSize);
   letter-spacing: var(--titleTracking);
   line-height: 0.9;
@@ -13,24 +15,11 @@
   text-transform: uppercase;
 }
 
-.header__brand{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap: 4px;
-}
-
 .header__logo{
   display:flex;
-  align-items:flex-start;
-  justify-content:flex-start;
-}
-
-.header__logo img{
-  height: 26px;
-  width: auto;
-  max-width: 140px;
-  display:block;
+  align-items:flex-end;
+  justify-content:center;
+  min-width: 56px;
 }
 
 .header__logoText{
@@ -226,6 +215,7 @@
 
 /* MOBILE: tighter spacing + ensure header fits */
 @media (max-width: 430px){
+  /* tighter density (iter114) */
   .header{ padding-top: 10px; padding-bottom: 6px; }
   .header__inner{ gap: 10px; }
   .nav{ padding-top: 8px; padding-bottom: 8px; }
@@ -235,6 +225,10 @@
   .group__label{ margin-bottom: 6px; letter-spacing: .14em; }
   .row{ padding-top: 10px; padding-bottom: 10px; }
   .cell__meta{ margin-top: 2px; }
+
+  .header__logo{ min-width: 44px; }
+  .header__logoText{ font-size: 12px; }
+
   .viewToggle{ padding: 5px; gap: 5px; }
   .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
 
@@ -254,8 +248,8 @@ input[type="search"]{ font-size:16px; }
   .header{ padding-top: 5px; padding-bottom: 3px; }
   .header__inner{ gap: 8px; }
   .header__title{ line-height: 0.95; }
-  .header__brand{ gap: 2px; }
-  .header__logo img{ height: 18px; width: auto; max-width: 120px; }
+  .header__logo{ min-width: 34px; }
+  .header__logo img{ width: 28px; height: auto; }
 
   /* View toggle pill */
   .viewToggle{ padding: 3px; gap: 3px; border-radius: 999px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
@@ -352,8 +346,4 @@ input[type="search"]{ font-size:16px; }
   }
   .pill{ gap: 2px; }
   .pill__caret{ font-size: 6.6px; margin-left: 1px; }
-}
-
-@media (max-width: 430px){
-  .header__brand{ gap: 3px; }
 }
