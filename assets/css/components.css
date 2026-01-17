@@ -1,4 +1,4 @@
-/* components113.css â€” full override-ready component styles.
+/* components113.css Ã¢â‚¬â€ full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
@@ -240,3 +240,40 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
+/* MOBILE: ultra-compact density (iter118) */
+@media (max-width: 430px){
+  .header{ padding-top: 6px; padding-bottom: 4px; }
+  .header__inner{ gap: 8px; }
+  .header__logo{ min-width: 36px; }
+  .header__logo img{ width: 30px; height: auto; }
+
+  .viewToggle{ padding: 4px; gap: 4px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
+  .viewToggle__tab{ padding: 6px 10px; font-size: 10px; letter-spacing: 0.07em; }
+  .viewToggle__thumb{ top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); }
+
+  .nav{ padding-top: 5px; padding-bottom: 5px; }
+  .nav__inner{ gap: 8px; }
+
+  .pill{ gap: 5px; border-width: 1px; box-shadow: 0 5px 10px rgba(0,0,0,0.09); }
+  .pill--search{ min-width: 190px; }
+
+  /* visually shrink input while keeping computed font-size >=16px (prevents iOS zoom) */
+  .pill__input{
+    font-size: 16px;
+    transform: scale(0.82);
+    transform-origin: left center;
+    width: 122%;
+  }
+
+  .pill__icon{ font-size: 12px; }
+  .pill__clear{ font-size: 18px; padding: 0 2px; }
+  .pill__caret{ font-size: 9px; }
+  .pill__dot{ margin-left: 4px; }
+
+  .group{ margin-top: 8px; }
+  .group__label{ margin: 10px 0 6px; letter-spacing: 0.14em; }
+
+  .table{ box-shadow: 0 7px 14px var(--shadow); }
+  .row{ padding: 7px 9px; gap: 7px; }
+  .cell__ig, .cell__state, .cell__ota{ margin-top: 1px; }
+}
