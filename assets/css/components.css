@@ -5,8 +5,6 @@
 /* HEADER */
 .header__title{
   margin: 0;
-  /* Match the reference (index245.html): use Fixture for the big header text */
-  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: var(--titleSize);
   letter-spacing: var(--titleTracking);
   line-height: 0.9;
@@ -346,4 +344,25 @@ input[type="search"]{ font-size:16px; }
   }
   .pill{ gap: 2px; }
   .pill__caret{ font-size: 6.6px; margin-left: 1px; }
+}
+
+/* --- Iter135: restore Fixture header font + prevent logo blow-ups --- */
+.header__title{
+  font-family: "Fixture", "Fixture Display", Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* If the header logo is an <img>, cap its rendered size so it can never take over the page. */
+.header__logo img{
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 60px;
+  max-height: 24px;
+}
+
+@media (max-width: 430px){
+  .header__logo img{
+    max-width: 44px;
+    max-height: 18px;
+  }
 }
