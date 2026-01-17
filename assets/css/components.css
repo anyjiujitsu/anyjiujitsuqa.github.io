@@ -240,42 +240,48 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
-
-/* MOBILE: ultra-compact density (iter119) â€” header/nav/pills/slider */
+/* MOBILE: extra-compact density (iter120) â€” shrink header/nav/pills/toggle + card body */
 @media (max-width: 430px){
-  .header{ padding-top: 6px; padding-bottom: 4px; }
+  /* Header */
+  .header{ padding-top: 5px; padding-bottom: 3px; }
   .header__inner{ gap: 8px; }
-  .header__logo{ min-width: 36px; }
-  .header__logoText{ font-size: 10px; }
+  .header__title{ line-height: 0.95; }
+  .header__logo{ min-width: 34px; }
+  .header__logo img{ width: 28px; height: auto; }
 
-  .viewToggle{ padding: 4px; gap: 4px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
-  .viewToggle__tab{ padding: 6px 10px; font-size: 10px; letter-spacing: 0.07em; }
-  .viewToggle__thumb{ top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); }
+  /* View toggle pill */
+  .viewToggle{ padding: 3px; gap: 3px; border-radius: 999px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
+  .viewToggle__tab{ padding: 5px 9px; font-size: 9.5px; letter-spacing: 0.07em; }
+  .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
 
-  .nav{ padding-top: 5px; padding-bottom: 5px; }
-  .nav__inner{ gap: 8px; }
+  /* Nav */
+  .nav{ padding-top: 4px; padding-bottom: 4px; }
+  .nav__inner{ gap: 7px; }
 
-  .pill{ gap: 5px; box-shadow: 0 5px 10px rgba(0,0,0,0.09); border-width: 1px; }
-  .pill--search{ min-width: 200px; }
+  /* Pills */
+  .pill{ gap: 4px; border-width: 1px; box-shadow: 0 5px 10px rgba(0,0,0,0.09); }
+  .pill--search{ min-width: 178px; }
+  .pill__icon{ font-size: 11px; margin-left: 2px; }
+  .pill__clear{ font-size: 17px; padding: 0 2px; }
+  .pill__caret{ font-size: 8px; }
+  .pill__dot{ margin-left: 3px; }
 
-  /* keep computed 16px (no iOS zoom), but visually smaller */
+  /* Search input: prevent iOS zoom while visually smaller */
   .pill__input{
     font-size: 16px;
-    transform: scale(0.74);
+    transform: scale(0.76);
     transform-origin: left center;
-    width: 135%;
+    width: 132%;
   }
 
-  .pill__icon{ font-size: 12px; }
-  .pill__label{ font-weight: 700; }
-  .pill__clear{ font-size: 18px; padding: 0 2px; }
-  .pill__caret{ font-size: 9px; }
-  .pill__dot{ margin-left: 4px; }
+  /* Counter + groups */
+  .count{ font-size: 12px; margin: 10px 0 10px; }
+  .group{ margin-top: 6px; }
+  .group__label{ margin: 8px 0 5px; letter-spacing: 0.16em; }
 
-  .group{ margin-top: 8px; }
-  .group__label{ margin: 10px 0 6px; letter-spacing: 0.14em; }
-
-  .table{ box-shadow: 0 7px 14px var(--shadow); }
-  .row{ padding: 7px 9px; gap: 7px; }
+  /* Card body */
+  .table{ border-radius: 10px; box-shadow: 0 7px 14px var(--shadow); }
+  .row{ padding: 6px 8px; gap: 6px; }
+  .cell__meta{ margin-top: 1px; }
   .cell__ig, .cell__state, .cell__ota{ margin-top: 1px; }
 }
