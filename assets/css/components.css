@@ -5,7 +5,6 @@
 /* HEADER */
 .header__title{
   margin: 0;
-  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: var(--titleSize);
   letter-spacing: var(--titleTracking);
   line-height: 0.9;
@@ -19,13 +18,6 @@
   align-items:flex-end;
   justify-content:center;
   min-width: 56px;
-}
-
-.header__logoImg{
-  display:block;
-  width: auto;
-  height: calc(var(--titleSize) * 0.55);
-  max-height: 56px;
 }
 
 .header__logoText{
@@ -352,4 +344,13 @@ input[type="search"]{ font-size:16px; }
   }
   .pill{ gap: 2px; }
   .pill__caret{ font-size: 6.6px; margin-left: 1px; }
+}
+/* iter131: align logo centered above header title */
+.header__inner{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.header__logo{
+  margin-bottom: 6px;
 }
