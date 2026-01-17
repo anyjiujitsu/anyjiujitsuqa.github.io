@@ -313,3 +313,17 @@ input[type="search"]{ font-size:16px; }
   .pill{ gap: 3px; }
   .pill__caret{ font-size: 7.5px; }
 }
+/* MOBILE: extra-narrow dropdown pills so ALL controls fit comfortably (iter123) */
+@media (max-width: 430px){
+  .pill:not(.pill--search){
+    min-width: 70px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .pill__label{
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  .pill{ gap: 2px; }
+  .pill__caret{ font-size: 7px; }
+}
