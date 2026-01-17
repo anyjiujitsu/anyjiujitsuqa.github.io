@@ -34,26 +34,30 @@
 /* Permanent compact mobile density */
 @media (max-width: 430px){
   :root{
-    --pagePad: 4px;
+    /* Permanent compact mobile density (iter120) â€” stronger */
+    --pagePad: 3px;
 
     /* Header */
     --titleSize: 30px;
 
     /* Pills */
-    --pillH: 22px;
-    --pillFont: 10px;
-    --pillPadX: 6px;
+    --pillH: 20px;
+    --pillFont: 9.5px;
+    --pillPadX: 5px;
 
     /* Groups + rows */
-    --groupLabelFont: 8px;
-    --rowFont: 10.5px;
+    --groupLabelFont: 7.5px;
+    --rowFont: 10px;
 
     --radius: 7px;
     --shadow: rgba(0,0,0,0.10);
 
-    --dotSize: 7px;
+    --dotSize: 6px;
   }
 }
+
+
+
 @media (min-width: 900px){
   :root{
     --pagePad: 24px;
