@@ -55,10 +55,12 @@
 /* Keep the logo as a small "mark" */
 .header__logo img{
   display: block;
+  /* IMPORTANT: max-* alone will NOT enlarge a smaller intrinsic image.
+     Use an explicit height so --logoMarkSize predictably scales the mark. */
+  height: var(--logoMarkSize, 16px);
   width: auto;
-  /* Slightly larger mark without ever allowing it to blow up */
-  max-width: 140px;
-  max-height: 38px;
+  max-height: var(--logoMarkSize, 16px);
+  max-width: 128px;
   object-fit: contain;
 }
 
