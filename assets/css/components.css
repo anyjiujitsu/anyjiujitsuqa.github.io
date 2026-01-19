@@ -402,3 +402,23 @@ input[type="search"]{ font-size:16px; }
     border-radius: 999px !important;
   }
 }
+
+
+/* --- v207: Mobile view toggle less wide, slightly taller, smaller type (match desktop proportions) --- */
+@media (max-width: 430px){
+  .viewToggle{
+    padding: 2px !important;
+    gap: 2px !important;
+  }
+  .viewToggle__tab{
+    padding: 5px 6px !important;   /* taller, less wide */
+    font-size: 8.5px !important;    /* smaller type */
+    letter-spacing: 0.045em !important;
+  }
+  .viewToggle__thumb{
+    top: 2px !important;
+    bottom: 2px !important;
+    left: 2px !important;
+    width: calc(50% - 2px) !important;
+  }
+}
