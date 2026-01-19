@@ -22,8 +22,7 @@
 }
 
 .filters{
-  position: sticky;
-  top: calc(env(safe-area-inset-top) + 0px);
+  position: relative;
   z-index: 40;
   background: var(--green);
   box-shadow: 0 6px 14px rgba(0,0,0,0.12);
