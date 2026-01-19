@@ -28,6 +28,12 @@ function setViewUI(view){
   $("tabEvents")?.setAttribute("aria-selected", view === "events" ? "true" : "false");
   $("tabIndex")?.setAttribute("aria-selected", view === "index" ? "true" : "false");
 
+  // Sticky filter bars (now outside the slider)
+  const evFilters = document.getElementById("eventsFilters");
+  const idxFilters = document.getElementById("filters");
+  if(evFilters) evFilters.hidden = (view !== "events");
+  if(idxFilters) idxFilters.hidden = (view !== "index");
+
   const title = $("viewTitle");
   if(title) title.textContent = (view === "events") ? "EVENTS" : "INDEX";
 
