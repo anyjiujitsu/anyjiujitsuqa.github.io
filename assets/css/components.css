@@ -1,4 +1,4 @@
-/* components113.css ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â full override-ready component styles.
+/* components113.css ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
@@ -48,12 +48,12 @@
   z-index: 2;
   border: 0;
   background: transparent;
-  padding: 10px 16px;
+  padding:8.0px 12.0px;
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 12px;
+  font-size:11.0px;
   color: rgba(0,0,0,0.45);
 }
 
@@ -228,7 +228,7 @@
   .header__logoText{ font-size: 12px; }
 
   .viewToggle{ padding: 5px; gap: 5px; }
-  .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
+  .viewToggle__tab{ padding:6.0px 8.0px; font-size:10.0px; }
 
   .pill{ gap: 6px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
   .pill--search{ min-width: 220px; }
@@ -240,7 +240,7 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
-/* MOBILE: extra-compact density (iter120) Ã¢â‚¬â€ shrink header/nav/pills/toggle + card body */
+/* MOBILE: extra-compact density (iter120) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â shrink header/nav/pills/toggle + card body */
 @media (max-width: 430px){
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
@@ -251,7 +251,7 @@ input[type="search"]{ font-size:16px; }
 
   /* View toggle pill */
   .viewToggle{ padding: 3px; gap: 3px; border-radius: 999px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
-  .viewToggle__tab{ padding: 5px 9px; font-size: 9.5px; letter-spacing: 0.07em; }
+  .viewToggle__tab{ padding:3.0px 5.0px; font-size:8.5px; letter-spacing: 0.07em; }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
 
   /* Nav */
