@@ -369,3 +369,6 @@ input[type="search"]{ font-size:16px; }
     letter-spacing: 0.06em !important;
   }
 }
+@media (max-width: 430px){
+  .viewToggle__tab{ font-size: 9px !important; }
+}
