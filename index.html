@@ -37,14 +37,11 @@
           <div class="viewToggle__thumb" aria-hidden="true"></div>
         </div>
       </div>
-    </header>
+    
 
-    <div class="viewShell" id="viewShell">
-      <div class="viewSlider" id="viewSlider">
-
-        <!-- VIEW A: EVENTS (LEFT / FIRST) -->
-        <div class="viewPanel" id="viewEvents" aria-label="Events">
-          <nav class="filters" aria-label="Events filters">
+    <!-- Sticky Filter Bars (locked with header) -->
+    <div class="stickyFilters" id="stickyFilters">
+      <nav class="filters" id="eventsFilters" aria-label="Events filters">
             <div class="filters__inner">
               <!-- Natural language search -->
               <div class="pill pill--search">
@@ -104,18 +101,7 @@
               </div>
             </div>
           </nav>
-
-          <main class="content" aria-label="Events">
-            <div class="content__inner">
-              <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
-              <div id="eventsRoot"></div>
-            </div>
-          </main>
-        </div>
-
-        <!-- VIEW B: INDEX (RIGHT / SECOND) -->
-        <div class="viewPanel" id="viewIndex" aria-label="Index">
-          <nav class="filters" id="filters" aria-label="Filters">
+      <nav class="filters" id="filters" hidden aria-label="Filters">
             <div class="filters__inner">
               <!-- Natural language search -->
               <div class="pill pill--search">
@@ -204,8 +190,26 @@
 
             </div>
           </nav>
+    </div>
 
-          <main class="content" id="content" aria-label="Directory">
+</header>
+
+    <div class="viewShell" id="viewShell">
+      <div class="viewSlider" id="viewSlider">
+
+        <!-- VIEW A: EVENTS (LEFT / FIRST) -->
+        <div class="viewPanel" id="viewEvents" aria-label="Events">
+<main class="content" aria-label="Events">
+            <div class="content__inner">
+              <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
+              <div id="eventsRoot"></div>
+            </div>
+          </main>
+        </div>
+
+        <!-- VIEW B: INDEX (RIGHT / SECOND) -->
+        <div class="viewPanel" id="viewIndex" aria-label="Index">
+<main class="content" id="content" aria-label="Directory">
             <div class="content__inner">
               <div id="status" class="status" aria-live="polite"></div>
               <div id="groupsRoot"></div>
