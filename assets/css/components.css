@@ -18,17 +18,6 @@
   align-items:flex-end;
   justify-content:center;
   min-width: 56px;
-  line-height: 0;
-}
-
-.header__logoText{ display:none; }
-
-/* Single source of truth for mark sizing (prevents overrides elsewhere) */
-.header__logo img{
-  display:block;
-  height: var(--logoMarkSize);
-  width: auto;
-  max-height: var(--logoMarkSize);
 }
 
 .header__logoText{
@@ -258,8 +247,7 @@ input[type="search"]{ font-size:16px; }
   .header__inner{ gap: 8px; }
   .header__title{ line-height: 0.95; }
   .header__logo{ min-width: 34px; }
-  /* mark sizing stays controlled by --logoMarkSize */
-  .header__logo img{ height: var(--logoMarkSize); width: auto; }
+  .header__logo img{ width: 28px; height: auto; }
 
   /* View toggle pill */
   .viewToggle{ padding: 3px; gap: 3px; border-radius: 999px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
