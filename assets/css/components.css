@@ -372,3 +372,33 @@ input[type="search"]{ font-size:16px; }
 @media (max-width: 430px){
   .viewToggle__tab{ font-size: 9px !important; }
 }
+
+
+/* --- v206: Mobile view toggle proportions to match desktop (compact + centered) --- */
+@media (max-width: 430px){
+  .viewToggle{
+    width: fit-content !important;
+    padding: 2px !important;
+    gap: 2px !important;
+    border-radius: 999px !important;
+  }
+  .viewToggle__tab{
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 4px 7px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.06em !important;
+    white-space: nowrap !important;
+  }
+  .viewToggle__thumb{
+    top: 2px !important;
+    bottom: 2px !important;
+    left: 2px !important;
+    width: calc(50% - 2px) !important;
+    border-radius: 999px !important;
+  }
+}
