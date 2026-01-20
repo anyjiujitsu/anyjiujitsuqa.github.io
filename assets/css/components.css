@@ -30,20 +30,12 @@
 
 /* Image logo sizing controlled by a single token for easy incremental tuning */
 :root{
-  --anyLogoH: 36px;
+  --anyLogoH: 32px;
 }
 
 @media (max-width: 640px){
-  :root{ --anyLogoH: 36px; }
+  :root{ --anyLogoH: 24px; }
 }
-
-.header__logoImg{
-  height: var(--anyLogoH);
-  width: auto;
-  display: block;
-  object-fit: contain;
-}
-
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
@@ -390,4 +382,13 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
+}
+
+
+/* --- v216: ANY logo image size driven by --anyLogoH (desktop + mobile) --- */
+.header__logoImg{
+  height: var(--anyLogoH) !important;
+  width: auto !important;
+  display: block;
+  object-fit: contain;
 }
