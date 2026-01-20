@@ -18,20 +18,22 @@
   align-items:flex-end;
   justify-content:center;
   min-width: 56px;
-
-  font-size: 14px;
 }
 
 .header__logoText{
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
+  font-size: 14px; /* desktop default; mobile overrides below */
+  line-height: 1;
 }
 
-.header__logo .header__logoImage{
-  display: block;
+/* Image logo should match the old "ANY" text scale and never render at native PNG size */
+.header__logoImg{
   height: 1em;
   width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 /* VIEW TOGGLE (tabs) */
@@ -234,7 +236,6 @@
 
   .header__logo{ min-width: 44px; }
   .header__logoText{ font-size: 12px; }
-  .header__logo{ font-size: 12px; }
 
   .viewToggle{ padding: 5px; gap: 5px; }
   .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
