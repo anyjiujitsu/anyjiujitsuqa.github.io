@@ -30,11 +30,11 @@
 
 /* Image logo sizing controlled by a single token for easy incremental tuning */
 :root{
-  --anyLogoH: 28px;
+  --anyLogoH: 30px;
 }
 
 @media (max-width: 640px){
-  :root{ --anyLogoH: 24px; }
+  :root{ --anyLogoH: 26px; }
 }
 
 .header__logoImg{
