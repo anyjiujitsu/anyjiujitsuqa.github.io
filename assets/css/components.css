@@ -34,7 +34,7 @@
 }
 
 @media (max-width: 640px){
-  :root{ --anyLogoH: 24px; }
+  :root{ --anyLogoH: 52px; }
 }
 
 /* VIEW TOGGLE (tabs) */
