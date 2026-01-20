@@ -30,7 +30,7 @@
 
 /* Image logo sizing controlled by a single token for easy incremental tuning */
 :root{
-  --anyLogoH: 44px;
+  --anyLogoH: 52px;
 }
 
 @media (max-width: 640px){
