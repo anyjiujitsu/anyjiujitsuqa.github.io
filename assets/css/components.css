@@ -20,8 +20,6 @@
   min-width: 56px;
 
   font-size: 14px;
-  line-height: 0;
-  overflow: hidden;
 }
 
 .header__logoText{
@@ -34,9 +32,29 @@
   display: block;
   height: 1em;
   width: auto;
-  object-fit: cover;
-  object-position: center top;
-  transform: translateY(3px);
+}
+
+/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+.header__logoCrop{
+  height: 1em;              /* matches prior "ANY" text height */
+  overflow: hidden;
+  display: block;
+  line-height: 0;
+}
+
+/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+.header__logoCrop .header__logoImage{
+  height: calc(1em * var(--anyLogoCropScale, 1.35));
+  width: auto;
+  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
+  transform-origin: top left;
+}
+
+@media (max-width: 560px){
+  .header__logo{
+    --anyLogoCropScale: 1.4;
+    --anyLogoCropY: 0.20;
+  }
 }
 
 
