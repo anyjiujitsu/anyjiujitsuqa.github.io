@@ -1,4 +1,4 @@
-/* components113.css ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â full override-ready component styles.
+/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
@@ -18,12 +18,20 @@
   align-items:flex-end;
   justify-content:center;
   min-width: 56px;
+
+  font-size: 14px;
 }
 
 .header__logoText{
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
+}
+
+.header__logo .header__logoImage{
+  display: block;
+  height: 1em;
+  width: auto;
 }
 
 /* VIEW TOGGLE (tabs) */
@@ -226,6 +234,7 @@
 
   .header__logo{ min-width: 44px; }
   .header__logoText{ font-size: 12px; }
+  .header__logo{ font-size: 12px; }
 
   .viewToggle{ padding: 5px; gap: 5px; }
   .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
@@ -240,7 +249,7 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
-/* MOBILE: extra-compact density (iter120) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â shrink header/nav/pills/toggle + card body */
+/* MOBILE: extra-compact density (iter120) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â shrink header/nav/pills/toggle + card body */
 @media (max-width: 430px){
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
