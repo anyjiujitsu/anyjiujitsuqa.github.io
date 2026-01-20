@@ -23,7 +23,10 @@
       <!-- Logo Area (above header) -->
     <div aria-label="ANY logo" style="margin:0 0 -10px 0;">
       <div class="header__inner" style="display:flex;justify-content:flex-start;align-items:flex-end;">
-        <div class="header__logoCrop"><img class="header__logoImage" src="assets/img/any-logo.png" alt="ANY" /></div>
+        <!-- Crop the transparent padding in the PNG without changing the visible logo size -->
+        <span class="header__logoCrop" aria-hidden="true">
+          <img class="header__logoImage" src="assets/img/any-logo.png" alt="ANY" />
+        </span>
       </div>
     </div>
 
