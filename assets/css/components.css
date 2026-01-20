@@ -28,13 +28,22 @@
   line-height: 1;
 }
 
-/* Image logo should match the old "ANY" text scale and never render at native PNG size */
+/* Image logo sizing controlled by a single token for easy incremental tuning */
+:root{
+  --anyLogoH: 18px;
+}
+
+@media (max-width: 640px){
+  :root{ --anyLogoH: 16px; }
+}
+
 .header__logoImg{
-  height: 1em;
+  height: var(--anyLogoH);
   width: auto;
   display: block;
   object-fit: contain;
 }
+
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
