@@ -28,35 +28,28 @@
   letter-spacing: 0.10em;
 }
 
-.header__logo .header__logoImage{
-  display: block;
-  height: 1em;
-  width: auto;
-}
+/*
+  The ANY logo PNG includes large transparent padding above and below the visible mark.
+  Crop that padding in CSS so the visible logo stays the same size, while the header
+  consumes less vertical space.
 
-/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
-.header__logoCrop{
-  height: 1em;              /* matches prior "ANY" text height */
+  The image's visible content is ~34% of its full height, so we scale the image up
+  inside a 1em-high crop window. (No asset editing required.)
+*/
+.header__logo .header__logoCrop{
+  height: 1em;          /* matches the prior text-height sizing */
   overflow: hidden;
   display: block;
-  line-height: 0;
 }
 
-/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
-.header__logoCrop .header__logoImage{
-  height: calc(1em * var(--anyLogoCropScale, 1.35));
+.header__logo .header__logoImage{
+  display: block;
+  height: calc(1em * 2.94); /* 1 / 0.34 â‰ˆ 2.94 */
   width: auto;
-  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
-  transform-origin: top left;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
-
-@media (max-width: 560px){
-  .header__logo{
-    --anyLogoCropScale: 1.4;
-    --anyLogoCropY: 0.20;
-  }
-}
-
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
