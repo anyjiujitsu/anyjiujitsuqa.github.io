@@ -3,25 +3,6 @@
 */
 
 /* HEADER */
-.header__titleWrap{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--anyLogoGap);
-}
-
-.header__logoWrap{
-  display: block;
-  line-height: 0;
-}
-
-.header__logoWrap .header__logoImage{
-  display: block;
-  height: var(--anyLogoH);
-  width: auto;
-  object-fit: contain;
-}
-
 .header__title{
   margin: 0;
   font-size: var(--titleSize);
@@ -401,20 +382,20 @@ input[type="search"]{ font-size:16px; }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
 }
 
-/* === ANY logo sizing (replaces "ANY" text) ===
-   Keep this isolated so we don't disturb header layout.
-   The logo image itself has been cropped tighter to reduce empty space,
-   so we only need to control displayed height here.
-*/
-img.header__logoImage{
-  height: 28px;   /* desktop default */
-  width: auto;
-  display: block;
-  object-fit: contain;
-}
 
-@media (max-width: 560px){
-  img.header__logoImage{
-    height: 24px; /* mobile default */
-  }
+/* ANY LOGO OVERRIDES (lock size/alignment across breakpoints) */
+.header__logo{
+  min-width: 0 !important;
+  margin: 0 0 var(--anyLogoMB) 0 !important;
+  justify-content: flex-start !important;
+  align-items: flex-end !important;
+  line-height: 0 !important;
+}
+.header__logo img,
+.header__logoImage{
+  height: var(--anyLogoH) !important;
+  width: auto !important;
+  max-height: none !important;
+  display: block !important;
+  object-fit: contain !important;
 }
