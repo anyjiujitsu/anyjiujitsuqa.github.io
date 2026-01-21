@@ -19,8 +19,9 @@
   justify-content:center;
   min-width: 56px;
 
-  /* Scales the logo image via 1em height in .header__logoImage */
-  font-size: var(--logoMarkSize);
+  --anyLogoSize: 12px; /* moderate downsize */
+
+  font-size: var(--anyLogoSize);
 }
 
 .header__logoText{
@@ -33,7 +34,33 @@
   display: block;
   height: 1em;
   width: auto;
+  max-height: 22px; /* guard against blown-up logo */
 }
+
+/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+.header__logoCrop{
+  height: 1em;              /* matches prior "ANY" text height */
+  overflow: hidden;
+  display: block;
+  line-height: 0;
+}
+
+/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+.header__logoCrop .header__logoImage{
+  height: calc(1em * var(--anyLogoCropScale, 1.12));
+  width: auto;
+  max-height: 22px; /* guard against blown-up logo */
+  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.10)));
+  transform-origin: top left;
+}
+
+@media (max-width: 560px){
+  .header__logo{
+    --anyLogoCropScale: 1.14;
+    --anyLogoCropY: 0.11;
+  }
+}
+
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
@@ -234,8 +261,8 @@
   .cell__meta{ margin-top: 2px; }
 
   .header__logo{ min-width: 44px; }
-	  .header__logoText{ font-size: var(--logoMarkSize); }
-	  .header__logo{ font-size: var(--logoMarkSize); }
+  .header__logoText{ font-size: 12px; }
+  .header__logo{ font-size: 12px; }
 
   .viewToggle{ padding: 5px; gap: 5px; }
   .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
@@ -257,7 +284,7 @@ input[type="search"]{ font-size:16px; }
   .header__inner{ gap: 8px; }
   .header__title{ line-height: 0.95; }
   .header__logo{ min-width: 34px; }
-	  .header__logo img{ height: 1em; width: auto; display:block; object-fit: contain; }
+  .header__logo img{ width: 28px; height: auto; }
 
   /* View toggle pill */
   .viewToggle{ padding: 3px; gap: 3px; border-radius: 999px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
