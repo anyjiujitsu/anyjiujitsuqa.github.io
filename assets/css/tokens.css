@@ -16,11 +16,11 @@
 
   /* Header */
   --titleSize: 58px;
-  --titleTracking: -0.04em;
 
-  /* Header mini-logo (replaces "ANY" text). Keep proportional across breakpoints. */
-  --anyLogoH: clamp(14px, calc(var(--titleSize) * 0.52), 32px);
-  --anyLogoGap: clamp(2px, calc(var(--titleSize) * 0.08), 6px);
+  /* ANY logo */
+  --anyLogoH: 22px;
+  --anyLogoMB: 4px;
+  --titleTracking: -0.04em;
 
   /* Pills */
   --pillH: 36px;
@@ -43,6 +43,10 @@
 
     /* Header */
     --titleSize: 30px;
+    /* ANY logo */
+    --anyLogoH: 12px;
+    --anyLogoMB: 1px;
+
 
     /* Pills */
     --pillH: 20px;
@@ -66,6 +70,7 @@
   :root{
     --pagePad: 24px;
     --titleSize: 72px;
+
     --pillH: 40px;
     --pillFont: 14px;
     --rowFont: 14px;
