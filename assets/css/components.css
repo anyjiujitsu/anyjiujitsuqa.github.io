@@ -16,12 +16,10 @@
 .header__logo{
   display:flex;
   align-items:flex-end;
-  /* Left-align the mark with the header title (matches the prior "ANY" text position) */
-  justify-content:flex-start;
-  min-width: 0;
+  justify-content:center;
+  min-width: 56px;
 
-  /* Controls overall mark size (crop wrapper is based on 1em) */
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .header__logoText{
@@ -35,31 +33,6 @@
   height: 1em;
   width: auto;
 }
-
-/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
-.header__logoCrop{
-  height: 1em;              /* matches prior "ANY" text height */
-  overflow: hidden;
-  display: block;
-  line-height: 0;
-}
-
-/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
-.header__logoCrop .header__logoImage{
-  height: calc(1em * var(--anyLogoCropScale, 1.35));
-  width: auto;
-  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
-  transform-origin: top left;
-}
-
-@media (max-width: 560px){
-  .header__logo{
-    --anyLogoCropScale: 1.4;
-    --anyLogoCropY: 0.20;
-    font-size: 16px;
-  }
-}
-
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
@@ -407,4 +380,22 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
+}
+
+/* === ANY logo sizing (replaces "ANY" text) ===
+   Keep this isolated so we don't disturb header layout.
+   The logo image itself has been cropped tighter to reduce empty space,
+   so we only need to control displayed height here.
+*/
+img.header__logoImage{
+  height: 28px;   /* desktop default */
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 560px){
+  img.header__logoImage{
+    height: 24px; /* mobile default */
+  }
 }
