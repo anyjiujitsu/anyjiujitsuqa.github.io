@@ -14,14 +14,14 @@
 }
 
 .header__logo{
-  /* Align with the left edge of the header content (matches the old "ANY" text placement) */
   display:flex;
   align-items:flex-end;
+  /* Left-align the mark with the header title (matches the prior "ANY" text position) */
   justify-content:flex-start;
   min-width: 0;
-  padding: 0;
-  margin: 0;
-  font-size: 14px;
+
+  /* Controls overall mark size (crop wrapper is based on 1em) */
+  font-size: 18px;
 }
 
 .header__logoText{
@@ -30,54 +30,35 @@
   letter-spacing: 0.10em;
 }
 
-/*
-  ANY LOGO IMAGE SIZING
-  --------------------
-  One dial controls the rendered logo height everywhere.
-  This prevents â€œblow upâ€ behavior from global img rules and makes
-  incremental resizing safe.
-*/
-:root{
-  --anyLogoH: 30px;            /* desktop default */
-  --anyLogoCropScale: 1.35;    /* trims built-in transparent padding */
-  --anyLogoCropY: 0.18;        /* vertical nudge as a fraction of height */
-}
-
-@media (max-width: 560px){
-  :root{
-    --anyLogoH: 28px;          /* mobile default */
-    --anyLogoCropScale: 1.40;
-    --anyLogoCropY: 0.20;
-  }
-}
-
-/* Base image constraint (works even if the crop wrapper isn't present) */
-.header__logo .header__logoImage,
-.header__logo .header__logoImg{
+.header__logo .header__logoImage{
   display: block;
-  height: var(--anyLogoH);
+  height: 1em;
   width: auto;
-  max-height: var(--anyLogoH);
-  max-width: none; /* override any global img { max-width:100% } */
-  object-fit: contain;
 }
 
 /* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
 .header__logoCrop{
-  height: var(--anyLogoH);
+  height: 1em;              /* matches prior "ANY" text height */
   overflow: hidden;
-  display: inline-block;
+  display: block;
   line-height: 0;
 }
 
 /* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
 .header__logoCrop .header__logoImage{
-  height: calc(var(--anyLogoH) * var(--anyLogoCropScale));
+  height: calc(1em * var(--anyLogoCropScale, 1.35));
   width: auto;
-  transform: translateY(calc(var(--anyLogoH) * -1 * var(--anyLogoCropY)));
+  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
   transform-origin: top left;
 }
 
+@media (max-width: 560px){
+  .header__logo{
+    --anyLogoCropScale: 1.4;
+    --anyLogoCropY: 0.20;
+    font-size: 16px;
+  }
+}
 
 
 /* VIEW TOGGLE (tabs) */
