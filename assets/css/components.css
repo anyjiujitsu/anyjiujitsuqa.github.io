@@ -3,6 +3,25 @@
 */
 
 /* HEADER */
+.header__titleWrap{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--anyLogoGap);
+}
+
+.header__logoWrap{
+  display: block;
+  line-height: 0;
+}
+
+.header__logoWrap .header__logoImage{
+  display: block;
+  height: var(--anyLogoH);
+  width: auto;
+  object-fit: contain;
+}
+
 .header__title{
   margin: 0;
   font-size: var(--titleSize);
