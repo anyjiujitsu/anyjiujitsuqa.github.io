@@ -382,20 +382,30 @@ input[type="search"]{ font-size:16px; }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
 }
 
+/* ===============================
+   ANY logo sizing + desktop/mobile parity
+   (Safe overrides; does not affect other header elements)
+   =============================== */
+:root{
+  --anyLogoH: 26px; /* desktop default */
+}
+@media (max-width: 430px){
+  :root{ --anyLogoH: 24px; }
+}
 
-/* ANY LOGO OVERRIDES (lock size/alignment across breakpoints) */
 .header__logo{
   min-width: 0 !important;
-  margin: 0 0 var(--anyLogoMB) 0 !important;
   justify-content: flex-start !important;
   align-items: flex-end !important;
   line-height: 0 !important;
+  font-size: 0 !important; /* prevent any inherited font-size from affecting box height */
 }
-.header__logo img,
-.header__logoImage{
+
+.header__logo .header__logoImage,
+img.header__logoImage{
   height: var(--anyLogoH) !important;
+  max-height: var(--anyLogoH) !important;
   width: auto !important;
-  max-height: none !important;
   display: block !important;
   object-fit: contain !important;
 }
