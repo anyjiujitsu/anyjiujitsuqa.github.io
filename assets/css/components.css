@@ -1,4 +1,4 @@
-/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â full override-ready component styles.
+/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
@@ -18,37 +18,23 @@
   align-items:flex-end;
   justify-content:center;
   min-width: 56px;
-
-  font-size: 14px;
 }
 
 .header__logoText{
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
+  font-size: 14px; /* desktop default; mobile overrides below */
+  line-height: 1;
 }
 
-/*
-  The ANY logo PNG includes large transparent padding above and below the visible mark.
-  Crop that padding in CSS so the visible logo stays the same size, while the header
-  consumes less vertical space.
-
-  The image's visible content is ~34% of its full height, so we scale the image up
-  inside a 1em-high crop window. (No asset editing required.)
-*/
-.header__logo .header__logoCrop{
-  height: 1em;          /* matches the prior text-height sizing */
-  overflow: hidden;
-  display: block;
+/* Image logo sizing controlled by a single token for easy incremental tuning */
+:root{
+  --anyLogoH: 60px;
 }
 
-.header__logo .header__logoImage{
-  display: block;
-  height: calc(1em * 2.94); /* 1 / 0.34 â‰ˆ 2.94 */
-  width: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+@media (max-width: 640px){
+  :root{ --anyLogoH: 52px; }
 }
 
 /* VIEW TOGGLE (tabs) */
@@ -251,7 +237,6 @@
 
   .header__logo{ min-width: 44px; }
   .header__logoText{ font-size: 12px; }
-  .header__logo{ font-size: 12px; }
 
   .viewToggle{ padding: 5px; gap: 5px; }
   .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
@@ -266,7 +251,7 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
-/* MOBILE: extra-compact density (iter120) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â shrink header/nav/pills/toggle + card body */
+/* MOBILE: extra-compact density (iter120) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â shrink header/nav/pills/toggle + card body */
 @media (max-width: 430px){
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
@@ -397,4 +382,13 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
+}
+
+
+/* --- v216: ANY logo image size driven by --anyLogoH (desktop + mobile) --- */
+.header__logoImg{
+  height: var(--anyLogoH) !important;
+  width: auto !important;
+  display: block;
+  object-fit: contain;
 }
