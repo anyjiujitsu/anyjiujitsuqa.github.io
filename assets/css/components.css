@@ -28,20 +28,55 @@
   letter-spacing: 0.10em;
 }
 
-/* Image-based ANY mark */
-/* The <img> sits directly under the aria-label wrapper (no .header__logo parent),
-   so we target .header__logoImage itself. */
-[aria-label="ANY logo"]{
-  line-height: 0; /* removes inline-image whitespace that can add extra header height */
+/*
+  ANY LOGO IMAGE SIZING
+  --------------------
+  One dial controls the rendered logo height everywhere.
+  This prevents â€œblow upâ€ behavior from global img rules and makes
+  incremental resizing safe.
+*/
+:root{
+  --anyLogoH: 22px;            /* desktop default */
+  --anyLogoCropScale: 1.35;    /* trims built-in transparent padding */
+  --anyLogoCropY: 0.18;        /* vertical nudge as a fraction of height */
 }
 
-[aria-label="ANY logo"] .header__logoImage{
+@media (max-width: 560px){
+  :root{
+    --anyLogoH: 20px;          /* mobile default (slightly tighter) */
+    --anyLogoCropScale: 1.40;
+    --anyLogoCropY: 0.20;
+  }
+}
+
+/* Base image constraint (works even if the crop wrapper isn't present) */
+.header__logo .header__logoImage,
+.header__logo .header__logoImg{
   display: block;
-  height: var(--anyLogoH, 22px);
+  height: var(--anyLogoH);
   width: auto;
-  max-height: var(--anyLogoH, 22px);
+  max-height: var(--anyLogoH);
+  max-width: none; /* override any global img { max-width:100% } */
   object-fit: contain;
 }
+
+/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+.header__logoCrop{
+  height: var(--anyLogoH);
+  overflow: hidden;
+  display: inline-block;
+  line-height: 0;
+}
+
+/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+.header__logoCrop .header__logoImage{
+  height: calc(var(--anyLogoH) * var(--anyLogoCropScale));
+  width: auto;
+  transform: translateY(calc(var(--anyLogoH) * -1 * var(--anyLogoCropY)));
+  transform-origin: top left;
+}
+
+
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
