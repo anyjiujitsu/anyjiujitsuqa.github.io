@@ -18,6 +18,10 @@
   --titleSize: 58px;
   --titleTracking: -0.04em;
 
+  /* Header mini-logo (replaces "ANY" text). Keep proportional across breakpoints. */
+  --anyLogoH: clamp(14px, calc(var(--titleSize) * 0.52), 32px);
+  --anyLogoGap: clamp(2px, calc(var(--titleSize) * 0.08), 6px);
+
   /* Pills */
   --pillH: 36px;
   --pillFont: 14px;
@@ -34,7 +38,7 @@
 /* Permanent compact mobile density */
 @media (max-width: 430px){
   :root{
-    /* Permanent compact mobile density (iter120) Ã¢â‚¬â€ stronger */
+    /* Permanent compact mobile density (iter120) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â stronger */
     --pagePad: 3px;
 
     /* Header */
