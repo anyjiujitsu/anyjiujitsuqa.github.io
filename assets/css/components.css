@@ -19,9 +19,7 @@
   justify-content:center;
   min-width: 56px;
 
-  --anyLogoSize: 12px; /* moderate downsize */
-
-  font-size: var(--anyLogoSize);
+  font-size: 14px;
 }
 
 .header__logoText{
@@ -30,37 +28,20 @@
   letter-spacing: 0.10em;
 }
 
-.header__logo .header__logoImage{
+/* Image-based ANY mark */
+/* The <img> sits directly under the aria-label wrapper (no .header__logo parent),
+   so we target .header__logoImage itself. */
+[aria-label="ANY logo"]{
+  line-height: 0; /* removes inline-image whitespace that can add extra header height */
+}
+
+[aria-label="ANY logo"] .header__logoImage{
   display: block;
-  height: 1em;
+  height: var(--anyLogoH, 22px);
   width: auto;
-  max-height: 22px; /* guard against blown-up logo */
+  max-height: var(--anyLogoH, 22px);
+  object-fit: contain;
 }
-
-/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
-.header__logoCrop{
-  height: 1em;              /* matches prior "ANY" text height */
-  overflow: hidden;
-  display: block;
-  line-height: 0;
-}
-
-/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
-.header__logoCrop .header__logoImage{
-  height: calc(1em * var(--anyLogoCropScale, 1.12));
-  width: auto;
-  max-height: 22px; /* guard against blown-up logo */
-  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.10)));
-  transform-origin: top left;
-}
-
-@media (max-width: 560px){
-  .header__logo{
-    --anyLogoCropScale: 1.14;
-    --anyLogoCropY: 0.11;
-  }
-}
-
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
