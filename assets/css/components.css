@@ -254,7 +254,7 @@ input[type="search"]{ font-size:16px; }
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
   .header__inner{ gap: 8px; }
-  .header__title{ line-height: 0.95; padding-top: 12px; }
+  .header__title{ line-height: 0.95; }
   .header__logo{ min-width: 34px; }
   .header__logo img{ width: 28px; height: auto; }
 
@@ -380,4 +380,25 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
+}
+
+/* ============================================================ */
+/* Logo safety overrides */
+/* ============================================================ */
+
+[aria-label="ANY logo"]{ margin: 0 0 -10px 0 !important; }
+
+.header__logoImage{
+  height: 1em !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.header__logoCrop{ height: auto !important; overflow: visible !important; }
+.header__logoCrop img{ height: 1em !important; width: auto !important; transform: none !important; }
+
+@media (max-width: 560px){
+  [aria-label="ANY logo"]{ margin-bottom: -2px !important; }
+  .header__inner{ padding-top: 6px !important; }
 }
