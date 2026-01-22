@@ -3,58 +3,6 @@
 */
 
 /* HEADER */
-/* Logo sizing + spacing controls (single source of truth) */
-:root{
-  --anyLogoH: 34px;      /* desktop logo height */
-  --anyLogoGap: 8px;     /* space between logo and header title */
-}
-
-/* Mobile tweaks */
-@media (max-width: 560px){
-  :root{
-    --anyLogoH: 30px;
-    --anyLogoGap: 12px;  /* a touch more breathing room on mobile */
-  }
-}
-
-/* Logo wrapper */
-.header__logo,
-.header__logoWrap{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  line-height: 0;
-}
-
-/* Support both markup variants we've used historically */
-.header__logoCrop,
-.header__logoWrap{
-  display: block;
-  line-height: 0;
-  margin-bottom: var(--anyLogoGap);
-}
-
-/* Ensure the image never blows up and never crops */
-.header__logoImg,
-.header__logoImage,
-.header__logo img{
-  display: block;
-  height: var(--anyLogoH);
-  width: auto;
-  max-height: none;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-/* If any older rules set a fixed width, this wins */
-.header__logo .header__logoImg,
-.header__logo .header__logoImage{
-  width: auto !important;
-  height: var(--anyLogoH) !important;
-}
-
-
 .header__title{
   margin: 0;
   font-size: var(--titleSize);
@@ -68,12 +16,10 @@
 .header__logo{
   display:flex;
   align-items:flex-end;
-  /* Left-align the mark with the header title (matches the prior "ANY" text position) */
-  justify-content:flex-start;
-  min-width: 0;
+  justify-content:center;
+  min-width: 56px;
 
-  /* Controls overall mark size (crop wrapper is based on 1em) */
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .header__logoText{
@@ -87,31 +33,6 @@
   height: 1em;
   width: auto;
 }
-
-/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
-.header__logoCrop{
-  height: 1em;              /* matches prior "ANY" text height */
-  overflow: hidden;
-  display: block;
-  line-height: 0;
-}
-
-/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
-.header__logoCrop .header__logoImage{
-  height: calc(1em * var(--anyLogoCropScale, 1.35));
-  width: auto;
-  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
-  transform-origin: top left;
-}
-
-@media (max-width: 560px){
-  .header__logo{
-    --anyLogoCropScale: 1.4;
-    --anyLogoCropY: 0.20;
-    font-size: 16px;
-  }
-}
-
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
@@ -459,4 +380,13 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
+}
+
+/* MOBILE: add a little more breathing room between the ANY logo and the EVENTS header text.
+   (We keep the logo image intact; no cropping, no scaling changes.) */
+@media (max-width: 560px){
+  /* Inline margin in index.html is overridden here for mobile only */
+  [aria-label="ANY logo"]{
+    margin: 0 0 6px 0 !important;
+  }
 }
