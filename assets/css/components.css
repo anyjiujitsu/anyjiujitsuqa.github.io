@@ -1,10 +1,24 @@
-/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â full override-ready component styles.
+/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
+
+/* FIXTURE (header title only)
+   Note: This @font-face uses local() names (as in the reference file). If you want it to work
+   universally (even when Fixture isn't installed on the device), add woff2 files in
+   assets/fonts/ and extend src: with url(...) entries.
+*/
+@font-face {
+  font-family: 'Fixture';
+  src: local('Fixture'), local('Fixture Display'), local('Fixture Condensed');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
 /* HEADER */
 .header__title{
   margin: 0;
+  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: var(--titleSize);
   letter-spacing: var(--titleTracking);
   line-height: 0.9;
@@ -279,7 +293,7 @@
 /* iOS Safari: prevent focus zoom */
 .search input,
 input[type="search"]{ font-size:16px; }
-/* MOBILE: extra-compact density (iter120) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â shrink header/nav/pills/toggle + card body */
+/* MOBILE: extra-compact density (iter120) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â shrink header/nav/pills/toggle + card body */
 @media (max-width: 430px){
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
