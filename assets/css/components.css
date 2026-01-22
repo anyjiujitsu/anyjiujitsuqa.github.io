@@ -1,16 +1,16 @@
-
-/* Fixture header font (LOCAL) */
-@font-face {
-  font-family: 'Fixture';
-  src: local('Fixture'), local('Fixture Display'), local('Fixture Condensed');
-  font-weight: 400 900;
-  font-style: normal;
-}
-
 /* components113.css ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â full override-ready component styles.
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
+
+/* FIXTURE header font (header title only) */
+@font-face{
+  font-family: 'Fixture';
+  src: local('Fixture'), local('Fixture Display'), local('Fixture Condensed');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
 /* HEADER */
 .header__title{
   margin: 0;
