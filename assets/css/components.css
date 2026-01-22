@@ -1,20 +1,16 @@
-/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â full override-ready component styles.
-   Key goal: all sizing comes from tokens so mobile density actually changes.
-*/
 
-
-/* FIXTURE (header title only)
-   Note: This @font-face uses local() names (as in the reference file). If you want it to work
-   universally (even when Fixture isn't installed on the device), add woff2 files in
-   assets/fonts/ and extend src: with url(...) entries.
-*/
+/* Fixture header font (LOCAL) */
 @font-face {
   font-family: 'Fixture';
   src: local('Fixture'), local('Fixture Display'), local('Fixture Condensed');
   font-weight: 400 900;
   font-style: normal;
-  font-display: swap;
 }
+
+/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â full override-ready component styles.
+   Key goal: all sizing comes from tokens so mobile density actually changes.
+*/
+
 /* HEADER */
 .header__title{
   margin: 0;
