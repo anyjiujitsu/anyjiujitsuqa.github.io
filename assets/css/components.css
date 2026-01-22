@@ -52,7 +52,7 @@
   .header__logoImg,
   .header__logoImage,
   .header__logo img{
-    height: var(--anyLogoHMobile, 40px);
+    height: var(--anyLogoHMobile, 44px);
   }
 }
 
