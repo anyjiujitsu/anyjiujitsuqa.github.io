@@ -2,24 +2,6 @@
    Key goal: all sizing comes from tokens so mobile density actually changes.
 */
 
-/* --- ANY logo sizing + spacing (desktop/mobile parity) --- */
-:root{
-  /* controls the rendered logo height */
-  --anyLogoH: 26px;
-  /* overrides inline margin-bottom on the logo wrapper (was -10px) */
-  --anyLogoMb: -10px;
-  /* overrides inline padding-top on the title row (was 0px) */
-  --headerTitlePadTop: 0px;
-}
-@media (max-width: 560px){
-  :root{
-    --anyLogoH: 22px;
-    /* slightly more breathing room between logo and title on mobile */
-    --anyLogoMb: -4px;
-    --headerTitlePadTop: 6px;
-  }
-}
-
 /* HEADER */
 .header__title{
   margin: 0;
@@ -29,15 +11,6 @@
   font-weight: 900;
   color: var(--green);
   text-transform: uppercase;
-}
-
-/* Override inline spacing so we can tune desktop/mobile without touching HTML */
-header [aria-label="ANY logo"]{
-  margin-bottom: var(--anyLogoMb) !important;
-}
-/* The title row has inline padding-top in index.html */
-header .header__inner[style*="padding-top"]{
-  padding-top: var(--headerTitlePadTop) !important;
 }
 
 .header__logo{
@@ -56,10 +29,9 @@ header .header__inner[style*="padding-top"]{
 }
 
 .header__logo .header__logoImage{
-  height: var(--anyLogoH);
-  width: auto;
   display: block;
-  object-fit: contain;
+  height: 1em;
+  width: auto;
 }
 
 /* VIEW TOGGLE (tabs) */
@@ -282,7 +254,7 @@ input[type="search"]{ font-size:16px; }
   /* Header */
   .header{ padding-top: 5px; padding-bottom: 3px; }
   .header__inner{ gap: 8px; }
-  .header__title{ line-height: 0.95; }
+  .header__title{ line-height: 0.95; padding-top: 12px; }
   .header__logo{ min-width: 34px; }
   .header__logo img{ width: 28px; height: auto; }
 
