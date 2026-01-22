@@ -1,6 +1,35 @@
-/* components113.css ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â full override-ready component styles.
-   Key goal: all sizing comes from tokens so mobile density actually changes.
+/* components.css (FULL FILE, overwrite-safe)
+   Token values are defined here so we do not introduce extra CSS files.
 */
+
+:root{
+  --green:#1f5537;
+
+  /* Global sizing */
+  --maxW: 980px;
+
+  /* Title sizing */
+  --titleSize: clamp(44px, 4.8vw, 58px);
+  --titleTracking: 0.04em;
+
+  /* Logo ("ANY") sizing + crop tuning */
+  --logoTitleGap: 0px;              /* desktop default */
+  --anyLogoH: 30px;/* desktop mark height */
+  --anyLogoCropScale: 1.35;
+  --anyLogoCropY: 0.18;
+}
+
+@media (max-width: 560px){
+  :root{
+    --titleSize: 46px;
+    --titleTracking: 0.04em;
+    --logoTitleGap: 6px;            /* mobile: add breathing room */
+    --anyLogoH: 22px;
+    --anyLogoCropScale: 1.40;
+    --anyLogoCropY: 0.20;
+  }
+}
+
 
 /* HEADER */
 .header__title{
@@ -19,7 +48,9 @@
   justify-content:center;
   min-width: 56px;
 
-  font-size: 14px;
+  /* Drives the rendered height of the mark since the image uses height: 1em */
+  font-size: var(--anyLogoH, 30px);
+  margin-bottom: var(--logoTitleGap, 0px);
 }
 
 .header__logoText{
@@ -33,6 +64,30 @@
   height: 1em;
   width: auto;
 }
+
+/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+.header__logoCrop{
+  height: 1em;              /* matches prior "ANY" text height */
+  overflow: hidden;
+  display: block;
+  line-height: 0;
+}
+
+/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+.header__logoCrop .header__logoImage{
+  height: calc(1em * var(--anyLogoCropScale, 1.35));
+  width: auto;
+  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
+  transform-origin: top left;
+}
+
+@media (max-width: 560px){
+  .header__logo{
+    --anyLogoCropScale: 1.4;
+    --anyLogoCropY: 0.20;
+  }
+}
+
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
@@ -380,10 +435,4 @@ input[type="search"]{ font-size:16px; }
     line-height: 1;
   }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
-}
-
-/* --- MOBILE: add breathing room between ANY logo and header title (logo-to-title gap) --- */
-@media (max-width: 430px){
-  /* Push the EVENTS wordmark down a bit to restore desktop-like spacing */
-  .header__title{ margin-top: 6px; }
 }
