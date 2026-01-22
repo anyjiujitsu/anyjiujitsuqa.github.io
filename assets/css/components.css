@@ -13,18 +13,13 @@
   text-transform: uppercase;
 }
 
-/*
-  ANY logo (image)
-  - No cropping / no transforms (prevents accidental blow-ups)
-  - Height controlled by --anyLogoH (matches the prior desktop sizing work)
-  - Left aligned to the title block
-*/
 .header__logo{
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
   min-width: 56px;
-  margin: 0 0 var(--anyLogoGap, 6px) 0;
+
+  font-size: 14px;
 }
 
 .header__logoText{
@@ -33,28 +28,41 @@
   letter-spacing: 0.10em;
 }
 
-/* Support both historic classnames */
-.header__logoImg,
-.header__logoImage,
-.header__logo img{
+.header__logo .header__logoImage{
   display: block;
-  height: var(--anyLogoH, 60px);
+  height: 1em;
   width: auto;
-  max-height: none;
-  max-width: none;
-  object-fit: contain;
+}
+
+/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+.header__logoCrop{
+  height: 1em;              /* matches prior "ANY" text height */
+  overflow: hidden;
+  display: block;
+  line-height: 0;
+}
+
+/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+.header__logoCrop .header__logoImage{
+  height: calc(1em * var(--anyLogoCropScale, 1.35));
+  width: auto;
+  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
+  transform-origin: top left;
 }
 
 @media (max-width: 560px){
+  /* Mobile: scale logo down slightly WITHOUT changing desktop, and prevent any cropping */
   .header__logo{
-    margin-bottom: var(--anyLogoGapMobile, 10px);
+    --anyLogoCropScale: 1.22; /* was 1.4 (too large) */
+    --anyLogoCropY: 0.20;
+    font-size: 12px; /* was 14px; keeps proportions stable */
   }
-  .header__logoImg,
-  .header__logoImage,
-  .header__logo img{
-    height: var(--anyLogoHMobile, 38px);
+  .header__logoCrop{
+    height: auto;
+    overflow: visible;
   }
 }
+
 
 /* VIEW TOGGLE (tabs) */
 .viewToggle{
