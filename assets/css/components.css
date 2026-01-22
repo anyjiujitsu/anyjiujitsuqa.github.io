@@ -382,30 +382,8 @@ input[type="search"]{ font-size:16px; }
   .viewToggle__thumb{ top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); }
 }
 
-/* ===============================
-   ANY logo sizing + desktop/mobile parity
-   (Safe overrides; does not affect other header elements)
-   =============================== */
-:root{
-  --anyLogoH: 26px; /* desktop default */
-}
+/* --- MOBILE: add breathing room between ANY logo and header title (logo-to-title gap) --- */
 @media (max-width: 430px){
-  :root{ --anyLogoH: 24px; }
-}
-
-.header__logo{
-  min-width: 0 !important;
-  justify-content: flex-start !important;
-  align-items: flex-end !important;
-  line-height: 0 !important;
-  font-size: 0 !important; /* prevent any inherited font-size from affecting box height */
-}
-
-.header__logo .header__logoImage,
-img.header__logoImage{
-  height: var(--anyLogoH) !important;
-  max-height: var(--anyLogoH) !important;
-  width: auto !important;
-  display: block !important;
-  object-fit: contain !important;
+  /* Push the EVENTS wordmark down a bit to restore desktop-like spacing */
+  .header__title{ margin-top: 6px; }
 }
