@@ -65,6 +65,18 @@ export function filterDirectory(rows, state){
   });
 }
 
+
+function eventYear(row){
+  const y = String(row?.YEAR ?? "").trim();
+  if(y) return y;
+  const d = String(row?.DATE ?? "").trim();
+  const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return m[3];
+  const tmp = new Date(d);
+  if(!isNaN(tmp)) return String(tmp.getFullYear());
+  return "";
+}
+
 // ------------------ EVENTS ------------------
 export function filterEvents(rows, state){
   const cs = clauses(state.events.q);
