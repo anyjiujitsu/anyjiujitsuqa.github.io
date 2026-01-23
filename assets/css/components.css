@@ -454,3 +454,15 @@ input[type="search"]{ font-size:16px; }
     padding-bottom: 0 !important;
   }
 }
+\n
+/* HEADER TOTALS â€” refinement: spacing, color, size */
+.header__title .header__total{
+  margin-left: 8px;           /* space after header text */
+  font-size: 0.65em;          /* smaller than header text */
+  color: var(--grey);         /* same grey for text + parentheses */
+}
+
+.header__title .header__total::before,
+.header__title .header__total::after{
+  color: var(--grey);         /* parentheses same grey */
+}
