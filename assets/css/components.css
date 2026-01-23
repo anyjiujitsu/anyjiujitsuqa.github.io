@@ -602,3 +602,15 @@ input[type="search"]{ font-size:16px; }
     line-height: 1 !important;
   }
 }
+
+
+/* HEADER TOTALS â€” mobile-only further decrease */
+@media (max-width: 768px){
+  .header__countWrap,
+  .header__countWrap .status,
+  .header__title .header__total,
+  .header__title .header__total .status{
+    font-size: 8px !important;   /* further reduced for mobile */
+    line-height: 1 !important;
+  }
+}
