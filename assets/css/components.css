@@ -579,13 +579,3 @@ nav.filters, .filters__inner, .pillRow{
     z-index: 1000;
   }
 }
-/* === State pill label in UPPERCASE (Index view) === */
-#stateBtn .pill__label{
-  text-transform: uppercase;
-}
-
-/* === State option labels in UPPERCASE (Index + Events) === */
-#stateMenu .menu__itemText,
-#eventsPill2Menu .menu__itemText{
-  text-transform: uppercase;
-}
