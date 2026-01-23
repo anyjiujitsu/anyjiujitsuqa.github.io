@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-006";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-006";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-006";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-006";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-007";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-007";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-007";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-007";
 
 let directoryRows = [];
 let eventRows = [];
@@ -37,6 +37,16 @@ function uniqStatesFromEvents(rows){
   });
   return Array.from(set).sort((a,b)=>a.localeCompare(b));
 }
+
+function uniqTypesFromEvents(rows){
+  const set = new Set();
+  rows.forEach(r=>{
+    const t = String(r.TYPE ?? "").trim();
+    if(t) set.add(t);
+  });
+  return Array.from(set).sort((a,b)=>a.localeCompare(b));
+}
+
 
 
 function closeAllMenus(){
@@ -240,6 +250,56 @@ function wireEventsStatePill(getEventRows, onChange){
 }
 
 
+function wireEventsTypePill(getEventRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('eventsPill3Btn');
+  const panel = $('eventsPill3Menu');
+  const clearBtn = $('eventsPill3Clear');
+
+  if(!btn || !panel) return;
+
+  const types = uniqTypesFromEvents(getEventRows());
+  buildMenuList(panel, types, state.events.type, ()=>{
+    setPillHasSelection(btn, state.events.type.size>0);
+    onChange();
+  });
+
+  setPillHasSelection(btn, state.events.type.size>0);
+
+  const toggleTypeMenu = (e)=>{
+    if(e.type === 'touchend') e.preventDefault();
+    e.stopPropagation();
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+
+    if(!expanded){
+      btn.setAttribute('aria-expanded','true');
+      positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
+    }
+  };
+
+  btn.addEventListener('click', toggleTypeMenu);
+  btn.addEventListener('touchend', toggleTypeMenu, {passive:false});
+
+  clearBtn?.addEventListener('click', (e)=>{
+    if(e.type === 'touchend') e.preventDefault();
+    e.stopPropagation();
+
+    state.events.type.clear();
+    setPillHasSelection(btn, false);
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
+    onChange();
+    closeAllMenus();
+  });
+}
+
+
+
 function setTransition(ms){
   document.body.style.setProperty("--viewTransition", ms + "ms");
 }
@@ -429,9 +489,10 @@ async function init(){
   directoryRows = dirRaw.map(normalizeDirectoryRow);
   eventRows = evRaw.map(normalizeEventRow);
 
-  // Wire YEAR + STATE filter pills (Events view)
+  // Wire YEAR + STATE + EVENT filter pills (Events view)
   wireEventsYearPill(()=>eventRows, render);
   wireEventsStatePill(()=>eventRows, render);
+  wireEventsTypePill(()=>eventRows, render);
 
   render();
 }
