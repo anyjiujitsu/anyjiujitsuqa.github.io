@@ -455,202 +455,58 @@ input[type="search"]{ font-size:16px; }
   }
 }
 \n
-/* HEADER TOTALS â€” refinement: spacing, color, size */
-.header__title .header__total{
-  margin-left: 8px;           /* space after header text */
-  font-size: 0.65em;          /* smaller than header text */
-  color: var(--grey);         /* same grey for text + parentheses */
-}
-
-.header__title .header__total::before,
-.header__title .header__total::after{
-  color: var(--grey);         /* parentheses same grey */
-}
-\n
-/* HEADER TOTALS â€” refinement v2: smaller, lighter, closer */
-.header__title .header__total{
-  margin-left: 4px;            /* closer to header text */
-  font-size: 0.55em;           /* smaller */
-  color: var(--muted);         /* lighter grey */
-}
-
-.header__title .header__total::before,
-.header__title .header__total::after{
-  color: var(--muted);         /* parentheses same lighter grey */
-}
 
 
-/* HEADER TOTALS â€” fix alignment + color (after title, unified muted color) */
-.header__countWrap{
-  flex: 0 0 auto;          /* never consume leftover space (prevents centering) */
-  margin-left: 6px;        /* closer to header text */
-  color: var(--muted);     /* wrapper sets color for text + parentheses */
-  font-size: 0.55em;       /* smaller overall (wrapper scale) */
-}
+/* =========================================================
+   HEADER TOTALS (EVENTS / INDEX)
+   Holistic consolidated styling (no stacked overrides)
+   Goals:
+   - Always appears immediately after header title (left cluster)
+   - Same color for text and any punctuation
+   - Desktop sizing unchanged; mobile slightly smaller
+   - No absolute positioning, no centering, no fragile top hacks
+   ========================================================= */
 
-/* Parentheses inherit the same muted color */
-.header__countWrap::before,
-.header__countWrap::after{
-  color: currentColor;
-}
-
-/* Ensure the inner status text uses the wrapper color (no darker override) */
-.header__countWrap .status{
-  color: currentColor;
-  font-size: 1em;          /* inherit wrapper scaling cleanly */
-}
-
-/* If any layout rule centered it via auto margins, neutralize */
-.header__countWrap{ margin-right: 0; }
-
-
-/* HEADER TOTALS â€” shift closer to title on desktop + mobile */
+/* Keep title + totals as one left-aligned unit */
 .header__title{
-  display: inline-flex;      /* keep title + count as a single left-aligned unit */
+  display: inline-flex;
   align-items: baseline;
 }
 
-.header__title .header__countWrap,
-.header__title .header__total{
-  margin-left: 2px !important; /* closer to end of title */
-}
-
-
-/* HEADER TOTALS â€” place immediately after title (left), not centered */
-.header__inner{
-  display: flex;                 /* ensure predictable ordering */
-  align-items: flex-end;
-}
-
-/* Keep left cluster order: logo -> title -> count */
-.header__logo{ order: 1; }
-.header__title{ order: 2; }
-.header__countWrap{ order: 3; }
-
-/* Push the view toggle to the far right */
-.viewToggle,
-.header__toggle,
-.header__actions{
-  order: 4;
-  margin-left: auto;
-}
-
-/* Neutralize any centering/absolute positioning that was used previously */
+/* Totals element (wrap) â€” treat as suffix after title */
 .header__countWrap{
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
-  top: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  margin-left: 6px !important;   /* sits right after title */
-  margin-right: 0 !important;
-  text-align: left !important;
-  width: auto !important;
-  max-width: none !important;
-}
-\n
-/* HEADER TOTALS â€” remove parentheses */
-.header__countWrap::before,
-.header__countWrap::after,
-.header__title .header__total::before,
-.header__title .header__total::after{
-  content: "" !important;
+  flex: 0 0 auto;
+  margin-left: 2px;          /* closer to title */
+  color: var(--muted);
+  font-size: 0.55em;         /* desktop sizing */
+  line-height: 1;
+  align-self: baseline;
+  position: static;
+  transform: none;
+  text-align: left;
+  width: auto;
 }
 
-/* HEADER TOTALS â€” mobile-only slightly smaller */
-@media (max-width: 768px){
-  .header__countWrap,
-  .header__title .header__total{
-    font-size: 0.5em !important;
-  }
+/* Ensure inner status inherits wrapper color */
+.header__countWrap .status{
+  color: currentColor;
+  font-size: 1em;
+  line-height: 1;
 }
 
-
-/* HEADER TOTALS â€” remove BOTH parentheses robustly */
+/* Remove any parentheses/punctuation if generated via pseudo-elements */
 .header__countWrap::before,
 .header__countWrap:before,
 .header__countWrap::after,
-.header__countWrap:after,
-.header__title .header__total::before,
-.header__title .header__total:before,
-.header__title .header__total::after,
-.header__title .header__total:after{
+.header__countWrap:after{
   content: "" !important;
   display: none !important;
 }
 
-/* HEADER TOTALS â€” mobile-only slightly smaller (force visible change) */
+/* Mobile: slightly smaller totals only */
 @media (max-width: 768px){
   .header__countWrap,
-  .header__countWrap .status,
-  .header__title .header__total,
-  .header__title .header__total .status{
-    font-size: 11px !important;   /* explicit px so it actually changes */
-    line-height: 1 !important;
-  }
-}
-
-
-/* HEADER TOTALS â€” mobile-only DECREASE (smaller than current) */
-@media (max-width: 768px){
-  .header__countWrap,
-  .header__countWrap .status,
-  .header__title .header__total,
-  .header__title .header__total .status{
-    font-size: 9px !important;    /* smaller (previous override was too large) */
-    line-height: 1 !important;
-  }
-}
-
-
-/* HEADER TOTALS â€” mobile-only further decrease */
-@media (max-width: 768px){
-  .header__countWrap,
-  .header__countWrap .status,
-  .header__title .header__total,
-  .header__title .header__total .status{
-    font-size: 8px !important;   /* further reduced for mobile */
-    line-height: 1 !important;
-  }
-}
-
-
-/* HEADER TOTALS â€” vertical alignment fix (raise to align with title baseline) */
-.header__title{
-  align-items: baseline !important;
-}
-
-.header__countWrap,
-.header__title .header__total{
-  position: relative;
-  top: -2px;               /* lift slightly to align bottoms */
-}
-
-/* Mobile: slightly less lift */
-@media (max-width: 768px){
-  .header__countWrap,
-  .header__title .header__total{
-    top: -1px;
-  }
-}
-
-
-/* HEADER TOTALS â€” stronger vertical lift + smaller mobile text */
-
-/* Desktop: lift a bit more */
-.header__countWrap,
-.header__title .header__total{
-  top: -4px;
-}
-
-/* Mobile: lift slightly less + reduce size further */
-@media (max-width: 768px){
-  .header__countWrap,
-  .header__countWrap .status,
-  .header__title .header__total,
-  .header__title .header__total .status{
-    top: -3px;
+  .header__countWrap .status{
     font-size: 7px !important;
     line-height: 1 !important;
   }
