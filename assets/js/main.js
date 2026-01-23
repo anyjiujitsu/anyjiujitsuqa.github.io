@@ -8,6 +8,122 @@ let eventRows = [];
 
 function $(id){ return document.getElementById(id); }
 
+function parseYearFromEventRow(r){
+  const y = String(r?.YEAR ?? "").trim();
+  if(y) return y;
+  const d = String(r?.DATE ?? "").trim();
+  const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return m[3];
+  const tmp = new Date(d);
+  if(!isNaN(tmp)) return String(tmp.getFullYear());
+  return "";
+}
+
+function uniqYearsFromEvents(rows){
+  const set = new Set();
+  rows.forEach(r=>{
+    const y = parseYearFromEventRow(r);
+    if(y) set.add(y);
+  });
+  // Desc sort numeric
+  return Array.from(set).sort((a,b)=>Number(b)-Number(a));
+}
+
+function closeAllMenus(){
+  document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
+    panel.hidden = true;
+  });
+  document.querySelectorAll('.pill.filter-pill[aria-expanded="true"]').forEach(btn=>{
+    btn.setAttribute('aria-expanded','false');
+  });
+}
+
+function setPillHasSelection(btnEl, has){
+  if(!btnEl) return;
+  btnEl.setAttribute('data-has-selection', has ? 'true' : 'false');
+}
+
+function wireMenuDismiss(){
+  // One-time global handlers
+  if(wireMenuDismiss._did) return;
+  wireMenuDismiss._did = true;
+
+  document.addEventListener('click', (e)=>{
+    const t = e.target;
+    if(t && (t.closest('.pillSelect') || t.closest('.menu'))) return;
+    closeAllMenus();
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      closeAllMenus();
+    }
+  });
+}
+
+function buildMenuList(panelEl, items, selectedSet, onToggle){
+  // Replace menu__empty with an interactive list
+  panelEl.querySelectorAll('.menu__empty').forEach(n=>n.remove());
+
+  const list = document.createElement('div');
+  list.className = 'menu__list';
+  items.forEach(val=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'menu__item';
+    b.setAttribute('role','menuitemcheckbox');
+    const checked = selectedSet.has(val);
+    b.setAttribute('aria-checked', checked ? 'true' : 'false');
+    b.dataset.value = val;
+    b.textContent = val;
+    b.addEventListener('click', ()=>{
+      onToggle(val);
+      const now = selectedSet.has(val);
+      b.setAttribute('aria-checked', now ? 'true' : 'false');
+    });
+    list.appendChild(b);
+  });
+
+  panelEl.appendChild(list);
+}
+
+function wireEventsYearPill(getEventRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('eventsPill1Btn');
+  const panel = $('eventsPill1Menu');
+  const clearBtn = $('eventsPill1Clear');
+
+  if(!btn || !panel) return;
+
+  const years = uniqYearsFromEvents(getEventRows());
+  // Ensure default requested behavior: only years present in data
+  buildMenuList(panel, years, state.events.year, (val)=>{
+    if(state.events.year.has(val)) state.events.year.delete(val);
+    else state.events.year.add(val);
+    setPillHasSelection(btn, state.events.year.size>0);
+    onChange();
+  });
+
+  // initial dot state
+  setPillHasSelection(btn, state.events.year.size>0);
+
+  btn.addEventListener('click', ()=>{
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+    btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    panel.hidden = expanded;
+  });
+
+  clearBtn?.addEventListener('click', ()=>{
+    state.events.year.clear();
+    setPillHasSelection(btn, false);
+    // update aria-checked in menu
+    panel.querySelectorAll('.menu__item[role="menuitemcheckbox"]').forEach(b=>b.setAttribute('aria-checked','false'));
+    onChange();
+  });
+}
+
 function setTransition(ms){
   document.body.style.setProperty("--viewTransition", ms + "ms");
 }
@@ -43,7 +159,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
+  document.title = (view === "events") ? "ANY N.E. â€“ EVENTS" : "ANY N.E. â€“ GYM INDEX";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
@@ -186,8 +302,8 @@ async function init(){
   if(!state.view) state.view = "events";
   setViewUI(state.view);
 
-  $("status").textContent = "Loading…";
-  $("eventsStatus").textContent = "Loading…";
+  $("status").textContent = "Loadingâ€¦";
+  $("eventsStatus").textContent = "Loadingâ€¦";
 
   const [dirRaw, evRaw] = await Promise.all([
     loadCSV("data/directory.csv"),
@@ -196,6 +312,9 @@ async function init(){
 
   directoryRows = dirRaw.map(normalizeDirectoryRow);
   eventRows = evRaw.map(normalizeEventRow);
+
+  // Wire YEAR filter pill (Events view)
+  wireEventsYearPill(()=>eventRows, render);
 
   render();
 }
