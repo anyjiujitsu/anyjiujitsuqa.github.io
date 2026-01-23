@@ -29,10 +29,48 @@ function uniqYearsFromEvents(rows){
   return Array.from(set).sort((a,b)=>Number(b)-Number(a));
 }
 
+
+function positionMenu(btnEl, panelEl){
+  if(!btnEl || !panelEl) return;
+  const r = btnEl.getBoundingClientRect();
+  const pad = 8;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // First show to measure
+  panelEl.hidden = false;
+
+  // Default: below-left of button
+  let left = r.left;
+  let top  = r.bottom + pad;
+
+  // Measure panel
+  const pr = panelEl.getBoundingClientRect();
+  const w = pr.width;
+  const h = pr.height;
+
+  // Clamp horizontally
+  if(left + w + pad > vw) left = Math.max(pad, vw - w - pad);
+  if(left < pad) left = pad;
+
+  // If bottom overflow, try above
+  if(top + h + pad > vh){
+    const above = r.top - h - pad;
+    if(above >= pad) top = above;
+    else top = Math.max(pad, vh - h - pad);
+  }
+
+  panelEl.style.left = Math.round(left) + "px";
+  panelEl.style.top  = Math.round(top) + "px";
+}
+
 function closeAllMenus(){
   document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
     panel.hidden = true;
   });
+    panel.style.left = '';
+    panel.style.top = '';
+
   document.querySelectorAll('.pill.filter-pill[aria-expanded="true"]').forEach(btn=>{
     btn.setAttribute('aria-expanded','false');
   });
@@ -113,6 +151,9 @@ function wireEventsYearPill(getEventRows, onChange){
     closeAllMenus();
     btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
     panel.hidden = expanded;
+    if(!expanded){
+      positionMenu(btn, panel);
+    }
   });
 
   clearBtn?.addEventListener('click', ()=>{
@@ -159,7 +200,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. â€“ EVENTS" : "ANY N.E. â€“ GYM INDEX";
+  document.title = (view === "events") ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
@@ -302,8 +343,8 @@ async function init(){
   if(!state.view) state.view = "events";
   setViewUI(state.view);
 
-  $("status").textContent = "Loadingâ€¦";
-  $("eventsStatus").textContent = "Loadingâ€¦";
+  $("status").textContent = "Loading…";
+  $("eventsStatus").textContent = "Loading…";
 
   const [dirRaw, evRaw] = await Promise.all([
     loadCSV("data/directory.csv"),
