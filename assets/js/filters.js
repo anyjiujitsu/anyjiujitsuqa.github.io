@@ -87,6 +87,12 @@ export function filterEvents(rows, state){
     out = out.filter(r => years.has(eventYear(r)));
   }
 
+  // STATE pill (multi-select)
+  const statesSel = state?.events?.state;
+  if(statesSel && statesSel.size){
+    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
+  }
+
   // Search query
   const cs = clauses(state.events.q);
   if(!cs.length) return out;
