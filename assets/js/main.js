@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-005";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-005";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-005";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-005";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-006";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-006";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-006";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-006";
 
 let directoryRows = [];
 let eventRows = [];
@@ -27,6 +27,7 @@ function uniqYearsFromEvents(rows){
     if(y) set.add(y);
   });
   return Array.from(set).sort((a,b)=>Number(b)-Number(a));
+}
 
 function uniqStatesFromEvents(rows){
   const set = new Set();
@@ -34,12 +35,9 @@ function uniqStatesFromEvents(rows){
     const s = String(r.STATE ?? "").trim();
     if(s) set.add(s);
   });
-  // Alpha sort
   return Array.from(set).sort((a,b)=>a.localeCompare(b));
 }
 
-
-}
 
 function closeAllMenus(){
   document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
@@ -210,8 +208,8 @@ function wireEventsStatePill(getEventRows, onChange){
 
   setPillHasSelection(btn, state.events.state.size>0);
 
-  btn.addEventListener('click', (e)=>{
-    e.preventDefault();
+  const toggleStateMenu = (e)=>{
+    if(e.type === 'touchend') e.preventDefault();
     e.stopPropagation();
 
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -224,10 +222,13 @@ function wireEventsStatePill(getEventRows, onChange){
       btn.setAttribute('aria-expanded','false');
       panel.hidden = true;
     }
-  });
+  };
+
+  btn.addEventListener('click', toggleStateMenu);
+  btn.addEventListener('touchend', toggleStateMenu, {passive:false});
 
   clearBtn?.addEventListener('click', (e)=>{
-    e.preventDefault();
+    if(e.type === 'touchend') e.preventDefault();
     e.stopPropagation();
 
     state.events.state.clear();
@@ -237,8 +238,6 @@ function wireEventsStatePill(getEventRows, onChange){
     closeAllMenus();
   });
 }
-
-
 
 
 function setTransition(ms){
@@ -276,7 +275,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
+  document.title = (view === "events") ? "ANY N.E. â€“ EVENTS" : "ANY N.E. â€“ GYM INDEX";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
@@ -419,8 +418,8 @@ async function init(){
   if(!state.view) state.view = "events";
   setViewUI(state.view);
 
-  $("status").textContent = "Loading…";
-  $("eventsStatus").textContent = "Loading…";
+  $("status").textContent = "Loadingâ€¦";
+  $("eventsStatus").textContent = "Loadingâ€¦";
 
   const [dirRaw, evRaw] = await Promise.all([
     loadCSV("data/directory.csv"),
