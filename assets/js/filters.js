@@ -5,7 +5,7 @@
 // - View A (Events) additionally matches group labels like "November 2025" derived from DATE
 
 function norm(s){
-  return String(s ?? "")
+  return String(s || "")
     .toLowerCase()
     // keep commas for splitting; remove other punctuation
     .replace(/[^\p{L}\p{N}\s,]+/gu, " ")
@@ -29,7 +29,7 @@ function includesAllWords(hay, needle){
 }
 
 function monthYearLabel(dateStr){
-  const str = String(dateStr ?? "").trim();
+  const str = String(dateStr || "").trim();
   if(!str) return "";
   // Prefer MM/DD/YYYY (or M/D/YYYY) to avoid locale issues
   const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -67,9 +67,9 @@ export function filterDirectory(rows, state){
 
 
 function eventYear(row){
-  const y = String(row?.YEAR ?? "").trim();
+  const y = String((row && row.YEAR) || "").trim();
   if(y) return y;
-  const d = String(row?.DATE ?? "").trim();
+  const d = String((row && row.DATE) || "").trim();
   const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if(m) return m[3];
   const tmp = new Date(d);
@@ -82,7 +82,7 @@ export function filterEvents(rows, state){
   let out = rows;
 
   // YEAR pill (multi-select)
-  const years = state?.events?.year;
+  const years = (state && state.events)?.year;
   if(years && years.size){
     out = out.filter(r => years.has(eventYear(r)));
   }
