@@ -466,3 +466,15 @@ input[type="search"]{ font-size:16px; }
 .header__title .header__total::after{
   color: var(--grey);         /* parentheses same grey */
 }
+\n
+/* HEADER TOTALS â€” refinement v2: smaller, lighter, closer */
+.header__title .header__total{
+  margin-left: 4px;            /* closer to header text */
+  font-size: 0.55em;           /* smaller */
+  color: var(--muted);         /* lighter grey */
+}
+
+.header__title .header__total::before,
+.header__title .header__total::after{
+  color: var(--muted);         /* parentheses same lighter grey */
+}
