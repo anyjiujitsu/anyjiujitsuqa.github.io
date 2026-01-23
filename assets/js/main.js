@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-004";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-004";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-004";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-004";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-005";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-005";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-005";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-005";
 
 let directoryRows = [];
 let eventRows = [];
@@ -27,6 +27,18 @@ function uniqYearsFromEvents(rows){
     if(y) set.add(y);
   });
   return Array.from(set).sort((a,b)=>Number(b)-Number(a));
+
+function uniqStatesFromEvents(rows){
+  const set = new Set();
+  rows.forEach(r=>{
+    const s = String(r.STATE ?? "").trim();
+    if(s) set.add(s);
+  });
+  // Alpha sort
+  return Array.from(set).sort((a,b)=>a.localeCompare(b));
+}
+
+
 }
 
 function closeAllMenus(){
@@ -179,6 +191,55 @@ function wireEventsYearPill(getEventRows, onChange){
     closeAllMenus();
   });
 }
+
+
+function wireEventsStatePill(getEventRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('eventsPill2Btn');
+  const panel = $('eventsPill2Menu');
+  const clearBtn = $('eventsPill2Clear');
+
+  if(!btn || !panel) return;
+
+  const states = uniqStatesFromEvents(getEventRows());
+  buildMenuList(panel, states, state.events.state, ()=>{
+    setPillHasSelection(btn, state.events.state.size>0);
+    onChange();
+  });
+
+  setPillHasSelection(btn, state.events.state.size>0);
+
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+
+    if(!expanded){
+      btn.setAttribute('aria-expanded','true');
+      positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
+    }
+  });
+
+  clearBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    state.events.state.clear();
+    setPillHasSelection(btn, false);
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
+    onChange();
+    closeAllMenus();
+  });
+}
+
+
+
 
 function setTransition(ms){
   document.body.style.setProperty("--viewTransition", ms + "ms");
@@ -369,8 +430,9 @@ async function init(){
   directoryRows = dirRaw.map(normalizeDirectoryRow);
   eventRows = evRaw.map(normalizeEventRow);
 
-  // Wire YEAR filter pill (Events view)
+  // Wire YEAR + STATE filter pills (Events view)
   wireEventsYearPill(()=>eventRows, render);
+  wireEventsStatePill(()=>eventRows, render);
 
   render();
 }
