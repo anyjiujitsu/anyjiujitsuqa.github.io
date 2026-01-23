@@ -614,3 +614,23 @@ input[type="search"]{ font-size:16px; }
     line-height: 1 !important;
   }
 }
+
+
+/* HEADER TOTALS â€” vertical alignment fix (raise to align with title baseline) */
+.header__title{
+  align-items: baseline !important;
+}
+
+.header__countWrap,
+.header__title .header__total{
+  position: relative;
+  top: -2px;               /* lift slightly to align bottoms */
+}
+
+/* Mobile: slightly less lift */
+@media (max-width: 768px){
+  .header__countWrap,
+  .header__title .header__total{
+    top: -1px;
+  }
+}
