@@ -634,3 +634,24 @@ input[type="search"]{ font-size:16px; }
     top: -1px;
   }
 }
+
+
+/* HEADER TOTALS â€” stronger vertical lift + smaller mobile text */
+
+/* Desktop: lift a bit more */
+.header__countWrap,
+.header__title .header__total{
+  top: -4px;
+}
+
+/* Mobile: lift slightly less + reduce size further */
+@media (max-width: 768px){
+  .header__countWrap,
+  .header__countWrap .status,
+  .header__title .header__total,
+  .header__title .header__total .status{
+    top: -3px;
+    font-size: 7px !important;
+    line-height: 1 !important;
+  }
+}
