@@ -79,15 +79,22 @@ function eventYear(row){
 
 // ------------------ EVENTS ------------------
 export function filterEvents(rows, state){
-  const cs = clauses(state.events.q);
-  if(!cs.length) return rows;
+  let out = rows;
 
-  return rows.filter(r=>{
-    // Build a haystack that includes the computed month/year group label.
+  // YEAR pill (multi-select)
+  const years = state?.events?.year;
+  if(years && years.size){
+    out = out.filter(r => years.has(eventYear(r)));
+  }
+
+  // Search query
+  const cs = clauses(state.events.q);
+  if(!cs.length) return out;
+
+  return out.filter(r=>{
     const group = monthYearLabel(r.DATE);
     const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
     const hay = `${base} ${group}`;
-
     return cs.every(c => includesAllWords(hay, c));
   });
 }
