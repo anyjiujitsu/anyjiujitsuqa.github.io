@@ -41,16 +41,19 @@ function closeAllMenus(){
 }
 
 function positionMenu(btnEl, panelEl){
+  const vv = window.visualViewport;
   if(!btnEl || !panelEl) return;
   const r = btnEl.getBoundingClientRect();
   const pad = 8;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vw = vv ? vv.width : window.innerWidth;
+  const vh = vv ? vv.height : window.innerHeight;
+  const vx = vv ? vv.offsetLeft : 0;
+  const vy = vv ? vv.offsetTop : 0;
 
   panelEl.hidden = false; // show to measure
 
-  let left = r.left;
-  let top  = r.bottom + pad;
+  let left = r.left + vx;
+  let top  = r.bottom + pad + vy;
 
   const pr = panelEl.getBoundingClientRect();
   const w = pr.width;
@@ -78,17 +81,19 @@ function wireMenuDismiss(){
   if(wireMenuDismiss._did) return;
   wireMenuDismiss._did = true;
 
-  document.addEventListener('click', (e)=>{
+  const outsideHandler = (e)=>{
     const t = e.target;
-    if(t && (t.closest('.pillSelect') || t.closest('.menu'))) return;
+    if(t && (t.closest('.pillSelect') || t.closest('.menu') || t.closest('.pill.filter-pill'))) return;
     closeAllMenus();
-  });
+  };
+
+  // Use pointerdown for mobile reliability; keep click as fallback.
+  document.addEventListener('pointerdown', outsideHandler);
+  document.addEventListener('click', outsideHandler);
 
   document.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape') closeAllMenus();
   });
-
-  window.addEventListener('resize', ()=>closeAllMenus());
 }
 
 function buildMenuList(panelEl, items, selectedSet, onToggle){
@@ -145,7 +150,7 @@ function wireEventsYearPill(getEventRows, onChange){
 
   setPillHasSelection(btn, state.events.year.size>0);
 
-  btn.addEventListener('click', (e)=>{
+  const openToggle = (e)=>{
     e.preventDefault();
     e.stopPropagation();
 
@@ -159,7 +164,11 @@ function wireEventsYearPill(getEventRows, onChange){
       btn.setAttribute('aria-expanded','false');
       panel.hidden = true;
     }
-  });
+  };
+
+  // pointerdown makes mobile feel instant and avoids click quirks
+  btn.addEventListener('pointerdown', openToggle);
+  btn.addEventListener('click', openToggle);
 
   clearBtn?.addEventListener('click', (e)=>{
     e.preventDefault();
