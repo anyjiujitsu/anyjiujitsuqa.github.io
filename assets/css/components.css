@@ -514,3 +514,38 @@ input[type="search"]{ font-size:16px; }
 .header__title .header__total{
   margin-left: 2px !important; /* closer to end of title */
 }
+
+
+/* HEADER TOTALS â€” place immediately after title (left), not centered */
+.header__inner{
+  display: flex;                 /* ensure predictable ordering */
+  align-items: flex-end;
+}
+
+/* Keep left cluster order: logo -> title -> count */
+.header__logo{ order: 1; }
+.header__title{ order: 2; }
+.header__countWrap{ order: 3; }
+
+/* Push the view toggle to the far right */
+.viewToggle,
+.header__toggle,
+.header__actions{
+  order: 4;
+  margin-left: auto;
+}
+
+/* Neutralize any centering/absolute positioning that was used previously */
+.header__countWrap{
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin-left: 6px !important;   /* sits right after title */
+  margin-right: 0 !important;
+  text-align: left !important;
+  width: auto !important;
+  max-width: none !important;
+}
