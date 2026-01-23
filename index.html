@@ -30,6 +30,12 @@
 <div class="header__inner" style="padding-top:0px;">
         <h1 class="header__title" id="viewTitle" aria-label="Current view">EVENTS</h1>
 
+        <div class="header__countWrap" id="headerCounts" aria-live="polite">
+          <span id="eventsStatus" class="status header__count">Loading…</span>
+          <span id="status" class="status header__count" hidden></span>
+        </div>
+
+
         <!-- Toggle: LEFT = EVENTS, RIGHT = INDEX -->
         <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
           <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="true" type="button">Events</button>
@@ -201,8 +207,7 @@
         <div class="viewPanel" id="viewEvents" aria-label="Events">
 <main class="content" aria-label="Events">
             <div class="content__inner">
-              <div id="eventsStatus" class="status" aria-live="polite">Loading…</div>
-              <div id="eventsRoot"></div>
+<div id="eventsRoot"></div>
             </div>
           </main>
         </div>
@@ -211,8 +216,7 @@
         <div class="viewPanel" id="viewIndex" aria-label="Index">
 <main class="content" id="content" aria-label="Directory">
             <div class="content__inner">
-              <div id="status" class="status" aria-live="polite"></div>
-              <div id="groupsRoot"></div>
+<div id="groupsRoot"></div>
             </div>
           </main>
         </div>
