@@ -103,7 +103,7 @@ function wireMenuDismiss(){
 
   document.addEventListener('click', (e)=>{
     const t = e.target;
-    if(t && (t.closest('.pillSelect') || t.closest('.menu'))) return;
+    if(t && (t.closest('.pillSelect') || t.closest('.menu') || t.closest('.pill.filter-pill'))) return;
     closeAllMenus();
   });
 
