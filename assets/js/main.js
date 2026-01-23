@@ -37,6 +37,12 @@ function setViewUI(view){
   const title = $("viewTitle");
   if(title) title.textContent = (view === "events") ? "EVENTS" : "INDEX";
 
+  // Header counts: show the relevant total next to the header title
+  const evStatus = $("eventsStatus");
+  const idxStatus = $("status");
+  if(evStatus) evStatus.hidden = (view !== "events");
+  if(idxStatus) idxStatus.hidden = (view !== "index");
+
   document.title = (view === "events") ? "ANY N.E. – EVENTS" : "ANY N.E. – GYM INDEX";
 
   setTransition(260);
