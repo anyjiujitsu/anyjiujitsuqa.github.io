@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-010";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-010";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-010";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-010";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-011";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-011";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-011";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-011";
 
 let directoryRows = [];
 let eventRows = [];
@@ -553,7 +553,12 @@ function render(){
   renderEventsGroups($("eventsRoot"), evFiltered);
   $("eventsStatus").textContent = `${evFiltered.length} events`;
 
-  const idxFiltered = filterDirectory(directoryRows, state);
+  let idxFiltered = filterDirectory(directoryRows, state);
+  // Redundant safeguard: ensure Index STATE selection is applied even if filterDirectory is stale/cached.
+  const idxStatesSel = state?.index?.states;
+  if(idxStatesSel && idxStatesSel.size){
+    idxFiltered = idxFiltered.filter(r => idxStatesSel.has(String(r.STATE ?? "").trim()));
+  }
   renderDirectoryGroups($("groupsRoot"), idxFiltered);
   $("status").textContent = `${idxFiltered.length} gyms`;
 }
