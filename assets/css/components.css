@@ -478,3 +478,27 @@ input[type="search"]{ font-size:16px; }
 .header__title .header__total::after{
   color: var(--muted);         /* parentheses same lighter grey */
 }
+
+
+/* HEADER TOTALS â€” fix alignment + color (after title, unified muted color) */
+.header__countWrap{
+  flex: 0 0 auto;          /* never consume leftover space (prevents centering) */
+  margin-left: 6px;        /* closer to header text */
+  color: var(--muted);     /* wrapper sets color for text + parentheses */
+  font-size: 0.55em;       /* smaller overall (wrapper scale) */
+}
+
+/* Parentheses inherit the same muted color */
+.header__countWrap::before,
+.header__countWrap::after{
+  color: currentColor;
+}
+
+/* Ensure the inner status text uses the wrapper color (no darker override) */
+.header__countWrap .status{
+  color: currentColor;
+  font-size: 1em;          /* inherit wrapper scaling cleanly */
+}
+
+/* If any layout rule centered it via auto margins, neutralize */
+.header__countWrap{ margin-right: 0; }
