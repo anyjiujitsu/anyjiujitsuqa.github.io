@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-003";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-003";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-003";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-003";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-004";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-004";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-004";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-004";
 
 let directoryRows = [];
 let eventRows = [];
@@ -10,9 +10,9 @@ function $(id){ return document.getElementById(id); }
 
 /* ------------------ PILL MENUS (Events: YEAR) ------------------ */
 function parseYearFromEventRow(r){
-  const y = String((r && r.YEAR) || "").trim();
+  const y = String(r?.YEAR ?? "").trim();
   if(y) return y;
-  const d = String((r && r.DATE) || "").trim();
+  const d = String(r?.DATE ?? "").trim();
   const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if(m) return m[3];
   const tmp = new Date(d);
@@ -41,16 +41,19 @@ function closeAllMenus(){
 }
 
 function positionMenu(btnEl, panelEl){
+  const vv = window.visualViewport;
   if(!btnEl || !panelEl) return;
   const r = btnEl.getBoundingClientRect();
   const pad = 8;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vw = vv ? vv.width : window.innerWidth;
+  const vh = vv ? vv.height : window.innerHeight;
+  const vx = vv ? vv.offsetLeft : 0;
+  const vy = vv ? vv.offsetTop : 0;
 
   panelEl.hidden = false; // show to measure
 
-  let left = r.left;
-  let top  = r.bottom + pad;
+  let left = r.left + vx;
+  let top  = r.bottom + pad + vy;
 
   const pr = panelEl.getBoundingClientRect();
   const w = pr.width;
@@ -146,7 +149,7 @@ function wireEventsYearPill(getEventRows, onChange){
   setPillHasSelection(btn, state.events.year.size>0);
 
   const toggleYearMenu = (e)=>{
-    e.preventDefault();
+    if(e.type === 'touchend') e.preventDefault();
     e.stopPropagation();
 
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -161,12 +164,12 @@ function wireEventsYearPill(getEventRows, onChange){
     }
   };
 
+  // Desktop: click. Mobile: touchend fallback.
   btn.addEventListener('click', toggleYearMenu);
-  btn.addEventListener('touchstart', toggleYearMenu, {passive:false});
-  btn.addEventListener('pointerdown', toggleYearMenu);
+  btn.addEventListener('touchend', toggleYearMenu, {passive:false});
 
-  (clearBtn && clearBtn.addEventListener)('click', (e)=>{
-    e.preventDefault();
+  clearBtn?.addEventListener('click', (e)=>{
+    if(e.type === 'touchend') e.preventDefault();
     e.stopPropagation();
 
     state.events.year.clear();
@@ -224,8 +227,8 @@ function wireViewToggle(){
   const viewToggle = $("viewToggle");
   const viewShell  = $("viewShell");
 
-  (tabEvents && tabEvents.addEventListener)("click", () => setViewUI("events"));
-  (tabIndex && tabIndex.addEventListener)("click", () => setViewUI("index"));
+  tabEvents?.addEventListener("click", () => setViewUI("events"));
+  tabIndex?.addEventListener("click", () => setViewUI("index"));
 
   if(viewToggle){
     let dragging = false;
@@ -316,11 +319,11 @@ function wireSearch(){
   const idxIn = $("searchInput");
   const evIn  = $("eventsSearchInput");
 
-  (idxIn && idxIn.addEventListener)("input",(e)=>{
+  idxIn?.addEventListener("input",(e)=>{
     setIndexQuery(e.target.value);
     render();
   });
-  (evIn && evIn.addEventListener)("input",(e)=>{
+  evIn?.addEventListener("input",(e)=>{
     setEventsQuery(e.target.value);
     render();
   });
