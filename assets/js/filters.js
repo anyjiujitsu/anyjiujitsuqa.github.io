@@ -49,10 +49,19 @@ function monthYearLabel(dateStr){
 
 // ------------------ INDEX ------------------
 export function filterDirectory(rows, state){
-  const cs = clauses(state.index.q);
-  if(!cs.length) return rows;
+  let out = rows;
 
-  return rows.filter(r=>{
+  // STATE pill (Index view)
+  const statesSel = state?.index?.states;
+  if(statesSel && statesSel.size){
+    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
+  }
+
+  // Search query
+  const cs = clauses(state.index.q);
+  if(!cs.length) return out;
+
+  return out.filter(r=>{
     return cs.every(c=>{
       // Special tokens (each clause can be a token or a normal text clause)
       if(c === "sat" || c === "saturday") return !!(r.SAT && String(r.SAT).trim());
