@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-011";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-011";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-011";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-011";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-012";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-012";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-012";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-012";
 
 let directoryRows = [];
 let eventRows = [];
@@ -53,7 +53,7 @@ function uniqTypesFromEvents(rows){
 function uniqStatesFromDirectory(rows){
   const set = new Set();
   rows.forEach(r=>{
-    const s = String(r.STATE ?? "").trim();
+    const s = String(r.STATE ?? "").trim().toUpperCase();
     if(s) set.add(s);
   });
   return Array.from(set).sort((a,b)=>a.localeCompare(b));
@@ -557,10 +557,10 @@ function render(){
   // Redundant safeguard: ensure Index STATE selection is applied even if filterDirectory is stale/cached.
   const idxStatesSel = state?.index?.states;
   if(idxStatesSel && idxStatesSel.size){
-    idxFiltered = idxFiltered.filter(r => idxStatesSel.has(String(r.STATE ?? "").trim()));
+    idxFiltered = idxFiltered.filter(r => idxStatesSel.has(String(r.STATE ?? "").trim().toUpperCase()));
   }
   renderDirectoryGroups($("groupsRoot"), idxFiltered);
-  $("status").textContent = `${idxFiltered.length} gyms`;
+  $("status").textContent = `${idxFiltered.length} gyms` + (idxStatesSel && idxStatesSel.size ? ` • STATE: ${Array.from(idxStatesSel).join(", ")}` : "");
 }
 
 async function init(){
