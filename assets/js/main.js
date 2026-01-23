@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-012";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-012";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-012";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-012";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-013";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-013";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-013";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-013";
 
 let directoryRows = [];
 let eventRows = [];
@@ -560,7 +560,7 @@ function render(){
     idxFiltered = idxFiltered.filter(r => idxStatesSel.has(String(r.STATE ?? "").trim().toUpperCase()));
   }
   renderDirectoryGroups($("groupsRoot"), idxFiltered);
-  $("status").textContent = `${idxFiltered.length} gyms` + (idxStatesSel && idxStatesSel.size ? ` • STATE: ${Array.from(idxStatesSel).join(", ")}` : "");
+  $("status").textContent = `${idxFiltered.length} gyms`;
 }
 
 async function init(){
