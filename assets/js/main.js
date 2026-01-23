@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-007";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-007";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-007";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-007";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-008";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-008";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-008";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-008";
 
 let directoryRows = [];
 let eventRows = [];
@@ -48,6 +48,46 @@ function uniqTypesFromEvents(rows){
 }
 
 
+
+
+function uniqStatesFromDirectory(rows){
+  const set = new Set();
+  rows.forEach(r=>{
+    const s = String(r.STATE ?? "").trim();
+    if(s) set.add(s);
+  });
+  return Array.from(set).sort((a,b)=>a.localeCompare(b));
+}
+
+function buildMenuListIn(listEl, items, selectedSet, onChange){
+  if(!listEl) return;
+  listEl.innerHTML = "";
+  items.forEach(val=>{
+    const row = document.createElement('label');
+    row.className = 'menu__item menu__item--check';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'menu__checkbox';
+    cb.checked = selectedSet.has(val);
+    cb.value = val;
+
+    const text = document.createElement('span');
+    text.className = 'menu__itemText';
+    text.textContent = val;
+
+    cb.addEventListener('change', (ev)=>{
+      ev.stopPropagation();
+      if(cb.checked) selectedSet.add(val);
+      else selectedSet.delete(val);
+      onChange();
+    });
+
+    row.appendChild(cb);
+    row.appendChild(text);
+    listEl.appendChild(row);
+  });
+}
 
 function closeAllMenus(){
   document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
@@ -435,6 +475,53 @@ function wireViewToggle(){
   }
 }
 
+
+function wireIndexStatePill(getDirectoryRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('stateBtn');
+  const panel = $('stateMenu');
+  const clearBtn = $('stateClear');
+  const listEl = $('stateList') || panel?.querySelector('.menu__list');
+
+  if(!btn || !panel) return;
+
+  const states = uniqStatesFromDirectory(getDirectoryRows());
+  buildMenuListIn(listEl, states, state.index.states, ()=>{
+    setPillHasSelection(btn, state.index.states.size>0);
+    onChange();
+  });
+
+  setPillHasSelection(btn, state.index.states.size>0);
+
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+
+    if(!expanded){
+      btn.setAttribute('aria-expanded','true');
+      positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
+    }
+  });
+
+  clearBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    state.index.states.clear();
+    setPillHasSelection(btn, false);
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
+    onChange();
+    closeAllMenus();
+  });
+}
+
 function wireSearch(){
   const idxIn = $("searchInput");
   const evIn  = $("eventsSearchInput");
@@ -493,6 +580,9 @@ async function init(){
   wireEventsYearPill(()=>eventRows, render);
   wireEventsStatePill(()=>eventRows, render);
   wireEventsTypePill(()=>eventRows, render);
+
+  // Wire STATE filter pill (Index view)
+  wireIndexStatePill(()=>directoryRows, render);
 
   render();
 }
