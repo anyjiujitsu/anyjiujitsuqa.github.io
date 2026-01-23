@@ -99,25 +99,30 @@ function buildMenuList(panelEl, items, selectedSet, onToggle){
   list.className = 'menu__list';
 
   items.forEach(val=>{
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'menu__item';
-    b.setAttribute('role','menuitemcheckbox');
+    const row = document.createElement('label');
+    row.className = 'menu__item menu__item--check';
 
-    const checked = selectedSet.has(val);
-    b.setAttribute('aria-checked', checked ? 'true' : 'false');
-    b.dataset.value = val;
-    b.textContent = val;
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'menu__checkbox';
+    cb.checked = selectedSet.has(val);
+    cb.value = val;
 
-    b.addEventListener('click', (ev)=>{
-      ev.preventDefault();
+    const text = document.createElement('span');
+    text.className = 'menu__itemText';
+    text.textContent = val;
+
+    cb.addEventListener('change', (ev)=>{
       ev.stopPropagation();
-      onToggle(val);
-      const now = selectedSet.has(val);
-      b.setAttribute('aria-checked', now ? 'true' : 'false');
+      // keep Set in sync with checkbox state
+      if(cb.checked) selectedSet.add(val);
+      else selectedSet.delete(val);
+      onToggle(val, cb.checked);
     });
 
-    list.appendChild(b);
+    row.appendChild(cb);
+    row.appendChild(text);
+    list.appendChild(row);
   });
 
   panelEl.appendChild(list);
@@ -133,9 +138,7 @@ function wireEventsYearPill(getEventRows, onChange){
   if(!btn || !panel) return;
 
   const years = uniqYearsFromEvents(getEventRows());
-  buildMenuList(panel, years, state.events.year, (val)=>{
-    if(state.events.year.has(val)) state.events.year.delete(val);
-    else state.events.year.add(val);
+  buildMenuList(panel, years, state.events.year, ()=>{
     setPillHasSelection(btn, state.events.year.size>0);
     onChange();
   });
@@ -164,7 +167,7 @@ function wireEventsYearPill(getEventRows, onChange){
 
     state.events.year.clear();
     setPillHasSelection(btn, false);
-    panel.querySelectorAll('.menu__item[role="menuitemcheckbox"]').forEach(b=>b.setAttribute('aria-checked','false'));
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
     onChange();
     closeAllMenus();
   });
