@@ -1,13 +1,14 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js";
-import { filterDirectory, filterEvents } from "./filters.js";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-001";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-001";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-001";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-001";
 
 let directoryRows = [];
 let eventRows = [];
 
 function $(id){ return document.getElementById(id); }
 
+/* ------------------ PILL MENUS (Events: YEAR) ------------------ */
 function parseYearFromEventRow(r){
   const y = String(r?.YEAR ?? "").trim();
   if(y) return y;
@@ -25,10 +26,19 @@ function uniqYearsFromEvents(rows){
     const y = parseYearFromEventRow(r);
     if(y) set.add(y);
   });
-  // Desc sort numeric
   return Array.from(set).sort((a,b)=>Number(b)-Number(a));
 }
 
+function closeAllMenus(){
+  document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
+    panel.hidden = true;
+    panel.style.left = '';
+    panel.style.top  = '';
+  });
+  document.querySelectorAll('.pill.filter-pill[aria-expanded="true"]').forEach(btn=>{
+    btn.setAttribute('aria-expanded','false');
+  });
+}
 
 function positionMenu(btnEl, panelEl){
   if(!btnEl || !panelEl) return;
@@ -37,23 +47,18 @@ function positionMenu(btnEl, panelEl){
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // First show to measure
-  panelEl.hidden = false;
+  panelEl.hidden = false; // show to measure
 
-  // Default: below-left of button
   let left = r.left;
   let top  = r.bottom + pad;
 
-  // Measure panel
   const pr = panelEl.getBoundingClientRect();
   const w = pr.width;
   const h = pr.height;
 
-  // Clamp horizontally
   if(left + w + pad > vw) left = Math.max(pad, vw - w - pad);
   if(left < pad) left = pad;
 
-  // If bottom overflow, try above
   if(top + h + pad > vh){
     const above = r.top - h - pad;
     if(above >= pad) top = above;
@@ -64,25 +69,12 @@ function positionMenu(btnEl, panelEl){
   panelEl.style.top  = Math.round(top) + "px";
 }
 
-function closeAllMenus(){
-  document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
-    panel.hidden = true;
-  });
-    panel.style.left = '';
-    panel.style.top = '';
-
-  document.querySelectorAll('.pill.filter-pill[aria-expanded="true"]').forEach(btn=>{
-    btn.setAttribute('aria-expanded','false');
-  });
-}
-
 function setPillHasSelection(btnEl, has){
   if(!btnEl) return;
   btnEl.setAttribute('data-has-selection', has ? 'true' : 'false');
 }
 
 function wireMenuDismiss(){
-  // One-time global handlers
   if(wireMenuDismiss._did) return;
   wireMenuDismiss._did = true;
 
@@ -93,32 +85,38 @@ function wireMenuDismiss(){
   });
 
   document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      closeAllMenus();
-    }
+    if(e.key === 'Escape') closeAllMenus();
   });
+
+  window.addEventListener('resize', ()=>closeAllMenus());
 }
 
 function buildMenuList(panelEl, items, selectedSet, onToggle){
-  // Replace menu__empty with an interactive list
   panelEl.querySelectorAll('.menu__empty').forEach(n=>n.remove());
+  panelEl.querySelectorAll('.menu__list').forEach(n=>n.remove());
 
   const list = document.createElement('div');
   list.className = 'menu__list';
+
   items.forEach(val=>{
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'menu__item';
     b.setAttribute('role','menuitemcheckbox');
+
     const checked = selectedSet.has(val);
     b.setAttribute('aria-checked', checked ? 'true' : 'false');
     b.dataset.value = val;
     b.textContent = val;
-    b.addEventListener('click', ()=>{
+
+    b.addEventListener('click', (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
       onToggle(val);
       const now = selectedSet.has(val);
       b.setAttribute('aria-checked', now ? 'true' : 'false');
     });
+
     list.appendChild(b);
   });
 
@@ -135,7 +133,6 @@ function wireEventsYearPill(getEventRows, onChange){
   if(!btn || !panel) return;
 
   const years = uniqYearsFromEvents(getEventRows());
-  // Ensure default requested behavior: only years present in data
   buildMenuList(panel, years, state.events.year, (val)=>{
     if(state.events.year.has(val)) state.events.year.delete(val);
     else state.events.year.add(val);
@@ -143,25 +140,33 @@ function wireEventsYearPill(getEventRows, onChange){
     onChange();
   });
 
-  // initial dot state
   setPillHasSelection(btn, state.events.year.size>0);
 
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     closeAllMenus();
-    btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-    panel.hidden = expanded;
+
     if(!expanded){
+      btn.setAttribute('aria-expanded','true');
       positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
     }
   });
 
-  clearBtn?.addEventListener('click', ()=>{
+  clearBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
     state.events.year.clear();
     setPillHasSelection(btn, false);
-    // update aria-checked in menu
     panel.querySelectorAll('.menu__item[role="menuitemcheckbox"]').forEach(b=>b.setAttribute('aria-checked','false'));
     onChange();
+    closeAllMenus();
   });
 }
 
