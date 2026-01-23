@@ -92,6 +92,11 @@ export function filterEvents(rows, state){
     out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
   }
 
+  const typesSel = state?.events?.type;
+  if(typesSel && typesSel.size){
+    out = out.filter(r => typesSel.has(String(r.TYPE ?? "").trim()));
+  }
+
   // Search query
   const cs = clauses(state.events.q);
   if(!cs.length) return out;
