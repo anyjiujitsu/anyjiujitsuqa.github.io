@@ -502,3 +502,15 @@ input[type="search"]{ font-size:16px; }
 
 /* If any layout rule centered it via auto margins, neutralize */
 .header__countWrap{ margin-right: 0; }
+
+
+/* HEADER TOTALS â€” shift closer to title on desktop + mobile */
+.header__title{
+  display: inline-flex;      /* keep title + count as a single left-aligned unit */
+  align-items: baseline;
+}
+
+.header__title .header__countWrap,
+.header__title .header__total{
+  margin-left: 2px !important; /* closer to end of title */
+}
