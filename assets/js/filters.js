@@ -54,7 +54,7 @@ export function filterDirectory(rows, state){
   // STATE pill (Index view)
   const statesSel = state?.index?.states;
   if(statesSel && statesSel.size){
-    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
+    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim().toUpperCase()));
   }
 
   // Search query
@@ -98,7 +98,7 @@ export function filterEvents(rows, state){
 
   const statesSel = state?.events?.state;
   if(statesSel && statesSel.size){
-    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
+    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim().toUpperCase()));
   }
 
   const typesSel = state?.events?.type;
