@@ -457,44 +457,64 @@ input[type="search"]{ font-size:16px; }
 \n
 
 
+}
+
+
 /* =========================================================
-   HEADER TOTALS (EVENTS / INDEX)
-   Holistic consolidated styling (no stacked overrides)
-   Goals:
-   - Always appears immediately after header title (left cluster)
-   - Same color for text and any punctuation
+   HEADER TOTALS (EVENTS / INDEX) â€” consolidated v2
+   Fixes:
+   - Keep totals in the LEFT cluster, immediately after title
+   - Prevent any centering / absolute positioning
+   - Vertically align with the bottom/baseline of the title text
    - Desktop sizing unchanged; mobile slightly smaller
-   - No absolute positioning, no centering, no fragile top hacks
    ========================================================= */
 
-/* Keep title + totals as one left-aligned unit */
-.header__title{
-  display: inline-flex;
-  align-items: baseline;
+/* Ensure header row is a predictable flex layout */
+.header__inner{
+  display: flex;
+  align-items: flex-end;          /* bottom align children (title + totals) */
 }
 
-/* Totals element (wrap) â€” treat as suffix after title */
+/* Keep left cluster ordering */
+.header__logo{ order: 1; }
+.header__title{ order: 2; }
+
+/* Totals: always in-flow, never centered */
 .header__countWrap{
-  flex: 0 0 auto;
-  margin-left: 2px;          /* closer to title */
+  order: 3;
+  flex: 0 0 auto;                /* never grow/shrink into centering */
+  align-self: flex-end;
+  margin-left: 2px;              /* sits right after title */
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   color: var(--muted);
-  font-size: 0.55em;         /* desktop sizing */
+  font-size: 0.55em;             /* desktop sizing */
   line-height: 1;
-  align-self: baseline;
-  position: static;
-  transform: none;
-  text-align: left;
-  width: auto;
+  position: static !important;   /* defeat any absolute centering */
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  text-align: left !important;
+  width: auto !important;
+  max-width: none !important;
 }
 
-/* Ensure inner status inherits wrapper color */
+/* Nudge down/up for optical baseline match (small, stable) */
+.header__countWrap{
+  margin-bottom: 2px;            /* aligns visually with title bottom */
+}
+
+/* Inner status inherits */
 .header__countWrap .status{
   color: currentColor;
   font-size: 1em;
   line-height: 1;
 }
 
-/* Remove any parentheses/punctuation if generated via pseudo-elements */
+/* Remove any parentheses/punctuation from pseudo-elements */
 .header__countWrap::before,
 .header__countWrap:before,
 .header__countWrap::after,
@@ -503,11 +523,20 @@ input[type="search"]{ font-size:16px; }
   display: none !important;
 }
 
+/* Push view toggle/actions to the far right */
+.viewToggle,
+.header__toggle,
+.header__actions{
+  order: 4;
+  margin-left: auto;
+}
+
 /* Mobile: slightly smaller totals only */
 @media (max-width: 768px){
   .header__countWrap,
   .header__countWrap .status{
     font-size: 7px !important;
     line-height: 1 !important;
+    margin-bottom: 1px;
   }
 }
