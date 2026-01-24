@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-011";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-011";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-011";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-011";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-015";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-015";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-015";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-015";
 
 let directoryRows = [];
 let eventRows = [];
@@ -88,6 +88,11 @@ function buildMenuListIn(listEl, items, selectedSet, onChange){
     listEl.appendChild(row);
   });
 }
+
+
+
+
+
 
 function closeAllMenus(){
   document.querySelectorAll('.menu[data-pill-panel]').forEach(panel=>{
@@ -476,6 +481,55 @@ function wireViewToggle(){
 }
 
 
+
+function wireIndexOpensPill(getDirectoryRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('openMatBtn');
+  const panel = $('openMatMenu');
+  const clearBtn = $('openMatClear');
+  const listEl = $('openMatList') || panel?.querySelector('.menu__list');
+
+  if(!btn || !panel) return;
+
+  const items = ["ALL","SATURDAY","SUNDAY"];
+  buildMenuListIn(listEl, items, state.index.opens, ()=>{
+    setPillHasSelection(btn, state.index.opens.size>0);
+    onChange();
+  });
+
+  setPillHasSelection(btn, state.index.opens.size>0);
+
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+
+    if(!expanded){
+      btn.setAttribute('aria-expanded','true');
+      positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
+    }
+  });
+
+  clearBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    state.index.opens.clear();
+    setPillHasSelection(btn, false);
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
+    onChange();
+    closeAllMenus();
+  });
+}
+
+
+
 function wireIndexStatePill(getDirectoryRows, onChange){
   wireMenuDismiss();
 
@@ -586,8 +640,9 @@ async function init(){
   wireEventsStatePill(()=>eventRows, render);
   wireEventsTypePill(()=>eventRows, render);
 
-  // Wire STATE filter pill (Index view)
+  // Wire STATE + OPENS filter pills (Index view)
   wireIndexStatePill(()=>directoryRows, render);
+  wireIndexOpensPill(()=>directoryRows, render);
 
   render();
 }
