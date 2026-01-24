@@ -619,22 +619,6 @@ nav.filters, .filters__inner, .pillRow{
 
 
 /* Events view â€” 4-column stacked layout */
-
-/* Mobile-only: EVENT + NEW moved above FOR (keeps 3 columns on mobile) */
-#viewEvents .cell__eventInlineWrap{
-  display:none; /* shown on mobile only */
-  gap: 10px;
-  align-items: baseline;
-  margin-bottom: 4px;
-}
-#viewEvents .cell__eventInlineWrap .cell__eventInline,
-#viewEvents .cell__eventInlineWrap .cell__newInline{
-  font-size: 12px;          /* smaller than main text */
-  line-height: 1.05;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
 #viewEvents .row.row--events{
   display: grid;
   grid-template-columns: 140px 1.55fr 1.05fr 120px;
@@ -660,12 +644,10 @@ nav.filters, .filters__inner, .pillRow{
 
 @media (max-width: 520px){
   #viewEvents .row.row--events{
-    grid-template-columns: 1.35fr 1fr 92px;
+    grid-template-columns: 110px 1.25fr 1fr 92px;
     column-gap: 12px;
+    font-size: 13px; /* mobile: slightly smaller for better fit */
   }
-
-#viewEvents .cell--event{ display:none; }
-#viewEvents .cell__eventInlineWrap{ display:flex; }
   #viewEvents .row.row--events .cell__sub{
     font-size: 11px;
   }
