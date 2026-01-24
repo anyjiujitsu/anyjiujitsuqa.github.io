@@ -4,7 +4,7 @@
 /* FIXTURE header font (header title only) */
 @font-face{
   font-family: 'Fixture';
-  src: local('Fixture'), local('Fixture Regular'), local('Fixture Display'), local('Fixture Condensed');
+  src: local('Fixture'), local('Fixture Regular'), local('Fixture Display');
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
@@ -188,11 +188,14 @@
 }
 
 .pill__label{
-  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: 600;
+line-height: 1;
+  font-synthesis: none;
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-stretch: normal;
-  font-variation-settings: 'wdth' 100;
+  font-variation-settings: 'wdth' 100, 'wght' 500;
   font-size: var(--pillFont);
-  font-weight: 700;
+  font-weight: 600;
   color: rgba(0,0,0,0.55);
   white-space: nowrap;
 }
