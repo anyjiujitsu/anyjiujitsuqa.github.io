@@ -72,7 +72,14 @@ export function filterDirectory(rows, state){
 
 
 
-  // STATE pill (Index view)
+    // GUESTS pill (Index view) — "GUESTS WELCOME" means OTA === "Y"
+  const guestsSel = state?.index?.guests;
+  if(guestsSel && guestsSel.size){
+    // Only one option right now, but keep Set semantics for [FILTER STRUCTURE]
+    out = out.filter(r => String(r.OTA ?? "").trim().toUpperCase() === "Y");
+  }
+
+// STATE pill (Index view)
   const statesSel = state?.index?.states;
   if(statesSel && statesSel.size){
     out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
