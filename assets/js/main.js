@@ -20,7 +20,7 @@ function parseYearFromEventRow(r){
   return "";
 }
 
-function uniqYearsFrom(rows){
+function uniqYearsFromEvents(rows){
   const set = new Set();
   rows.forEach(r=>{
     const y = parseYearFromEventRow(r);
@@ -29,7 +29,7 @@ function uniqYearsFrom(rows){
   return Array.from(set).sort((a,b)=>Number(b)-Number(a));
 }
 
-function uniqStatesFrom(rows){
+function uniqStatesFromEvents(rows){
   const set = new Set();
   rows.forEach(r=>{
     const s = String(r.STATE ?? "").trim();
@@ -38,7 +38,7 @@ function uniqStatesFrom(rows){
   return Array.from(set).sort((a,b)=>a.localeCompare(b));
 }
 
-function uniqTypesFrom(rows){
+function uniqTypesFromEvents(rows){
   const set = new Set();
   rows.forEach(r=>{
     const t = String(r.TYPE ?? "").trim();
@@ -375,7 +375,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. GRAPPING" : "ANY N.E. GRAPPLING";
+  document.title = (view === "events") ? "ANY N.E. â€“ EVENTS" : "ANY N.E. â€“ GYM INDEX";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
