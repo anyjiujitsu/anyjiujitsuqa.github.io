@@ -116,15 +116,13 @@
   background: transparent;
   padding: 10px 16px;
   border-radius: 999px;
-  font-synthesis: none;
-  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-stretch: normal;
-  font-variation-settings: 'wdth' 100, 'wght' 500;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 12px;
   color: rgba(0,0,0,0.45);
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
 }
 
 .viewToggle__tab[aria-selected="true"]{ color: #111; }
@@ -178,20 +176,10 @@
   border: 0;
   outline: none;
   background: transparent;
-  font-synthesis: none;
   font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-stretch: normal;
-  font-variation-settings: 'wdth' 100, 'wght' 500;
-  font-weight: 500;
+  font-synthesis: none;
   width: 100%;
   font-size: 16px;
-}
-
-.pill__input::placeholder{
-  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-variation-settings: 'wdth' 100, 'wght' 500;
-  font-weight: 500;
-  color: rgba(0,0,0,0.55);
 }
 
 .pill__clear{
@@ -600,4 +588,10 @@ nav.filters, .filters__inner, .pillRow{
     position: sticky;
     z-index: 1000;
   }
+}
+
+
+.pill__input::placeholder{
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
 }
