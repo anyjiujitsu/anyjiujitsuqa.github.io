@@ -1,7 +1,7 @@
-import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-015";
-import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-015";
-import { filterDirectory, filterEvents } from "./filters.js?v=20260123-015";
-import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-015";
+import { loadCSV, normalizeDirectoryRow, normalizeEventRow } from "./data.js?v=20260123-016";
+import { state, setView, setIndexQuery, setEventsQuery } from "./state.js?v=20260123-016";
+import { filterDirectory, filterEvents } from "./filters.js?v=20260123-016";
+import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=20260123-016";
 
 let directoryRows = [];
 let eventRows = [];
@@ -530,6 +530,54 @@ function wireIndexOpensPill(getDirectoryRows, onChange){
 
 
 
+
+function wireIndexGuestsPill(getDirectoryRows, onChange){
+  wireMenuDismiss();
+
+  const btn = $('guestsBtn');
+  const panel = $('guestsMenu');
+  const clearBtn = $('guestsClear');
+  const listEl = $('guestsList') || panel?.querySelector('.menu__list');
+
+  if(!btn || !panel) return;
+
+  const items = ["GUESTS WELCOME"];
+  buildMenuListIn(listEl, items, state.index.guests, ()=>{
+    setPillHasSelection(btn, state.index.guests.size>0);
+    onChange();
+  });
+
+  setPillHasSelection(btn, state.index.guests.size>0);
+
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllMenus();
+
+    if(!expanded){
+      btn.setAttribute('aria-expanded','true');
+      positionMenu(btn, panel);
+    } else {
+      btn.setAttribute('aria-expanded','false');
+      panel.hidden = true;
+    }
+  });
+
+  clearBtn?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    state.index.guests.clear();
+    setPillHasSelection(btn, false);
+    panel.querySelectorAll('input.menu__checkbox').forEach(cb=>{ cb.checked = false; });
+    onChange();
+    closeAllMenus();
+  });
+}
+
+
 function wireIndexStatePill(getDirectoryRows, onChange){
   wireMenuDismiss();
 
@@ -640,9 +688,10 @@ async function init(){
   wireEventsStatePill(()=>eventRows, render);
   wireEventsTypePill(()=>eventRows, render);
 
-  // Wire STATE + OPENS filter pills (Index view)
+  // Wire STATE + OPENS + GUESTS filter pills (Index view)
   wireIndexStatePill(()=>directoryRows, render);
   wireIndexOpensPill(()=>directoryRows, render);
+  wireIndexGuestsPill(()=>directoryRows, render);
 
   render();
 }
