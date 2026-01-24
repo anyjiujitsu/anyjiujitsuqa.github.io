@@ -9,7 +9,8 @@ export const state = {
     q: "",
     // pills intentionally inactive in STEP 0
     states: new Set(),
-    openMat: "", // "all" | "sat" | "sun" | ""
+    opens: new Set(), // "ALL" | "SATURDAY" | "SUNDAY"
+    openMat: "", // deprecated (kept for backward compat)
     guests: new Set(), // "welcomed" etc.
   },
 
@@ -33,7 +34,7 @@ export function setEventsQuery(q){ state.events.q = String(q ?? ""); }
 export function hasIndexSelections(){
   return state.index.q.trim().length > 0 ||
     state.index.states.size > 0 ||
-    state.index.openMat !== "" ||
+    state.index.opens.size > 0 ||
     state.index.guests.size > 0;
 }
 
