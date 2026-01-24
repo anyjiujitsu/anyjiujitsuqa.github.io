@@ -50,6 +50,27 @@ function monthYearLabel(dateStr){
 // ------------------ INDEX ------------------
 export function filterDirectory(rows, state){
   let out = rows;
+  // OPENS pill (Index view) — multi-select: ALL | SATURDAY | SUNDAY
+  const opensSel = state?.index?.opens;
+  if(opensSel && opensSel.size){
+    const wantAll = opensSel.has("ALL");
+    const wantSat = opensSel.has("SATURDAY");
+    const wantSun = opensSel.has("SUNDAY");
+
+    // If ALL is selected (alone or with others), treat as "Sat OR Sun"
+    if(wantAll){
+      out = out.filter(r => (r.SAT && String(r.SAT).trim()) || (r.SUN && String(r.SUN).trim()));
+    } else {
+      // Otherwise, if multiple days selected, treat as OR across selected days.
+      out = out.filter(r => {
+        const hasSat = (r.SAT && String(r.SAT).trim());
+        const hasSun = (r.SUN && String(r.SUN).trim());
+        return (wantSat && hasSat) || (wantSun && hasSun);
+      });
+    }
+  }
+
+
 
   // STATE pill (Index view)
   const statesSel = state?.index?.states;
