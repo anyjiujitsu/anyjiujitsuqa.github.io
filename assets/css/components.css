@@ -629,7 +629,7 @@ nav.filters, .filters__inner, .pillRow{
 }
 #viewEvents .cell__eventInlineWrap .cell__eventInline,
 #viewEvents .cell__eventInlineWrap .cell__newInline{
-  font-size: 10px;          /* smaller than main text */
+  font-size: 5px;          /* smaller than main text */
   line-height: 1.05;
   color: var(--muted);
   font-weight: 600;
@@ -648,7 +648,7 @@ nav.filters, .filters__inner, .pillRow{
 
 #viewEvents .row.row--events .cell__sub{
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 7px;
   color: var(--muted);
   letter-spacing: 0.10em;
   text-transform: uppercase;
@@ -681,7 +681,7 @@ nav.filters, .filters__inner, .pillRow{
 
   /* primary (top) labels in each column */
   #viewEvents .row.row--events .cell__top{
-    font-size: 12px;
+    font-size: 10px;
     line-height: 1.15;
   }
 
