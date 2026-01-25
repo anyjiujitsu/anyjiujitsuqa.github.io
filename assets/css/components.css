@@ -37,7 +37,21 @@
   line-height: 1;
 }
 @media (max-width: 430px){
-  .header__countWrap{ margin-left: 8px; }
+  .header__countWrap{ margin-left: 8px; 
+  /* EVENTS cardbody mobile typography tightening */
+  #viewEvents .cardbody,
+  #viewEvents .row,
+  #viewEvents .cell {
+    font-size: 11px;
+  }
+
+  /* EVENT + NEW 2x smaller than other fields */
+  #viewEvents .cell--event,
+  #viewEvents .cell--event-secondary {
+    font-size: 9px;
+  }
+
+}
 }
 
 
