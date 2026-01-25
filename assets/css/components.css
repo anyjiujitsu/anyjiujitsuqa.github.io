@@ -672,40 +672,17 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* --- Mobile: tighten Events cardbody text sizing; make EVENT/NEW noticeably smaller --- */
-@media (max-width: 520px){
-  /* overall Events row text smaller for better fit */
-  #viewEvents .row.row--events{ font-size: 11px; }
+@media (max-width: 640px){
+  /* shrink all Events cardbody text a bit more for fit */
+  #viewEvents .row.row--events .col{ font-size: 11px; }
+  #viewEvents .row.row--events .col strong{ font-size: 11px; } /* keep strong in sync */
+  #viewEvents .row.row--events .muted{ font-size: 8.5px; }
 
-  /* primary lines */
-  #viewEvents .cell__top{ font-size: 12px; line-height: 1.1; }
-  #viewEvents .cell__sub{ font-size: 9px; line-height: 1.1; }
+  /* EVENT (1a) + NEW (1b) should be noticeably smaller than everything else */
+  #viewEvents .row.row--events .col--type strong{ font-size: 6px; font-weight: 600; letter-spacing: 0.02em; }
+  #viewEvents .row.row--events .col--type .muted{ font-size: 6px; }
 
-  /* column 1 inline (EVENT + NEW) is secondary -> ~2x smaller */
-  #viewEvents .cell__eventInlineWrap{ gap: 6px; }
-  #viewEvents .cell__eventInline{ font-size: 6px; line-height: 1.1; }
-
-  /* keep right columns readable and consistent */
-  #viewEvents .cell__day{ font-size: 11px; }
-  #viewEvents .cell__date{ font-size: 10px; }
-
-  /* preserve spacing/widths (no layout change) */
-}
-/* primary (top) labels in each column */
-  #viewEvents .row.row--events .cell__top{
-    font-size: 10px;
-    line-height: 1.15;
-  }
-
-  /* secondary (bottom) labels */
-  #viewEvents .row.row--events .cell__sub{
-    font-size: 9px;
-    line-height: 1.1;
-  }
-
-  /* EVENT + NEW (inline) should be smaller than the rest */
-  #viewEvents .cell__eventInlineWrap .cell__eventInline,
-  #viewEvents .cell__eventInlineWrap .cell__newInline{
-    font-size: 8px;
-    line-height: 1.05;
-  }
+  /* Keep day/date block aligned + compact */
+  #viewEvents .row.row--events .col--date strong{ font-size: 11px; }
+  #viewEvents .row.row--events .col--date .muted{ font-size: 10px; }
 }
