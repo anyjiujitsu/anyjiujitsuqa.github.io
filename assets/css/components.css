@@ -629,7 +629,7 @@ nav.filters, .filters__inner, .pillRow{
 }
 #viewEvents .cell__eventInlineWrap .cell__eventInline,
 #viewEvents .cell__eventInlineWrap .cell__newInline{
-  font-size: 12px;          /* smaller than main text */
+  font-size: 10px;          /* smaller than main text */
   line-height: 1.05;
   color: var(--muted);
   font-weight: 600;
@@ -667,7 +667,7 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .cell--event{ display:none; }
 #viewEvents .cell__eventInlineWrap{ display:flex; }
   #viewEvents .row.row--events .cell__sub{
-    font-size: 11px;
+    font-size: 9px;
   }
 }
 
@@ -675,13 +675,13 @@ nav.filters, .filters__inner, .pillRow{
 @media (max-width: 520px){
   /* overall events row text */
   #viewEvents .row.row--events{
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.15;
   }
 
   /* primary (top) labels in each column */
   #viewEvents .row.row--events .cell__top{
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.15;
   }
 
@@ -694,7 +694,7 @@ nav.filters, .filters__inner, .pillRow{
   /* EVENT + NEW (inline) should be smaller than the rest */
   #viewEvents .cell__eventInlineWrap .cell__eventInline,
   #viewEvents .cell__eventInlineWrap .cell__newInline{
-    font-size: 10px;
+    font-size: 8px;
     line-height: 1.05;
   }
 }
