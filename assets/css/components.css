@@ -38,16 +38,18 @@
 }
 @media (max-width: 430px){
   .header__countWrap{ margin-left: 8px; 
-  /* EVENTS cardbody mobile typography tightening */
+  /* EVENTS cardbody (mobile) â€” smaller overall, with EVENT + NEW even smaller */
   #viewEvents .cardbody,
   #viewEvents .row,
-  #viewEvents .cell {
+  #viewEvents .cell,
+  #viewEvents .cell__top,
+  #viewEvents .cell__sub{
     font-size: 11px;
   }
 
-  /* EVENT + NEW 2x smaller than other fields */
-  #viewEvents .cell--event,
-  #viewEvents .cell--event-secondary {
+  /* EVENT (1a) + NEW (1b) */
+  #viewEvents .cell--event .cell__event,
+  #viewEvents .cell--event .cell__new{
     font-size: 9px;
   }
 
