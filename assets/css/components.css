@@ -673,21 +673,22 @@ nav.filters, .filters__inner, .pillRow{
 
 
 /* ==============================
-   EVENTS cardbody mobile sizing
+   EVENTS cardbody mobile sizing (decrease)
    ============================== */
 @media (max-width: 430px){
-  /* Overall Events cardbody text slightly smaller */
-  #viewEvents .cardbody,
-  #viewEvents .row,
-  #viewEvents .cell,
+  /* Decrease ALL Events cardbody text (mobile) */
+  #viewEvents .row{
+    font-size: 9px;
+  }
+  /* Ensure inner lines inherit (override any fixed sizes) */
   #viewEvents .cell__top,
   #viewEvents .cell__sub{
-    font-size: 11px;
+    font-size: inherit;
   }
 
-  /* EVENT (1a) + NEW (1b) 2x smaller */
+  /* EVENT (1a) + NEW (1b) even smaller */
   #viewEvents .cell--event .cell__event,
   #viewEvents .cell--event .cell__new{
-    font-size: 9px;
+    font-size: 7.5px;
   }
 }
