@@ -674,15 +674,15 @@ nav.filters, .filters__inner, .pillRow{
 /* --- Mobile: tighten Events cardbody text sizing; make EVENT/NEW noticeably smaller --- */
 @media (max-width: 640px){
   /* shrink all Events cardbody text a bit more for fit */
-  #viewEvents .row.row--events .col{ font-size: 11px; }
-  #viewEvents .row.row--events .col strong{ font-size: 11px; } /* keep strong in sync */
-  #viewEvents .row.row--events .muted{ font-size: 8.5px; }
+  #viewEvents .row.row--events .col{ font-size: 10px; }
+  #viewEvents .row.row--events .col strong{ font-size: 10px; } /* keep strong in sync */
+  #viewEvents .row.row--events .muted{ font-size: 7.5px; }
 
   /* EVENT (1a) + NEW (1b) should be noticeably smaller than everything else */
-  #viewEvents .row.row--events .col--type strong{ font-size: 6px; font-weight: 600; letter-spacing: 0.02em; }
-  #viewEvents .row.row--events .col--type .muted{ font-size: 6px; }
+  #viewEvents .row.row--events .col--type strong{ font-size: 5px; font-weight: 600; letter-spacing: 0.02em; }
+  #viewEvents .row.row--events .col--type .muted{ font-size: 5px; }
 
   /* Keep day/date block aligned + compact */
-  #viewEvents .row.row--events .col--date strong{ font-size: 11px; }
+  #viewEvents .row.row--events .col--date strong{ font-size: 10px; }
   #viewEvents .row.row--events .col--date .muted{ font-size: 10px; }
 }
