@@ -125,6 +125,13 @@ function renderEventRow(r){
   const row = document.createElement("div");
   row.className = "row row--events";
 
+  // DATE displayed as MM/DD/YY (fallback to original if parse fails)
+  const rawDate = String(r.DATE ?? "").trim();
+  const parsed = rawDate ? parseEventDate(rawDate) : null;
+  const dateText = parsed
+    ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
+    : (rawDate || "—");
+
   // 1) EVENT + (placeholder) NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
@@ -137,10 +144,6 @@ function renderEventRow(r){
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap">
-      <span class="cell__eventInline">${escapeHtml(r.EVENT || r.TYPE || "—")}</span>
-      <span class="cell__newInline">—</span>
-    </div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${escapeHtml(r.WHERE || r.GYM || "—")}</div>
   `;
@@ -158,7 +161,7 @@ function renderEventRow(r){
   c4.className = "cell cell--daydate";
   c4.innerHTML = `
     <div class="cell__top cell__day">${escapeHtml(r.DAY || "—")}</div>
-    <div class="cell__sub cell__date">${escapeHtml(r.DATE || "—")}</div>
+    <div class="cell__sub cell__date">${escapeHtml(dateText)}</div>
   `;
 
   row.appendChild(c1);
