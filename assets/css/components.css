@@ -688,15 +688,9 @@ nav.filters, .filters__inner, .pillRow{
 
 @media (max-width: 520px){
   #viewEvents .row.row--events{
-    grid-template-columns: 1.6fr 0.9fr 84px;
+    grid-template-columns: 1.5fr 1fr 84px;
     column-gap: 10px;
   }
-
-  /* Nudge the DAY/DATE column content to the right on mobile */
-  #viewEvents .row.row--events .cell--daydate{
-    padding-left: 10px;
-  }
-
 
 #viewEvents .cell--event{ display:none; }
 #viewEvents .cell__eventInlineWrap{ display:flex; }
@@ -765,15 +759,17 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-/* --- Center column micro-nudge (desktop & mobile) --- */
-/* Desktop */
-.events-card .cell--center {
-  padding-left: 18px;
+/* --- Center/right column spacing (Events rows) --- */
+/* NOTE: Render uses .cell--citystate (middle) and .cell--daydate (right). */
+#viewEvents .row.row--events .cell--citystate{
+  padding-left: 4px; /* subtle separation from col 1 */
+}
+#viewEvents .row.row--events .cell--daydate{
+  padding-left: 16px; /* pushes DAY/DATE block visually right (more separation) */
 }
 
 /* Mobile */
-@media (max-width: 768px) {
-  .events-card .cell--center {
-    padding-left: 16px;
-  }
+@media (max-width: 768px){
+  #viewEvents .row.row--events .cell--citystate{ padding-left: 3px; }
+  #viewEvents .row.row--events .cell--daydate{ padding-left: 18px; }
 }
