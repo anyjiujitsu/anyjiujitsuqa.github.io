@@ -705,7 +705,8 @@ nav.filters, .filters__inner, .pillRow{
 /* EVENTS cardbody: tighten tracking for width-sensitive fields */
 #viewEvents .cell__where,
 #viewEvents .cell__state,
-#viewEvents .cell__date{
+#viewEvents .cell__date,
+#viewEvents .cell__for{
   letter-spacing: -0.02em;
 }
 
@@ -713,12 +714,12 @@ nav.filters, .filters__inner, .pillRow{
 /* --- Center column micro-nudge (desktop & mobile) --- */
 /* Desktop */
 .events-card .cell--center {
-  padding-left: 4px;
+  padding-left: 10px;
 }
 
 /* Mobile */
 @media (max-width: 768px) {
   .events-card .cell--center {
-    padding-left: 3px;
+    padding-left: 8px;
   }
 }
