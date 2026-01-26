@@ -637,13 +637,18 @@ nav.filters, .filters__inner, .pillRow{
 }
 #viewEvents .row.row--events{
   display: grid;
-  grid-template-columns: 165px 1.55fr 1.05fr 120px;
+  grid-template-columns: 165px 1.55fr 1.15fr 110px;
   column-gap: 12px;
   align-items: center;
 }
 
 #viewEvents .row.row--events .cell__top{
   font-weight: 700;
+}
+
+#viewEvents .row.row--events .cell--forwhere .cell__top{
+  letter-spacing: -0.02em;
+  font-stretch: condensed;
 }
 
 #viewEvents .row.row--events .cell__sub{
@@ -683,12 +688,32 @@ nav.filters, .filters__inner, .pillRow{
 
 @media (max-width: 520px){
   #viewEvents .row.row--events{
-    grid-template-columns: 1.5fr 1fr 92px;
+    grid-template-columns: 1.5fr 1fr 84px;
     column-gap: 10px;
   }
 
 #viewEvents .cell--event{ display:none; }
 #viewEvents .cell__eventInlineWrap{ display:flex; }
+#viewEvents .row.row--events .cell--forwhere{
+  position: relative;
+}
+#viewEvents .row.row--events .cell--forwhere::before{
+  content: "";
+  position: absolute;
+  left: -14px;
+  right: 0;
+  top: -14px;
+  bottom: -14px;
+  background: rgba(232, 221, 198, 0.85);
+  border-radius: 14px 0 0 14px;
+  z-index: 0;
+  pointer-events: none;
+}
+#viewEvents .row.row--events .cell--forwhere > *{
+  position: relative;
+  z-index: 1;
+}
+
   #viewEvents .row.row--events .cell__sub{
     font-size: 11px;
   }
