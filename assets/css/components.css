@@ -714,12 +714,12 @@ nav.filters, .filters__inner, .pillRow{
 /* --- Center column micro-nudge (desktop & mobile) --- */
 /* Desktop */
 .events-card .cell--center {
-  padding-left: 14px;
+  padding-left: 18px;
 }
 
 /* Mobile */
 @media (max-width: 768px) {
   .events-card .cell--center {
-    padding-left: 12px;
+    padding-left: 16px;
   }
 }
