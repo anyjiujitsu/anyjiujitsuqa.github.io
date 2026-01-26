@@ -708,3 +708,17 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .cell__date{
   letter-spacing: -0.02em;
 }
+
+
+/* --- Center column micro-nudge (desktop & mobile) --- */
+/* Desktop */
+.events-card .cell--center {
+  padding-left: 4px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .events-card .cell--center {
+    padding-left: 3px;
+  }
+}
