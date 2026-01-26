@@ -133,7 +133,42 @@ function renderEventRow(r){
     : (rawDate || "—");
 
   // 1) EVENT + (placeholder) NEW field
-row.appendChild(c2);
+  const c1 = document.createElement("div");
+  c1.className = "cell cell--event";
+  c1.innerHTML = `
+    <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
+    <div class="cell__sub cell__new">—</div>
+  `;
+
+  // 2) FOR + WHERE
+  const c2 = document.createElement("div");
+  c2.className = "cell cell--forwhere";
+  const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
+  const newShown = String(newRaw).trim() || "—";
+  c2.innerHTML = `
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
+    <div class="cell__sub cell__where">${escapeHtml(r.WHERE || r.GYM || "—")}</div>
+  `;
+
+  // 3) CITY + STATE
+  const c3 = document.createElement("div");
+  c3.className = "cell cell--citystate";
+  c3.innerHTML = `
+    <div class="cell__top cell__city">${escapeHtml(r.CITY || "—")}</div>
+    <div class="cell__sub cell__state">${escapeHtml(r.STATE || "—")}</div>
+  `;
+
+  // 4) DAY + DATE
+  const c4 = document.createElement("div");
+  c4.className = "cell cell--daydate";
+  c4.innerHTML = `
+    <div class="cell__top cell__day">${escapeHtml(r.DAY || "—")}</div>
+    <div class="cell__sub cell__date">${escapeHtml(dateText)}</div>
+  `;
+
+  row.appendChild(c1);
+  row.appendChild(c2);
   row.appendChild(c3);
   row.appendChild(c4);
 
