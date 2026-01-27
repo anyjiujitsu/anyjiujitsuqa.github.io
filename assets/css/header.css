@@ -1,6 +1,7 @@
-/* header.css (corrected)
-   Extracted from pre-split ANYJJv28 components.css and cleaned.
-*/
+/* header.css (split from components.css v28; order-preserving) */
+
+
+
 
 /* FIXTURE header font (header title only) */
 @font-face{
