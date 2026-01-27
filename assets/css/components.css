@@ -647,7 +647,8 @@ nav.filters, .filters__inner, .pillRow{
    Only inner dividers are shown (no group top/bottom). */
 #viewEvents .table .row.row--events{
   border-top: 0;          /* disable the shared .row border divider for Events rows */
-  position: relative;     /* anchor ::before overlay divider */
+  position: relative;     /* anchor overlay divider */
+  isolation: isolate;     /* ensure divider paints above cell backgrounds on desktop */
 }
 
 #viewEvents .table .row.row--events + .row.row--events::before{
@@ -658,7 +659,7 @@ nav.filters, .filters__inner, .pillRow{
   top: 0;
   height: 1px;
   background: rgba(0,0,0,0.06);
-  z-index: 3;
+  z-index: 30;
   pointer-events: none;
 }
 
