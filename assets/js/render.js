@@ -146,39 +146,25 @@ function renderEventRow(r){
   const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
   const newShown = String(newRaw).trim() || "—";
   c2.innerHTML = `
-    <div class="cell__stackWithIcon">
-      <span class="cell__icon">${iconSvg('building')}</span>
-      <div class="cell__stack">
-        <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
-        <div class="cell__sub cell__where">${escapeHtml(r.WHERE || r.GYM || "—")}</div>
-      </div>
-    </div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
+    <div class="cell__sub cell__where">${escapeHtml(r.WHERE || r.GYM || "—")}</div>
   `;
 
   // 3) CITY + STATE
   const c3 = document.createElement("div");
   c3.className = "cell cell--citystate";
   c3.innerHTML = `
-    <div class="cell__stackWithIcon">
-      <span class="cell__icon">${iconSvg('pin')}</span>
-      <div class="cell__stack">
-        <div class="cell__top cell__city">${escapeHtml(r.CITY || "—")}</div>
-        <div class="cell__sub cell__state">${escapeHtml(r.STATE || "—")}</div>
-      </div>
-    </div>
+    <div class="cell__top cell__city">${escapeHtml(r.CITY || "—")}</div>
+    <div class="cell__sub cell__state">${escapeHtml(r.STATE || "—")}</div>
   `;
 
   // 4) DAY + DATE
   const c4 = document.createElement("div");
   c4.className = "cell cell--daydate";
   c4.innerHTML = `
-    <div class="cell__stackWithIcon">
-      <span class="cell__icon">${iconSvg('calendar')}</span>
-      <div class="cell__stack">
-        <div class="cell__top cell__day">${escapeHtml(r.DAY || "—")}</div>
-        <div class="cell__sub cell__date">${escapeHtml(dateText)}</div>
-      </div>
-    </div>
+    <div class="cell__top cell__day">${escapeHtml(r.DAY || "—")}</div>
+    <div class="cell__sub cell__date">${escapeHtml(dateText)}</div>
   `;
 
   row.appendChild(c1);
@@ -265,31 +251,4 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-}
-
-function iconSvg(kind){
-  // Dependency-free inline icons (stroke uses currentColor)
-  if(kind === 'building'){
-    return `
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M4 21V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 7h.01M12 7h.01M16 7h.01M8 10h.01M12 10h.01M16 10h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
-  }
-  if(kind === 'pin'){
-    return `
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 21s7-4.4 7-11a7 7 0 0 0-14 0c0 6.6 7 11 7 11z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
-      </svg>`;
-  }
-  // calendar
-  return `
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M7 3v3M17 3v3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-      <path d="M4 6h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-      <path d="M5 6v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>`;
 }
