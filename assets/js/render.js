@@ -148,7 +148,11 @@ function renderEventRow(r){
   c2.innerHTML = `
     <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
-    <div class="cell__sub cell__where">${escapeHtml(r.WHERE || r.GYM || "—")}</div>
+    <div class="cell__sub cell__where">${(() => {
+      const raw = (r.WHERE ?? r.GYM ?? "");
+      const t = String(raw).trim();
+      return escapeHtml(t || "HOSTED LOCATION");
+    })()}</div>
   `;
 
   // 3) CITY + STATE
