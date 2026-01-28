@@ -33,6 +33,8 @@
 }
 #viewEvents .cell__eventInlineWrap .cell__eventInline,
 #viewEvents .cell__eventInlineWrap .cell__newInline{
+  font-style: italic;
+  text-transform: uppercase;
   font-size: 12px;          /* smaller than main text */
   line-height: 1.05;
   color: var(--muted);
@@ -269,6 +271,8 @@
     font-size: 6px;
   }
   #viewEvents .row.row--events .cell__newInline{
+  font-style: italic;
+  text-transform: uppercase;
     font-size: 4px;
   }
 }
