@@ -914,3 +914,20 @@ nav.filters, .filters__inner, .pillRow{
     padding-top: 10px;
   }
 }
+
+
+/* =========================================================
+   EVENTS: reclaim left-edge space (mobile-first)
+   Goal: shift ONLY the FOR/WHERE column (icon + text) visually left,
+   without changing icon size or icon-to-text spacing.
+   We move icon and text together by the same delta.
+   ========================================================= */
+#viewEvents{
+  --evForWhereShiftX: 4px; /* tweak knob */
+}
+#viewEvents .row.row--events .cell--forwhere{
+  padding-left: calc(var(--evIconPad) - var(--evForWhereShiftX));
+}
+#viewEvents .row.row--events .cell--forwhere::after{
+  left: calc(var(--evIconLeft) - var(--evForWhereShiftX));
+}
