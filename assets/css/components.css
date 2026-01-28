@@ -637,10 +637,10 @@ nav.filters, .filters__inner, .pillRow{
 }
 #viewEvents .row.row--events{
   display: grid;
-  grid-template-columns: 155px 1.8fr 1.45fr 92px;
+  grid-template-columns: 165px 1.7fr 1.35fr 96px;
   column-gap: 10px;
+  padding: 11px 8px;
   align-items: center;
-  padding: 10px 10px;
 }
 
 /* EVENTS: internal dividers must span through the left TYPE color block.
@@ -693,9 +693,9 @@ nav.filters, .filters__inner, .pillRow{
    Uses overlay icons (mask) so color inherits consistently.
    ========================================================= */
 #viewEvents{
-  --evIconPad: 17px;
-  --evIconLeft: 5px;
-  --evIconSize: 12.5px;
+  --evIconPad: 16px;
+  --evIconLeft: 4px;
+  --evIconSize: 13px;
   --evIconOpacity: 0.65;
 }
 
@@ -774,7 +774,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* Slightly tighter icon sizing on very small screens */
 @media (max-width: 520px){
-  #viewEvents{ --evIconPad: 17px; --evIconLeft: 5px; --evIconSize: 12.5px; }
+  #viewEvents{ --evIconPad: 15px; --evIconLeft: 4px; --evIconSize: 11px; }
 
   #viewEvents .row.row--events .cell--forwhere::after,
   #viewEvents .row.row--events .cell--citystate::before,
@@ -815,7 +815,8 @@ nav.filters, .filters__inner, .pillRow{
 @media (max-width: 520px){
   #viewEvents .row.row--events{
     grid-template-columns: 1.6fr 1fr 74px;
-    column-gap: 10px;
+    column-gap: 9px;
+    padding: 11px 6px;
   }
 
 #viewEvents .cell--event{ display:none; }
