@@ -128,23 +128,23 @@ function renderEventRow(r){
   // DATE displayed as MM/DD/YY (fallback to original if parse fails)
   const rawDate = String(r.DATE ?? "").trim();
   const parsed = rawDate ? parseEventDate(rawDate) : null;
-  \1
-  const showNew = isNewByCreated(r.CREATED, 3);
-  const newText = showNew ? \"— NEW\" : \"\";
+  const dateText = parsed
+    ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
+    : (rawDate || "—");
+
+  const newShown = computeNewLabel(r.CREATED);
 
   // 1) EVENT + (placeholder) NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
   c1.innerHTML = `
     <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
-    <div class="cell__sub cell__new">${escapeHtml(newText)}</div>
+    <div class="cell__sub cell__new">${escapeHtml(newShown)}</div>
   `;
 
   // 2) FOR + WHERE
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
-  const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
-  const newShown = String(newRaw).trim() || "—";
   c2.innerHTML = `
     <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
@@ -257,41 +257,50 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
-
 // --- NEW badge logic (based on CREATED) ---
-function parseDateLoose(v){
-  const s = String(v ?? "").trim();
+function parseCreatedDate(value){
+  if(!value) return null;
+  const s = String(value).trim();
   if(!s) return null;
 
-  // YYYY-MM-DD (optionally with time)
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)){
-    const d = new Date(s.slice(0,10) + "T00:00:00");
-    return isNaN(d) ? null : d;
-  }
-
-  // MM/DD/YY or MM/DD/YYYY
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  // ISO yyyy-mm-dd
+  let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if(m){
-    const mm = Number(m[1]), dd = Number(m[2]);
-    let yy = Number(m[3]);
-    if(yy < 100) yy += 2000;
-    const d = new Date(yy, mm - 1, dd);
-    return isNaN(d) ? null : d;
+    const y=+m[1], mo=+m[2]-1, d=+m[3];
+    const dt = new Date(y, mo, d);
+    return isNaN(dt.getTime()) ? null : dt;
   }
 
-  // Fallback: Date.parse
-  const d = new Date(s);
-  return isNaN(d) ? null : d;
+  // mm/dd/yy or mm/dd/yyyy
+  m = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(s);
+  if(m){
+    const mo=+m[1]-1, d=+m[2];
+    let y=+m[3];
+    if(y < 100) y = 2000 + y;
+    const dt = new Date(y, mo, d);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+
+  // Fallback to Date.parse
+  const t = Date.parse(s);
+  if(!Number.isFinite(t)) return null;
+  const dt = new Date(t);
+  return isNaN(dt.getTime()) ? null : dt;
 }
 
-function isNewByCreated(createdVal, daysWindow = 3){
-  const d = parseDateLoose(createdVal);
-  if(!d) return false;
+function computeNewLabel(createdValue){
+  const dt = parseCreatedDate(createdValue);
+  if(!dt) return "";
 
+  // Compare at day granularity in local time
   const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const createdStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const threshold = new Date(startOfToday);
+  threshold.setDate(threshold.getDate() - 3); // last 3 days inclusive
 
-  const diffDays = Math.floor((todayStart - createdStart) / 86400000);
-  return diffDays >= 0 && diffDays <= daysWindow;
+  const createdDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  if(createdDay >= threshold && createdDay <= startOfToday){
+    return "— NEW";
+  }
+  return "";
 }
