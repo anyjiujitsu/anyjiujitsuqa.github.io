@@ -143,10 +143,10 @@ function renderEventRow(r){
   // 2) FOR + WHERE
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
-  const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
-  const newShown = String(newRaw).trim() || "—";
+  const newText = getNewBadge(r.CREATED ?? r.Created ?? r.created ?? "");
+  const showNew = !!newText;
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${showNew ? '<span class="cell__newInline">' + escapeHtml(newText) + '</span>' : ''}</div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
@@ -228,6 +228,22 @@ function parseEventDate(s){
     const d = new Date(yy, mm-1, dd);
     return isNaN(d) ? null : d;
   }
+function normalizeToLocalMidnight(d){
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+
+function getNewBadge(createdStr){
+  if(!createdStr) return "";
+  const d = parseEventDate(createdStr);
+  if(!d) return "";
+  const created = normalizeToLocalMidnight(d);
+  const today = normalizeToLocalMidnight(new Date());
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - 3);
+  return (created >= cutoff && created <= today) ? "— NEW" : "";
+}
 
   const d = new Date(str);
   return isNaN(d) ? null : d;
