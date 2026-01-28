@@ -143,10 +143,9 @@ function renderEventRow(r){
   // 2) FOR + WHERE
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
-  const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
-  const newShown = String(newRaw).trim() || "—";
+  const newBadge = getNewBadgeFromCreated(r.CREATED);
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${newBadge ? `<span class="cell__newInline">${escapeHtml(newBadge)}</span>` : ""}</div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
@@ -231,6 +230,48 @@ function parseEventDate(s){
 
   const d = new Date(str);
   return isNaN(d) ? null : d;
+}
+
+
+function parseCreatedDate(s){
+  const str = String(s ?? "").trim();
+  if(!str) return null;
+
+  // Accept MM/DD/YYYY or M/D/YYYY
+  let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m){
+    const mm = Number(m[1]), dd = Number(m[2]), yy = Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  // Accept MM/DD/YY or M/D/YY (assume 20YY for 00-69 and 19YY for 70-99)
+  m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+  if(m){
+    const mm = Number(m[1]), dd = Number(m[2]), yy2 = Number(m[3]);
+    const yy = (yy2 <= 69) ? (2000 + yy2) : (1900 + yy2);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+
+function getNewBadgeFromCreated(created){
+  const d = parseCreatedDate(created);
+  if(!d) return "";
+
+  // Compare by date only (local), not time
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const createdDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const cutoff = new Date(today);
+  cutoff.setDate(today.getDate() - 3);
+
+  // Show if CREATED is today or within the last 3 days
+  return (createdDay >= cutoff && createdDay <= today) ? "— NEW" : "";
 }
 
 function formatMonthYear(d){
