@@ -634,8 +634,6 @@ nav.filters, .filters__inner, .pillRow{
   color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.02em;
-  font-style: italic;
-  text-transform: uppercase;
 }
 #viewEvents .row.row--events{
   padding: var(--evRowPadY) var(--evRowPadX);
