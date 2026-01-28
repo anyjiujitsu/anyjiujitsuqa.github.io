@@ -701,7 +701,7 @@ nav.filters, .filters__inner, .pillRow{
 
   /* Events row padding (scoped) â€” shrink outer edges without touching icon sizing */
   --evRowPadY: 11px;
-  --evRowPadX: 9px;
+  --evRowPadX: 6px;
 
   /* Background "bleed" so the TYPE tint reaches the rounded edge like legacy */
   --evRowBleedX: calc(var(--evRowPadX) + 1px);
@@ -824,8 +824,12 @@ nav.filters, .filters__inner, .pillRow{
 
 
 @media (max-width: 520px){
+  #viewEvents{
+    --evRowPadX: 5px;
+    --evRowBleedX: calc(var(--evRowPadX) + 1px);
+  }
   #viewEvents .row.row--events{
-    grid-template-columns: 1.6fr 1fr 72px;
+    grid-template-columns: 1.6fr 1fr 66px;
     column-gap: 10px;
   }
 
