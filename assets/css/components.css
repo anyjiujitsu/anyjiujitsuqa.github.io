@@ -720,14 +720,6 @@ nav.filters, .filters__inner, .pillRow{
   padding-left: var(--evIconPad); /* room for icon */
 }
 
-/* Tighten leading inset on CENTER column (CITY/STATE) without changing iconâ†’text spacing */
-#viewEvents .row.row--events .cell--citystate{
-  padding-left: calc(var(--evIconPad) - 6px);
-}
-#viewEvents .row.row--events .cell--citystate::before{
-  left: calc(var(--evIconLeft) - 6px);
-}
-
 #viewEvents .row.row--events .cell--forwhere::after{
   content: "";
   position: absolute;
@@ -943,4 +935,29 @@ nav.filters, .filters__inner, .pillRow{
 }
 #viewEvents .row.row--events .cell--forwhere::after{
   left: calc(var(--evIconLeft) - var(--evForWhereShiftX));
+}
+
+
+/* =========================================================
+   TUNE: reclaim leading space in CENTER column (CITY/STATE)
+   - shifts icon + text block left together (keeps iconâ†’text gap)
+   - does NOT change icon sizes, grid, or card padding
+   ========================================================= */
+#viewEvents{
+  --evMidShift: 8px; /* was 6px; tighten a bit more per latest guide */
+}
+
+#viewEvents .row.row--events .cell--citystate{
+  padding-left: calc(var(--evIconPad) - var(--evMidShift));
+}
+
+#viewEvents .row.row--events .cell--citystate::before{
+  left: calc(var(--evIconLeft) - var(--evMidShift));
+}
+
+/* Ensure mobile icon-left override doesnâ€™t cancel the shift */
+@media (max-width: 520px){
+  #viewEvents .row.row--events .cell--citystate::before{
+    left: calc(var(--evIconLeft) - var(--evMidShift));
+  }
 }
