@@ -679,8 +679,13 @@ nav.filters, .filters__inner, .pillRow{
   margin-top: 2px;
   font-size: 12px;
   color: var(--muted);
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* Tighten tracking specifically for numeric DATE line */
+#viewEvents .row.row--events .cell--daydate .cell__sub{
+  letter-spacing: 0.04em;
 }
 
 
@@ -699,7 +704,7 @@ nav.filters, .filters__inner, .pillRow{
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
 
-  /* Events row padding (scoped) â€” shrink outer edges without touching icon sizing */
+  /* Events row padding (scoped) Ã¢â‚¬â€ shrink outer edges without touching icon sizing */
   --evRowPadY: 11px;
   --evRowPadX: 6px;
 
