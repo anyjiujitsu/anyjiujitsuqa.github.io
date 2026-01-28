@@ -38,9 +38,7 @@
   color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.02em;
-
-  font-style: italic;
-  text-transform: uppercase;}
+}
 #viewEvents .row.row--events{
   display: grid;
   grid-template-columns: 165px 1.7fr 1.35fr 96px;
@@ -297,3 +295,8 @@
     padding-top: 10px;
   }
 }
+
+
+/* NEW badge (based on CREATED) */
+#viewEvents .row.row--events .cell__new{font-size:10px;font-style:italic;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);} 
+#viewEvents .row.row--events .cell__new:empty{display:none;}
