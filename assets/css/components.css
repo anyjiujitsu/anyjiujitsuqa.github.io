@@ -704,7 +704,7 @@ nav.filters, .filters__inner, .pillRow{
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
 
-  /* Events row padding (scoped) Ã¢â‚¬â€ shrink outer edges without touching icon sizing */
+  /* Events row padding (scoped) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â shrink outer edges without touching icon sizing */
   --evRowPadY: 11px;
   --evRowPadX: 6px;
 
@@ -718,6 +718,14 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .row.row--events .cell--daydate{
   position: relative;
   padding-left: var(--evIconPad); /* room for icon */
+}
+
+/* Tighten leading inset on CENTER column (CITY/STATE) without changing iconâ†’text spacing */
+#viewEvents .row.row--events .cell--citystate{
+  padding-left: calc(var(--evIconPad) - 6px);
+}
+#viewEvents .row.row--events .cell--citystate::before{
+  left: calc(var(--evIconLeft) - 6px);
 }
 
 #viewEvents .row.row--events .cell--forwhere::after{
