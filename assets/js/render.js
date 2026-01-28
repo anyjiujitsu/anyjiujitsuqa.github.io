@@ -143,9 +143,11 @@ function renderEventRow(r){
   // 2) FOR + WHERE
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
-  const newShown = getNewBadgeText(r);
+  const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
+      const createdDt = parseCreatedDate(r.CREATED);
+    const newShown = (!createdDt) ? "" : (isCreatedWithinLastNDays(createdDt, 3) ? "— NEW" : "");
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${newShown ? ('<span class="cell__newInline">' + escapeHtml(newShown) + '</span>') : ""}</div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
@@ -232,6 +234,48 @@ function parseEventDate(s){
   return isNaN(d) ? null : d;
 }
 
+
+// CREATED date parsing + NEW window (last 3 days, inclusive)
+function parseCreatedDate(v){
+  if(v==null) return null;
+  const s=String(v).trim();
+  if(!s) return null;
+
+  // ISO yyyy-mm-dd
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m){
+    const y=+m[1], mo=+m[2]-1, d=+m[3];
+    const dt=new Date(y, mo, d);
+    if(!isNaN(dt.getTime())) return dt;
+  }
+
+  // M/D/YY or M/D/YYYY
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if(m){
+    const mo=+m[1]-1, d=+m[2];
+    let y=+m[3];
+    if(y<100) y += (y>=70 ? 1900 : 2000); // 70-99 => 19xx, else 20xx
+    const dt=new Date(y, mo, d);
+    if(!isNaN(dt.getTime())) return dt;
+  }
+
+  // try Date() fallback
+  const dt=new Date(s);
+  if(!isNaN(dt.getTime())) return dt;
+
+  return null;
+}
+
+function isCreatedWithinLastNDays(createdDate, nDays){
+  if(!createdDate) return false;
+  const now=new Date();
+  const today=new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const cutoff=new Date(today);
+  cutoff.setDate(cutoff.getDate() - nDays);
+  const created=new Date(createdDate.getFullYear(), createdDate.getMonth(), createdDate.getDate());
+  return created.getTime() >= cutoff.getTime();
+}
+
 function formatMonthYear(d){
   return d.toLocaleString("en-US", { month: "long", year: "numeric" });
 }
@@ -254,54 +298,4 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-}
-
-
-function parseFlexibleDate(input){
-  const s = String(input ?? "").trim();
-  if(!s) return null;
-
-  // ISO (YYYY-MM-DD or YYYY/MM/DD)
-  let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
-  if(m){
-    const y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
-    const dt = new Date(y, mo-1, d);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-
-  // US (MM/DD/YY or MM/DD/YYYY)
-  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{2,4})/);
-  if(m){
-    const mo = Number(m[1]), d = Number(m[2]);
-    let y = Number(m[3]);
-    if(String(m[3]).length === 2) y = 2000 + y;
-    const dt = new Date(y, mo-1, d);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-
-  // Fallback: Date.parse
-  const t = Date.parse(s);
-  if(Number.isFinite(t)){
-    const dt = new Date(t);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-  return null;
-}
-
-function getNewBadgeText(row){
-  const createdRaw = row.CREATED ?? row.Created ?? row.created ?? row["CREATED DATE"] ?? "";
-  const created = parseFlexibleDate(createdRaw);
-  if(!created) return "";
-
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const createdStart = new Date(created.getFullYear(), created.getMonth(), created.getDate());
-
-  const msPerDay = 24 * 60 * 60 * 1000;
-  const ageDays = Math.floor((todayStart.getTime() - createdStart.getTime()) / msPerDay);
-
-  // Show for created today or within the last 3 days (inclusive). Hide if blank or older.
-  if(ageDays < 0) return "";
-  if(ageDays <= 3) return "— NEW";
-  return "";
 }
