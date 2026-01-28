@@ -704,13 +704,13 @@ nav.filters, .filters__inner, .pillRow{
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
 
-  /* Events row padding (scoped) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â shrink outer edges without touching icon sizing */
-  --evRowPadY: 11px;
+  /* Events row padding (scoped) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â shrink outer edges without touching icon sizing */
+  --evRowPadY: 8px;
   --evRowPadX: 6px;
 
   /* Background "bleed" so the TYPE tint reaches the rounded edge like legacy */
   --evRowBleedX: calc(var(--evRowPadX) + 1px);
-  --evRowBleedY: calc(var(--evRowPadY) + 3px);
+  --evRowBleedY: calc(var(--evRowPadY) + 2px);
 }
 
 #viewEvents .row.row--events .cell--forwhere,
@@ -940,7 +940,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* =========================================================
    TUNE: reclaim leading space in CENTER column (CITY/STATE)
-   - shifts icon + text block left together (keeps iconâ†’text gap)
+   - shifts icon + text block left together (keeps iconÃ¢â€ â€™text gap)
    - does NOT change icon sizes, grid, or card padding
    ========================================================= */
 #viewEvents{
@@ -955,7 +955,7 @@ nav.filters, .filters__inner, .pillRow{
   left: calc(var(--evIconLeft) - var(--evMidShift));
 }
 
-/* Ensure mobile icon-left override doesnâ€™t cancel the shift */
+/* Ensure mobile icon-left override doesnÃ¢â‚¬â„¢t cancel the shift */
 @media (max-width: 520px){
   #viewEvents .row.row--events .cell--citystate::before{
     left: calc(var(--evIconLeft) - var(--evMidShift));
