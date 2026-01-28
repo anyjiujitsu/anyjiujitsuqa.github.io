@@ -638,9 +638,10 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .row.row--events{
   display: grid;
   grid-template-columns: 165px 1.7fr 1.35fr 96px;
-  column-gap: 10px;
-  padding: 11px 8px;
+  column-gap: 12px;
   align-items: center;
+  /* reclaim horizontal space without affecting inner cell layout */
+  padding: 11px 10px;
 }
 
 /* EVENTS: internal dividers must span through the left TYPE color block.
@@ -774,7 +775,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* Slightly tighter icon sizing on very small screens */
 @media (max-width: 520px){
-  #viewEvents{ --evIconPad: 15px; --evIconLeft: 4px; --evIconSize: 11px; }
+  #viewEvents{ --evIconPad: 14px; --evIconLeft: 3px; --evIconSize: 11px; }
 
   #viewEvents .row.row--events .cell--forwhere::after,
   #viewEvents .row.row--events .cell--citystate::before,
@@ -814,9 +815,9 @@ nav.filters, .filters__inner, .pillRow{
 
 @media (max-width: 520px){
   #viewEvents .row.row--events{
-    grid-template-columns: 1.6fr 1fr 74px;
-    column-gap: 9px;
-    padding: 11px 6px;
+    grid-template-columns: 1.6fr 1fr 70px;
+    column-gap: 8px;
+    padding: 11px 8px;
   }
 
 #viewEvents .cell--event{ display:none; }
