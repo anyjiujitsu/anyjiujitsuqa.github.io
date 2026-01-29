@@ -628,18 +628,6 @@ nav.filters, .filters__inner, .pillRow{
   margin-bottom: 4px;
 }
 #viewEvents .cell__eventInlineWrap .cell__eventInline,
-#viewEvents .cell__eventInlineWrap .cell__newInline{
-  font-size: 12px;          /* smaller than main text */
-  line-height: 1.05;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-#viewEvents .cell__eventInlineWrap .cell__newInline{
-  color: #D16C4E;
-  font-style: italic;
-}
-
 #viewEvents .row.row--events{
   padding: var(--evRowPadY) var(--evRowPadX);
 
@@ -648,6 +636,17 @@ nav.filters, .filters__inner, .pillRow{
   column-gap: 12px;
   align-items: center;
 }
+
+#viewEvents .cell__eventInlineWrap .cell__newInlineBefore{
+  color: var(--muted);
+  font-style: normal;
+}
+#viewEvents .cell__eventInlineWrap .cell__newInlineTag{
+  color: #D16C4E;
+  font-style: italic;
+}
+
+
 
 /* EVENTS: internal dividers must span through the left TYPE color block.
    We draw the divider as an overlay so it sits above cell backgrounds.
