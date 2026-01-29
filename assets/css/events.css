@@ -306,12 +306,15 @@
 #viewEvents .row.row--events .cell__new:empty{display:none;}
 
 
-/* FIX: Desktop left TYPE (cell--event) background must fill full row height even when NEW is hidden.
-   When NEW is absent the cell content is shorter; ensure the grid item stretches to the row height
-   (determined by other columns) and center its content vertically without changing sizing/padding. */
-#viewEvents .row.row--events .cell--event{
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+
+/* --- FIX: desktop rows without NEW should still have the left column background fill the full row.
+   The events row grid uses align-items:center, which can make .cell--event shorter than the row
+   when it has fewer lines (no NEW subline). Stretch just this cell and vertically center its contents. */
+@media (min-width: 521px){
+  #viewEvents .row.row--events .cell--event{
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
