@@ -631,10 +631,15 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .cell__eventInlineWrap .cell__newInline{
   font-size: 12px;          /* smaller than main text */
   line-height: 1.05;
-  color: #D16C4E;
+  color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+#viewEvents .cell__eventInlineWrap .cell__newInline{
+  color: #D16C4E;
+  font-style: italic;
+}
+
 #viewEvents .row.row--events{
   padding: var(--evRowPadY) var(--evRowPadX);
 
