@@ -299,6 +299,4 @@
 
 /* NEW badge (based on CREATED) */
 #viewEvents .row.row--events .cell__new{font-size:10px;font-style:italic;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);} 
-
-
-#viewEvents .cell__new.is-empty{visibility:hidden;}
+#viewEvents .row.row--events .cell__new:empty{display:none;}
