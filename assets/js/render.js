@@ -128,16 +128,16 @@ function renderEventRow(r){
   // DATE displayed as MM/DD/YY (fallback to original if parse fails)
   const rawDate = String(r.DATE ?? "").trim();
   const parsed = rawDate ? parseEventDate(rawDate) : null;
-  \1
-  const showNew = isNewByCreated(r.CREATED, 3);
-  const newText = showNew ? \"— NEW\" : \"\";
+  const dateText = parsed
+    ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
+    : (rawDate || "—");
 
   // 1) EVENT + (placeholder) NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
   c1.innerHTML = `
     <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
-    <div class="cell__sub cell__new">${escapeHtml(newText)}</div>
+    <div class="cell__sub cell__new">—</div>
   `;
 
   // 2) FOR + WHERE
@@ -255,43 +255,4 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-}
-
-
-// --- NEW badge logic (based on CREATED) ---
-function parseDateLoose(v){
-  const s = String(v ?? "").trim();
-  if(!s) return null;
-
-  // YYYY-MM-DD (optionally with time)
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)){
-    const d = new Date(s.slice(0,10) + "T00:00:00");
-    return isNaN(d) ? null : d;
-  }
-
-  // MM/DD/YY or MM/DD/YYYY
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if(m){
-    const mm = Number(m[1]), dd = Number(m[2]);
-    let yy = Number(m[3]);
-    if(yy < 100) yy += 2000;
-    const d = new Date(yy, mm - 1, dd);
-    return isNaN(d) ? null : d;
-  }
-
-  // Fallback: Date.parse
-  const d = new Date(s);
-  return isNaN(d) ? null : d;
-}
-
-function isNewByCreated(createdVal, daysWindow = 3){
-  const d = parseDateLoose(createdVal);
-  if(!d) return false;
-
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const createdStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-  const diffDays = Math.floor((todayStart - createdStart) / 86400000);
-  return diffDays >= 0 && diffDays <= daysWindow;
 }
