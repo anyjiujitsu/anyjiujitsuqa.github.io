@@ -304,3 +304,14 @@
 /* NEW badge (based on CREATED) */
 #viewEvents .row.row--events .cell__new{font-size:10px;font-style:italic;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);} 
 #viewEvents .row.row--events .cell__new:empty{display:none;}
+
+
+/* FIX: Desktop left TYPE (cell--event) background must fill full row height even when NEW is hidden.
+   When NEW is absent the cell content is shorter; ensure the grid item stretches to the row height
+   (determined by other columns) and center its content vertically without changing sizing/padding. */
+#viewEvents .row.row--events .cell--event{
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
