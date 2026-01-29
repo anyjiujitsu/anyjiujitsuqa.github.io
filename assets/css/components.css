@@ -631,7 +631,7 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .cell__eventInlineWrap .cell__newInline{
   font-size: 12px;          /* smaller than main text */
   line-height: 1.05;
-  color: var(--muted);
+  color: #D16C4E;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -704,7 +704,7 @@ nav.filters, .filters__inner, .pillRow{
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
 
-  /* Events row padding (scoped) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â shrink outer edges without touching icon sizing */
+  /* Events row padding (scoped) ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â shrink outer edges without touching icon sizing */
   --evRowPadY: 8px;
   --evRowPadX: 6px;
 
@@ -942,7 +942,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* =========================================================
    TUNE: reclaim leading space in CENTER column (CITY/STATE)
-   - shifts icon + text block left together (keeps iconÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢text gap)
+   - shifts icon + text block left together (keeps iconÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢text gap)
    - does NOT change icon sizes, grid, or card padding
    ========================================================= */
 #viewEvents{
@@ -957,7 +957,7 @@ nav.filters, .filters__inner, .pillRow{
   left: calc(var(--evIconLeft) - var(--evMidShift));
 }
 
-/* Ensure mobile icon-left override doesnÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢t cancel the shift */
+/* Ensure mobile icon-left override doesnÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢t cancel the shift */
 @media (max-width: 520px){
   #viewEvents .row.row--events .cell--citystate::before{
     left: calc(var(--evIconLeft) - var(--evMidShift));
