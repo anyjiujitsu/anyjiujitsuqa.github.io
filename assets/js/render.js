@@ -132,21 +132,19 @@ function renderEventRow(r){
     ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
     : (rawDate || "—");
 
-  const newShown = computeNewLabel(r.CREATED);
-
-  // 1) EVENT + (placeholder) NEW field
+  // 1) EVENT + NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
   c1.innerHTML = `
-    <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
-    <div class="cell__sub cell__new">${escapeHtml(newShown)}</div>
+    <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || '—')}</div>
+    <div class="cell__sub cell__new${newShown ? '' : ' is-empty'}">${newShown ? '— <span class=\"cell__newText\">NEW</span>' : '&nbsp;'}</div>
   `;
 
   // 2) FOR + WHERE
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
+  const newShown = getNewBadgeText(r);
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
@@ -257,50 +255,52 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
-// --- NEW badge logic (based on CREATED) ---
-function parseCreatedDate(value){
-  if(!value) return null;
-  const s = String(value).trim();
+
+function parseFlexibleDate(input){
+  const s = String(input ?? "").trim();
   if(!s) return null;
 
-  // ISO yyyy-mm-dd
-  let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  // ISO (YYYY-MM-DD or YYYY/MM/DD)
+  let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
   if(m){
-    const y=+m[1], mo=+m[2]-1, d=+m[3];
-    const dt = new Date(y, mo, d);
-    return isNaN(dt.getTime()) ? null : dt;
+    const y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+    const dt = new Date(y, mo-1, d);
+    return Number.isFinite(dt.getTime()) ? dt : null;
   }
 
-  // mm/dd/yy or mm/dd/yyyy
-  m = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(s);
+  // US (MM/DD/YY or MM/DD/YYYY)
+  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{2,4})/);
   if(m){
-    const mo=+m[1]-1, d=+m[2];
-    let y=+m[3];
-    if(y < 100) y = 2000 + y;
-    const dt = new Date(y, mo, d);
-    return isNaN(dt.getTime()) ? null : dt;
+    const mo = Number(m[1]), d = Number(m[2]);
+    let y = Number(m[3]);
+    if(String(m[3]).length === 2) y = 2000 + y;
+    const dt = new Date(y, mo-1, d);
+    return Number.isFinite(dt.getTime()) ? dt : null;
   }
 
-  // Fallback to Date.parse
+  // Fallback: Date.parse
   const t = Date.parse(s);
-  if(!Number.isFinite(t)) return null;
-  const dt = new Date(t);
-  return isNaN(dt.getTime()) ? null : dt;
+  if(Number.isFinite(t)){
+    const dt = new Date(t);
+    return Number.isFinite(dt.getTime()) ? dt : null;
+  }
+  return null;
 }
 
-function computeNewLabel(createdValue){
-  const dt = parseCreatedDate(createdValue);
-  if(!dt) return "";
+function getNewBadgeText(row){
+  const createdRaw = row.CREATED ?? row.Created ?? row.created ?? row["CREATED DATE"] ?? "";
+  const created = parseFlexibleDate(createdRaw);
+  if(!created) return "";
 
-  // Compare at day granularity in local time
   const today = new Date();
-  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const threshold = new Date(startOfToday);
-  threshold.setDate(threshold.getDate() - 3); // last 3 days inclusive
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const createdStart = new Date(created.getFullYear(), created.getMonth(), created.getDate());
 
-  const createdDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-  if(createdDay >= threshold && createdDay <= startOfToday){
-    return "— NEW";
-  }
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const ageDays = Math.floor((todayStart.getTime() - createdStart.getTime()) / msPerDay);
+
+  // Show for created today or within the last 3 days (inclusive). Hide if blank or older.
+  if(ageDays < 0) return "";
+  if(ageDays <= 3) return "— NEW";
   return "";
 }
