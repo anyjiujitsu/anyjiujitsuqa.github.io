@@ -984,6 +984,7 @@ nav.filters, .filters__inner, .pillRow{
 /* EVENTS: mobile NEW emphasis (iter309) */
 @media (max-width: 520px){
   #viewEvents .cell__eventInlineWrap .cell__newInline{
-    font-size: calc(12px + 1px);
+    font-size: calc(12px + 2px);
   }
 }
+
