@@ -43,12 +43,7 @@
   display: grid;
   grid-template-columns: 165px 1.7fr 1.35fr 96px;
   column-gap: 12px;
-  align-items: stretch;
-}
-
-#viewEvents .row.row--events .cell{
-  display:flex;
-  align-items:center;
+  align-items: center;
 }
 
 /* EVENTS: internal dividers must span through the left TYPE color block.
@@ -197,10 +192,6 @@
 
 /* EVENTS view   subtle highlighted first column (matches legacy reference) */
 #viewEvents .row.row--events .cell--event{
-  align-self: stretch;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
   position: relative;
 }
 #viewEvents .row.row--events .cell--event::before{
@@ -309,22 +300,3 @@
 /* NEW badge (based on CREATED) */
 #viewEvents .row.row--events .cell__new{font-size:10px;font-style:italic;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);} 
 #viewEvents .row.row--events .cell__new:empty{display:none;}
-
-/* --- Desktop fix: ensure left-column tint fills full row even when NEW is absent --- */
-@media (min-width: 521px){
-  /* Paint the row background with a left-column tint, so it's not dependent on inner content height. */
-  #viewEvents .row.row--events{
-    background: linear-gradient(
-      to right,
-      rgba(232, 221, 198, 0.85) 0,
-      rgba(232, 221, 198, 0.85) 248px,
-      rgba(230, 230, 230, 0.90) 248px,
-      rgba(230, 230, 230, 0.90) 100%
-    );
-  }
-
-  /* Avoid double-tint (row handles it now). */
-  #viewEvents .row.row--events .cell--event::before{
-    content: none !important;
-  }
-}
