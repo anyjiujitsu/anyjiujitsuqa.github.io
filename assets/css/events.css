@@ -318,3 +318,27 @@
     justify-content: center;
   }
 }
+
+/* --- FIX: desktop left column background must span full row even when NEW is absent --- */
+@media (min-width: 521px){
+  /* disable earlier pseudo background (it depended on content height) */
+  #viewEvents .row.row--events .cell--event::before{ display:none !important; }
+
+  /* make the left column itself own the background + full-height coverage */
+  #viewEvents .row.row--events .cell--event{
+    background: rgba(242, 230, 200, 0.55);
+    border-radius: 14px 0 0 14px;
+
+    /* pull into the row padding so the beige reaches the rounded outer edge */
+    margin: -14px 0 -14px -14px;
+    padding: 14px 0 14px 14px;
+
+    /* ensure it spans the full row height */
+    align-self: stretch;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
