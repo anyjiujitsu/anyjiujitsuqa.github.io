@@ -634,12 +634,16 @@ nav.filters, .filters__inner, .pillRow{
   color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.02em;
+
+  font-weight: 700;
 }
 
 /* EVENTS: desktop NEW field (iter308) */
 #viewEvents .row.row--events .cell__sub.cell__new{
   color: #D16C4E;
   font-style: italic;
+
+  font-weight: 700;
 }
 
 #viewEvents .cell__eventInlineWrap .cell__newInline{
@@ -973,5 +977,13 @@ nav.filters, .filters__inner, .pillRow{
 @media (max-width: 520px){
   #viewEvents .row.row--events .cell--citystate::before{
     left: calc(var(--evIconLeft) - var(--evMidShift));
+  }
+}
+
+
+/* EVENTS: mobile NEW emphasis (iter309) */
+@media (max-width: 520px){
+  #viewEvents .cell__eventInlineWrap .cell__newInline{
+    font-size: calc(12px + 1px);
   }
 }
