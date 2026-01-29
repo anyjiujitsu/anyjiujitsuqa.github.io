@@ -132,12 +132,14 @@ function renderEventRow(r){
     ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
     : (rawDate || "—");
 
-  // 1) EVENT + (placeholder) NEW field
+  
+const hasCreated = String(r.CREATED ?? "").trim() !== "";
+// 1) EVENT + (placeholder) NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
   c1.innerHTML = `
     <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
-    <div class="cell__sub cell__new">—</div>
+    ${hasCreated ? `<div class="cell__sub cell__new">*NEW</div>` : ``}
   `;
 
   // 2) FOR + WHERE
@@ -146,7 +148,7 @@ function renderEventRow(r){
   const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
   const newShown = String(newRaw).trim() || "—";
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${hasCreated ? `<span class="cell__newInline">*NEW</span>` : ``}</div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
