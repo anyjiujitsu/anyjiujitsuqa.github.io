@@ -634,8 +634,6 @@ nav.filters, .filters__inner, .pillRow{
   color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.02em;
-
-  font-weight: 700;
 }
 
 /* EVENTS: desktop NEW field (iter308) */
@@ -643,7 +641,7 @@ nav.filters, .filters__inner, .pillRow{
   color: #D16C4E;
   font-style: italic;
 
-  font-weight: 700;
+  font-size: 11px;
 }
 
 #viewEvents .cell__eventInlineWrap .cell__newInline{
@@ -981,9 +979,9 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-/* EVENTS: mobile NEW emphasis (iter309) */
+/* EVENTS: mobile NEW emphasis (iter310) */
 @media (max-width: 520px){
   #viewEvents .cell__eventInlineWrap .cell__newInline{
-    font-size: calc(12px + 1px);
+    font-size: 14px;
   }
 }
