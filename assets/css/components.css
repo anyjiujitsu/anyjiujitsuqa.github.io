@@ -788,7 +788,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* Slightly tighter icon sizing on very small screens */
 @media (max-width: 520px){
-  #viewEvents{ --evRowPadY: 6px; }
+  #viewEvents{ --evRowPadY: 5px; }
 
   #viewEvents{ --evRowPadX: 7px; }
 
