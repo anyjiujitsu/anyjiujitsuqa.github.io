@@ -132,13 +132,45 @@ function renderEventRow(r){
     ? `${String(parsed.getMonth() + 1).padStart(2,'0')}/${String(parsed.getDate()).padStart(2,'0')}/${String(parsed.getFullYear()).slice(-2)}`
     : (rawDate || "—");
 
-    const hasCreated = String(r.CREATED ?? "").trim() !== "";
+    // NEW rule:
+// - If CREATED is blank OR cannot be parsed => treat as not new (render placeholder).
+// - If CREATED is older than (today - 4 days) => not new.
+// - If CREATED is within the last 4 days => show *NEW.
+const createdRaw = String(r.CREATED ?? "").trim();
+
+const createdDate = (() => {
+  if (!createdRaw) return null;
+
+  // Try native Date.parse first (handles ISO and many common formats)
+  const ms = Date.parse(createdRaw);
+  if (!Number.isNaN(ms)) return new Date(ms);
+
+  // Fallback: reuse parseEventDate if available in this file (handles MM/DD[/YY] style)
+  try {
+    if (typeof parseEventDate === "function"){
+      const d = parseEventDate(createdRaw);
+      if (d) return d;
+    }
+  } catch(e) {}
+
+  return null;
+})();
+
+const cutoff = (() => {
+  const now = new Date();
+  // Use local midnight to avoid time-of-day edge cases
+  const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  mid.setDate(mid.getDate() - 4);
+  return mid;
+})();
+
+const showNew = !!(createdDate && createdDate >= cutoff);
 // 1) EVENT + (placeholder) NEW field
   const c1 = document.createElement("div");
   c1.className = "cell cell--event";
   c1.innerHTML = `
     <div class="cell__top cell__event">${escapeHtml(r.EVENT || r.TYPE || "—")}</div>
-    ${hasCreated ? `<div class="cell__sub cell__new">*NEW</div>` : `<div class="cell__sub cell__new">&nbsp;</div>`}
+    ${showNew ? `<div class="cell__sub cell__new">*NEW</div>` : `<div class="cell__sub cell__new">&nbsp;</div>`}
   `;
 
   // 2) FOR + WHERE
@@ -147,7 +179,7 @@ function renderEventRow(r){
   const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
   const newShown = String(newRaw).trim() || "—";
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${hasCreated ? `<span class="cell__newInline">*NEW</span>` : `<span class="cell__newInline">&nbsp;</span>`}</div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${showNew ? `<span class="cell__newInline">*NEW</span>` : `<span class="cell__newInline">&nbsp;</span>`}</div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
