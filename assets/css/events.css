@@ -43,7 +43,12 @@
   display: grid;
   grid-template-columns: 165px 1.7fr 1.35fr 96px;
   column-gap: 12px;
-  align-items: stretch; /* ensure left column highlight fills full row height */
+  align-items: stretch;
+}
+
+#viewEvents .row.row--events .cell{
+  display:flex;
+  align-items:center;
 }
 
 /* EVENTS: internal dividers must span through the left TYPE color block.
@@ -192,6 +197,10 @@
 
 /* EVENTS view   subtle highlighted first column (matches legacy reference) */
 #viewEvents .row.row--events .cell--event{
+  align-self: stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
   position: relative;
 }
 #viewEvents .row.row--events .cell--event::before{
