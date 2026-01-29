@@ -635,6 +635,13 @@ nav.filters, .filters__inner, .pillRow{
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
+/* EVENTS: desktop NEW field (iter308) */
+#viewEvents .row.row--events .cell__sub.cell__new{
+  color: #D16C4E;
+  font-style: italic;
+}
+
 #viewEvents .cell__eventInlineWrap .cell__newInline{
   color: #D16C4E;
   font-style: italic;
