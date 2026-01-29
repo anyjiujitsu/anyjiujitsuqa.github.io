@@ -144,9 +144,9 @@ function renderEventRow(r){
   const c2 = document.createElement("div");
   c2.className = "cell cell--forwhere";
   const newRaw = (r.NEW ?? r.NEW_FIELD ?? r.NEWFLAG ?? "");
-  const newShown = String(newRaw).trim() || "—  *NEW";
+  const newShown = String(newRaw).trim() || "—";
   c2.innerHTML = `
-    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span><span class="cell__newInline">${escapeHtml(newShown)}</span></div>
+    <div class="cell__eventInlineWrap"><span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>${formatNewInline(newShown)}</div>
     <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
     <div class="cell__sub cell__where">${(() => {
       const raw = (r.WHERE ?? r.GYM ?? "");
@@ -255,4 +255,17 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+}
+
+
+function formatNewInline(raw){
+  const s = String(raw ?? "").trim();
+  const tagIdx = s.toUpperCase().indexOf("*NEW");
+  if (tagIdx === -1){
+    return `<span class="cell__newInline">${escapeHtml(s || "—")}</span>`;
+  }
+  const before = s.slice(0, tagIdx).trimEnd();
+  const tag = s.slice(tagIdx);
+  const beforeShown = before ? before : "—";
+  return `<span class="cell__newInlineBefore">${escapeHtml(beforeShown)}</span><span class="cell__newInlineTag">${escapeHtml(tag)}</span>`;
 }
