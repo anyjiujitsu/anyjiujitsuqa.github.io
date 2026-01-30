@@ -54,18 +54,24 @@ function renderIndexRow(r){
   row.className = "row";
 
   const a = document.createElement("div");
+  a.className = "cell cell--indexFirst";
+
   a.innerHTML = `
     <div class="cell__name">${escapeHtml(r.NAME)}</div>
     <div class="cell__ig">${escapeHtml(r.IG)}</div>
   `;
 
   const b = document.createElement("div");
+  b.className = "cell cell--indexSecond";
+
   b.innerHTML = `
     <div class="cell__city">${escapeHtml(r.CITY)}</div>
     <div class="cell__state">${escapeHtml(r.STATE)}</div>
   `;
 
   const c = document.createElement("div");
+  c.className = "cell cell--indexThird";
+
   c.innerHTML = `
     <div class="cell__days">${escapeHtml(composeDays(r))}</div>
     <div class="cell__ota">OTA: ${escapeHtml(r.OTA || "—")}</div>
