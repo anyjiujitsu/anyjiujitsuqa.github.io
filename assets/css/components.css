@@ -1241,3 +1241,38 @@ nav.filters, .filters__inner, .pillRow{
   letter-spacing: 0.08em;
   font-weight: 500;
 }
+
+/* =========================================================
+   INDEX dead-space tuning (iter329)
+   1) Remove column-gap so columns line up flush (fix red circle)
+   2) Reduce first column width to reclaim dead space (left red box)
+   3) Bring times closer to Sat./Sun. labels (right red box)
+   4) Give CITY/STATE a bit more room after the above
+   ========================================================= */
+
+/* 1) Flush columns (no hidden grid gap) */
+#viewIndex .table .row{
+  column-gap: 0 !important;
+}
+
+/* 2 + 4) Rebalance grid widths (mobile + desktop) */
+#viewIndex .table .row{
+  grid-template-columns: minmax(190px, 1.25fr) 1.15fr 112px;
+}
+@media (min-width: 521px){
+  #viewIndex .table .row{
+    grid-template-columns: minmax(250px, 1.35fr) 1.20fr 140px;
+  }
+}
+
+/* 3) Sat/Sun: keep label position fixed and move time closer */
+#viewIndex .cell__daysLine{
+  width: 100%;
+  grid-template-columns: 4ch auto;
+  column-gap: 6px;
+}
+#viewIndex .cell__daysTime{
+  justify-self: start;      /* sit next to the label */
+  min-width: 7ch;           /* reserve time slot so labels don't jump */
+  text-align: left;
+}
