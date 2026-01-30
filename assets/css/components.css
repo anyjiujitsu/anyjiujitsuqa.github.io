@@ -918,22 +918,10 @@ nav.filters, .filters__inner, .pillRow{
    EVENT 6px, NEW 4px, all other fields 8px via --rowFont
    ========================================================= */
 @media (max-width: 520px){
-/* Shared mobile typography ladder (EVENTS + INDEX) */
-:root{
-  --mRowFont: 8px;
-  --mTopFont: var(--mRowFont);
-  --mSubFont: calc(var(--mRowFont) - 2px);
-}
-
   /* Set Events-only row font baseline for all non EVENT/NEW fields */
   #viewEvents{
-    --rowFont: var(--mRowFont);
+    --rowFont: 8px;
   }
-
-#viewIndex{
-  --rowFont: var(--mRowFont);
-}
-
 
   /* Ensure Events rows and cell lines inherit the baseline */
   #viewEvents .row.row--events{
@@ -951,16 +939,6 @@ nav.filters, .filters__inner, .pillRow{
   #viewEvents .row.row--events .cell__newInline{
     font-size: 4px;
   }
-
-/* Enforce consistent top/sub sizing across views on mobile */
-#viewEvents .row.row--events{ font-size: var(--mTopFont); }
-#viewIndex  .row{           font-size: var(--mTopFont); }
-
-#viewEvents .row.row--events .cell__sub{ font-size: var(--mSubFont); }
-#viewIndex  .row .cell__ig,
-#viewIndex  .row .cell__state,
-#viewIndex  .row .cell__ota{ font-size: var(--mSubFont); }
-
 }
 
 
@@ -1038,5 +1016,34 @@ nav.filters, .filters__inner, .pillRow{
   }
 }
 
+/* =========================================================
+   INDEX: first-column tint block (match EVENTS) (iter320)
+   Applies on desktop + mobile
+   ========================================================= */
+#viewIndex .table .row{
+  position: relative;
+  isolation: isolate; /* keep tint behind cell content */
+}
 
+#viewIndex .table .row > div:first-child{
+  position: relative;
+}
 
+/* Beige tint behind first column like EVENTS */
+#viewIndex .table .row > div:first-child::before{
+  content:"";
+  position:absolute;
+  left: calc(-1 * var(--evRowBleedX, 10px));
+  right: 0;
+  top:  calc(-1 * var(--evRowBleedY, 2px));
+  bottom: calc(-1 * var(--evRowBleedY, 2px));
+  background: rgba(232, 221, 198, 0.85);
+  border-radius: 14px 0 0 14px;
+  z-index: 0;
+  pointer-events:none;
+}
+
+#viewIndex .table .row > div:first-child > *{
+  position: relative;
+  z-index: 1;
+}
