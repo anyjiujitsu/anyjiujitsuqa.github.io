@@ -939,19 +939,6 @@ nav.filters, .filters__inner, .pillRow{
   #viewEvents .row.row--events .cell__newInline{
     font-size: 4px;
   }
-
-/* INDEX mobile: mirror EVENTS top-line font sizing baseline */
-#viewIndex{
-  --rowFont: 8px;
-}
-#viewIndex .row{
-  font-size: var(--rowFont);
-}
-#viewIndex .row .cell__name,
-#viewIndex .row .cell__city,
-#viewIndex .row .cell__days{
-  font-size: inherit;
-}
 }
 
 
@@ -1029,5 +1016,9 @@ nav.filters, .filters__inner, .pillRow{
   }
 }
 
-
-
+/* INDEX mobile: mirror EVENTS mobile first-column grid proportions (iter318) */
+@media (max-width: 520px){
+  #viewIndex .table .row{
+    grid-template-columns: 1.6fr 1fr 66px;
+  }
+}
