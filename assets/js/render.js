@@ -81,9 +81,15 @@ function renderIndexRow(r){
   const c = document.createElement("div");
   c.className = "cell cell--indexThird";
   c.innerHTML = `
-    <div class="cell__days cell__daysLine"><span class="dayLbl">Sat.</span><span class="dayTime">${satTime ? escapeHtml(satTime) : "&nbsp;"}</span></div>
-    <div class="cell__days cell__daysLine"><span class="dayLbl">Sun.</span><span class="dayTime">${sunTime ? escapeHtml(sunTime) : "&nbsp;"}</span></div>
-  `;
+  <div class="cell__days cell__daysLine">
+    <span class="cell__daysLabel">Sat.</span>
+    <span class="cell__daysTime">${satTime ? escapeHtml(satTime) : "&nbsp;"}</span>
+  </div>
+  <div class="cell__days cell__daysLine">
+    <span class="cell__daysLabel">Sun.</span>
+    <span class="cell__daysTime">${sunTime ? escapeHtml(sunTime) : "&nbsp;"}</span>
+  </div>
+`;
 
   row.appendChild(a);
   row.appendChild(b);
