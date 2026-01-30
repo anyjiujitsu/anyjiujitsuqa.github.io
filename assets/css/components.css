@@ -1276,3 +1276,44 @@ nav.filters, .filters__inner, .pillRow{
   min-width: 7ch;           /* reserve time slot so labels don't jump */
   text-align: left;
 }
+
+/* =========================================================
+   INDEX alignment + dead space (iter330)
+   - Fix beige/grey row divider misalignment by removing bleed/margins on first cell
+   - Add comfortable left padding to CITY/STATE cell
+   - Narrow 3rd column to remove dead space + give col2 more room
+   ========================================================= */
+
+/* Grid rebalance */
+#viewIndex .table .row{
+  grid-template-columns: minmax(180px, 1.15fr) 1.35fr 96px;
+}
+@media (min-width: 521px){
+  #viewIndex .table .row{
+    grid-template-columns: minmax(240px, 1.25fr) 1.45fr 120px;
+  }
+}
+
+/* Column 2 breathing room (so text isn't on the edge) */
+#viewIndex .cell--indexSecond{
+  padding-left: 14px;
+}
+#viewIndex .cell--indexThird{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* First column: stop background bleed from covering divider lines */
+#viewIndex .table .row .cell--indexFirst{
+  margin: 0 !important;
+  padding: 11px 13px !important;
+  background: rgba(232, 221, 198, 0.85);
+}
+
+/* Ensure group-only rounding stays intact */
+#viewIndex .table .row:first-child .cell--indexFirst{
+  border-top-left-radius: var(--radius);
+}
+#viewIndex .table .row:last-child .cell--indexFirst{
+  border-bottom-left-radius: var(--radius);
+}
