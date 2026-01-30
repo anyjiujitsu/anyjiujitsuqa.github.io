@@ -304,34 +304,6 @@ line-height: 1;
   font-size: var(--rowFont);
 }
 
-
-/* INDEX: match EVENTS row typography + subline treatment (iter315) */
-#viewIndex .row{
-  padding: var(--evRowPadY) var(--evRowPadX);
-}
-
-/* Top line (match .cell__top in Events) */
-#viewIndex .row .cell__name,
-#viewIndex .row .cell__city,
-#viewIndex .row .cell__days{
-  font-weight: 700;
-}
-
-/* Sub line (match .cell__sub in Events) */
-#viewIndex .row .cell__ig,
-#viewIndex .row .cell__state,
-#viewIndex .row .cell__ota{
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Small tightening to mimic Events density */
-#viewIndex .row{
-  align-items: center;
-}
 .row:first-child{ border-top: 0; }
 
 .cell__name{ font-weight: 800; }
@@ -1044,5 +1016,90 @@ nav.filters, .filters__inner, .pillRow{
   }
 }
 
+/* =========================================================
+   INDEX: skin to match EVENTS look (iter316)
+   - Uses Events density vars and divider treatment
+   - Adds left-column tint block like Events
+   ========================================================= */
 
+#viewIndex{
+  --ixRowPadY: var(--evRowPadY);
+  --ixRowPadX: var(--evRowPadX);
+  --ixRowBleedX: var(--evRowBleedX);
+  --ixRowBleedY: var(--evRowBleedY);
+}
 
+/* Match Events desktop grid feel: fixed first column + tight gaps */
+#viewIndex .table .row{
+  padding: var(--ixRowPadY) var(--ixRowPadX);
+  display: grid;
+  grid-template-columns: 165px 1.7fr 96px;
+  column-gap: 12px;
+  align-items: center;
+
+  border-top: 0;          /* use overlay divider like Events */
+  position: relative;
+  isolation: isolate;
+}
+
+/* Overlay divider (Index) to match Events */
+#viewIndex .table .row + .row::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; top:0;
+  height:1px;
+  background: rgba(0,0,0,0.06);
+  z-index: 30;
+  pointer-events:none;
+}
+
+/* Left column tint block (matches Events TYPE/EVENT tint) */
+#viewIndex .row .cell--indexFirst{
+  position: relative;
+}
+#viewIndex .row .cell--indexFirst::before{
+  content:"";
+  position:absolute;
+  left: calc(-1 * var(--ixRowBleedX));
+  right: 0;
+  top: calc(-1 * var(--ixRowBleedY));
+  bottom: calc(-1 * var(--ixRowBleedY));
+  background: rgba(232, 221, 198, 0.85);
+  border-radius: 14px 0 0 14px;
+  z-index: 0;
+  pointer-events:none;
+}
+#viewIndex .row .cell--indexFirst > *{
+  position: relative;
+  z-index: 1;
+}
+
+/* Typography parity with Events */
+#viewIndex .row .cell__name,
+#viewIndex .row .cell__city,
+#viewIndex .row .cell__days{
+  font-weight: 700;
+}
+
+#viewIndex .row .cell__ig,
+#viewIndex .row .cell__state,
+#viewIndex .row .cell__ota{
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Mobile: mirror Events mobile grid proportions */
+@media (max-width: 520px){
+  #viewIndex .table .row{
+    grid-template-columns: 1.6fr 1fr 66px;
+    column-gap: 10px;
+  }
+  #viewIndex .row .cell__ig,
+  #viewIndex .row .cell__state,
+  #viewIndex .row .cell__ota{
+    font-size: 11px;
+  }
+}
