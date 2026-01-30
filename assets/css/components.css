@@ -1017,26 +1017,28 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* =========================================================
-   INDEX: first-column tint block (match EVENTS) (iter320)
-   Applies on desktop + mobile
+   INDEX: first-column tint block (safe) (iter321)
+   - Uses the first grid cell, but forces it to stretch so tint fills row height
+   - Extends into row padding to match EVENTS
    ========================================================= */
-#viewIndex .table .row{
-  position: relative;
-  isolation: isolate; /* keep tint behind cell content */
-}
 
+/* Ensure the first column cell stretches full row height */
 #viewIndex .table .row > div:first-child{
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
 }
 
-/* Beige tint behind first column like EVENTS */
+/* Remove any previous tint pseudo (if present) and re-apply correctly */
 #viewIndex .table .row > div:first-child::before{
   content:"";
   position:absolute;
-  left: calc(-1 * var(--evRowBleedX, 10px));
+  left: calc(-1 * var(--evRowPadX, 12px));  /* extend into row left padding */
   right: 0;
-  top:  calc(-1 * var(--evRowBleedY, 2px));
-  bottom: calc(-1 * var(--evRowBleedY, 2px));
+  top:  calc(-1 * var(--evRowPadY, 8px));   /* extend into row top padding */
+  bottom: calc(-1 * var(--evRowPadY, 8px)); /* extend into row bottom padding */
   background: rgba(232, 221, 198, 0.85);
   border-radius: 14px 0 0 14px;
   z-index: 0;
