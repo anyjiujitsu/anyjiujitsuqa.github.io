@@ -53,28 +53,30 @@ function renderIndexRow(r){
   const row = document.createElement("div");
   row.className = "row";
 
-  const a = document.createElement("div");
-  a.className = "cell cell--indexFirst";
+  const otaVal = (r.OTA && String(r.OTA).trim()) ? String(r.OTA).trim() : "—";
 
+  const a = document.createElement("div");
   a.innerHTML = `
-    <div class="cell__name">${escapeHtml(r.NAME)}</div>
-    <div class="cell__ig">${escapeHtml(r.IG)}</div>
+    <div class="cell__indexInlineWrap">
+      <span class="cell__indexInline cell__indexInlineGuests">GUESTS:</span>
+      <span class="cell__indexInline cell__indexInlineOta">OTA: ${'${escapeHtml(otaVal)}'}</span>
+    </div>
+    <div class="cell__name">${'${escapeHtml(r.NAME)}'}</div>
+    <div class="cell__ig">${'${escapeHtml(r.IG)}'}</div>
   `;
 
   const b = document.createElement("div");
-  b.className = "cell cell--indexSecond";
-
   b.innerHTML = `
-    <div class="cell__city">${escapeHtml(r.CITY)}</div>
-    <div class="cell__state">${escapeHtml(r.STATE)}</div>
+    <div class="cell__city">${'${escapeHtml(r.CITY)}'}</div>
+    <div class="cell__state">${'${escapeHtml(r.STATE)}'}</div>
   `;
 
   const c = document.createElement("div");
-  c.className = "cell cell--indexThird";
-
+  const satLine = r.SAT ? `Sat. ${'${escapeHtml(r.SAT)}'}` : "Sat.";
+  const sunLine = r.SUN ? `Sun. ${'${escapeHtml(r.SUN)}'}` : "Sun.";
   c.innerHTML = `
-    <div class="cell__days">${escapeHtml(composeDays(r))}</div>
-    <div class="cell__ota">OTA: ${escapeHtml(r.OTA || "—")}</div>
+    <div class="cell__sat">${'${satLine}'}</div>
+    <div class="cell__sun">${'${sunLine}'}</div>
   `;
 
   row.appendChild(a);
