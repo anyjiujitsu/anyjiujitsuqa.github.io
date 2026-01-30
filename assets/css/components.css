@@ -1121,3 +1121,52 @@ nav.filters, .filters__inner, .pillRow{
 #viewEvents .group .table .row:last-child .cell--forwhere::before{
   border-bottom-left-radius: var(--radius) !important;
 }
+
+/* =========================================================
+   PATCH (iter327): INDEX parity with EVENTS (mobile+desktop)
+   1) GUESTS/OTA inline header matches EVENTS "EVENT" label style
+   2) INDEX IG matches INDEX STATE style (uppercase subline)
+   3) Add internal dividers inside beige first column
+   4) Lock right column width so times don't shift layout
+   ========================================================= */
+
+/* 4) Lock right column width (prevents auto width growth when times exist) */
+@media (max-width: 520px){
+  #viewIndex .row{
+    grid-template-columns: 1.2fr 1fr 112px;
+  }
+}
+@media (min-width: 521px){
+  #viewIndex .row{
+    grid-template-columns: 1.2fr 1fr 140px;
+  }
+}
+
+/* 1) GUESTS/OTA inline header: match EVENTS top label feel */
+#viewIndex .cell__indexInlineWrap{
+  font-size: calc(var(--rowFont) - 2px);
+  color: rgba(0,0,0,0.55);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Keep the two items aligned and compact */
+#viewIndex .cell__indexInlineWrap{
+  display:flex;
+  gap: 14px;
+  align-items: baseline;
+}
+
+/* 2) IG subline should match STATE subline styling */
+#viewIndex .cell__ig{
+  font-size: calc(var(--rowFont) - 2px);
+  color: rgba(0,0,0,0.55);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* 3) Internal divider lines inside the beige first column */
+#viewIndex .table .row + .row .cell--indexFirst{
+  box-shadow: inset 0 1px rgba(0,0,0,0.06);
+}
