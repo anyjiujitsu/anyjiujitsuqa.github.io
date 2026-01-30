@@ -58,6 +58,7 @@ function renderIndexRow(r){
   const sunLine = (r.SUN && String(r.SUN).trim()) ? `Sun. ${String(r.SUN).trim()}` : "Sun.";
 
   const a = document.createElement("div");
+  a.className = "cell cell--indexFirst";
   a.innerHTML = `
     <div class="cell__indexInlineWrap">
       <span class="cell__indexGuests">GUESTS:</span>
@@ -68,12 +69,14 @@ function renderIndexRow(r){
   `;
 
   const b = document.createElement("div");
+  b.className = "cell cell--indexSecond";
   b.innerHTML = `
     <div class="cell__city">${escapeHtml(r.CITY)}</div>
     <div class="cell__state">${escapeHtml(r.STATE)}</div>
   `;
 
   const c = document.createElement("div");
+  c.className = "cell cell--indexThird";
   c.innerHTML = `
     <div class="cell__days cell__daysLine">${escapeHtml(satLine)}</div>
     <div class="cell__days cell__daysLine">${escapeHtml(sunLine)}</div>
