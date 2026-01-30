@@ -1062,50 +1062,69 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* =========================================================
-   INDEX: real first-column beige block (no pseudo tint) (iter324)
-   - Make row padding live on cells so the beige column fills the full row height.
-   - Keeps your mobile typography ladder intact (no font-size changes here).
+   INDEX: restore row sizing + group-only rounding + stable SAT/SUN widths (iter325)
    ========================================================= */
 
-/* If any older pseudo-tint rules exist, neutralize them */
-#viewIndex .table .row > div:first-child::before{
-  content: none !important;
-  display: none !important;
-}
-
-/* Move row padding to cells so column backgrounds can fill the row */
+/* Restore default row padding/sizing (undo prior cell-padding approach) */
 #viewIndex .table .row{
-  padding: 0 !important;
+  padding: 11px 13px !important;
 }
 
-/* Cell padding mirrors EVENTS row padding */
+/* Ensure cells don't impose their own padding/box model */
 #viewIndex .table .row .cell{
-  padding: var(--evRowPadY, 8px) var(--evRowPadX, 12px);
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  padding: 0 !important;
+  display: block !important;
+  align-self: auto !important;
+  justify-content: initial !important;
+  flex-direction: initial !important;
 }
 
-/* Preserve horizontal rhythm: remove duplicate padding caused by existing rules */
-#viewIndex .table .row .cell--indexSecond,
-#viewIndex .table .row .cell--indexThird{
-  background: transparent;
-}
-
-/* First column = real beige column block */
+/* Real beige first column using background on the first cell, but WITHOUT per-row rounding */
 #viewIndex .table .row .cell--indexFirst{
   background: rgba(232, 221, 198, 0.85);
-  border-radius: 14px 0 0 14px;
+  border-radius: 0;
+  padding: 11px 13px;               /* match row padding so beige fills full height cleanly */
+  margin: -11px 0 -11px -13px;      /* extend into row padding (left/top/bottom) */
 }
 
-/* Keep third column aligned right */
-#viewIndex .table .row .cell--indexThird{
+/* Only the group (table) gets rounded corners; keep first column rounded only on group ends */
+#viewIndex .group .table{
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+#viewIndex .table .row:first-child .cell--indexFirst{
+  border-top-left-radius: var(--radius);
+}
+#viewIndex .table .row:last-child .cell--indexFirst{
+  border-bottom-left-radius: var(--radius);
+}
+
+/* Third column: align and keep label/time spacing consistent */
+#viewIndex .cell--indexThird{
   text-align: right;
-  align-items: flex-end;
+}
+#viewIndex .cell__daysLine{
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+#viewIndex .cell__daysLine .dayLbl{
+  font-weight: 800;
+}
+#viewIndex .cell__daysLine .dayTime{
+  min-width: 7ch; /* keeps column width stable when time is missing */
+  text-align: right;
+  color: rgba(0,0,0,0.55);
 }
 
-/* Inline header spacing inside first column */
-#viewIndex .cell--indexFirst .cell__indexInlineWrap{
-  margin-bottom: 4px;
+/* Mobile: match row padding (avoid perceived scaling changes) */
+@media (max-width: 520px){
+  #viewIndex .table .row{
+    padding: 11px 13px !important;
+  }
+  #viewIndex .table .row .cell--indexFirst{
+    padding: 11px 13px;
+    margin: -11px 0 -11px -13px;
+  }
 }
