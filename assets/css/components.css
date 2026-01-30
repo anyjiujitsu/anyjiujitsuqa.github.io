@@ -918,10 +918,22 @@ nav.filters, .filters__inner, .pillRow{
    EVENT 6px, NEW 4px, all other fields 8px via --rowFont
    ========================================================= */
 @media (max-width: 520px){
+/* Shared mobile typography ladder (EVENTS + INDEX) */
+:root{
+  --mRowFont: 8px;
+  --mTopFont: var(--mRowFont);
+  --mSubFont: calc(var(--mRowFont) - 2px);
+}
+
   /* Set Events-only row font baseline for all non EVENT/NEW fields */
   #viewEvents{
-    --rowFont: 8px;
+    --rowFont: var(--mRowFont);
   }
+
+#viewIndex{
+  --rowFont: var(--mRowFont);
+}
+
 
   /* Ensure Events rows and cell lines inherit the baseline */
   #viewEvents .row.row--events{
@@ -939,6 +951,16 @@ nav.filters, .filters__inner, .pillRow{
   #viewEvents .row.row--events .cell__newInline{
     font-size: 4px;
   }
+
+/* Enforce consistent top/sub sizing across views on mobile */
+#viewEvents .row.row--events{ font-size: var(--mTopFont); }
+#viewIndex  .row{           font-size: var(--mTopFont); }
+
+#viewEvents .row.row--events .cell__sub{ font-size: var(--mSubFont); }
+#viewIndex  .row .cell__ig,
+#viewIndex  .row .cell__state,
+#viewIndex  .row .cell__ota{ font-size: var(--mSubFont); }
+
 }
 
 
@@ -1016,9 +1038,5 @@ nav.filters, .filters__inner, .pillRow{
   }
 }
 
-/* INDEX mobile: mirror EVENTS mobile first-column grid proportions (iter318) */
-@media (max-width: 520px){
-  #viewIndex .table .row{
-    grid-template-columns: 1.6fr 1fr 66px;
-  }
-}
+
+
