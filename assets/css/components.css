@@ -1062,37 +1062,39 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* =========================================================
-   INDEX: restore row sizing + group-only rounding + stable SAT/SUN widths (iter325)
+   PATCH (iter326): keep EVENTS untouched visually + fix INDEX scale
+   - Restore EVENTS "group-only" rounding for the beige TYPE tint
+   - Ensure INDEX uses the same --rowFont ladder as EVENTS (mobile/desktop)
+   - Keep INDEX first-column beige block behavior from iter325
    ========================================================= */
 
-/* Restore default row padding/sizing (undo prior cell-padding approach) */
+/* ---------- INDEX: define row font baseline (fix perceived scaling) ---------- */
+/* Desktop baseline */
+#viewIndex{
+  --rowFont: 12px;
+}
+/* Mobile baseline matches Events baseline */
+@media (max-width: 520px){
+  #viewIndex{
+    --rowFont: 8px;
+  }
+}
+/* Make sure Index rows actually use the variable */
 #viewIndex .table .row{
-  padding: 11px 13px !important;
+  font-size: var(--rowFont);
 }
 
-/* Ensure cells don't impose their own padding/box model */
-#viewIndex .table .row .cell{
-  padding: 0 !important;
-  display: block !important;
-  align-self: auto !important;
-  justify-content: initial !important;
-  flex-direction: initial !important;
-}
-
-/* Real beige first column using background on the first cell, but WITHOUT per-row rounding */
+/* ---------- INDEX: beige first column block (no per-row rounding) ---------- */
 #viewIndex .table .row .cell--indexFirst{
   background: rgba(232, 221, 198, 0.85);
   border-radius: 0;
-  padding: 11px 13px;               /* match row padding so beige fills full height cleanly */
-  margin: -11px 0 -11px -13px;      /* extend into row padding (left/top/bottom) */
+  padding: 11px 13px;
+  margin: -11px 0 -11px -13px;
 }
-
-/* Only the group (table) gets rounded corners; keep first column rounded only on group ends */
 #viewIndex .group .table{
   border-radius: var(--radius);
   overflow: hidden;
 }
-
 #viewIndex .table .row:first-child .cell--indexFirst{
   border-top-left-radius: var(--radius);
 }
@@ -1100,31 +1102,22 @@ nav.filters, .filters__inner, .pillRow{
   border-bottom-left-radius: var(--radius);
 }
 
-/* Third column: align and keep label/time spacing consistent */
-#viewIndex .cell--indexThird{
-  text-align: right;
+/* ---------- EVENTS: group-only rounding for beige TYPE tint ---------- */
+/* Remove per-row rounding on the beige tint pseudo element */
+#viewEvents .row.row--events .cell--event::before,
+#viewEvents .row.row--events .cell--forwhere::before{
+  border-radius: 0 !important;
 }
-#viewIndex .cell__daysLine{
-  display: flex;
-  justify-content: flex-end;
-  gap: 6px;
+/* Apply rounding only on the first/last row within the group */
+#viewEvents .group .table{
+  border-radius: var(--radius);
+  overflow: hidden;
 }
-#viewIndex .cell__daysLine .dayLbl{
-  font-weight: 800;
+#viewEvents .group .table .row:first-child .cell--event::before,
+#viewEvents .group .table .row:first-child .cell--forwhere::before{
+  border-top-left-radius: var(--radius) !important;
 }
-#viewIndex .cell__daysLine .dayTime{
-  min-width: 7ch; /* keeps column width stable when time is missing */
-  text-align: right;
-  color: rgba(0,0,0,0.55);
-}
-
-/* Mobile: match row padding (avoid perceived scaling changes) */
-@media (max-width: 520px){
-  #viewIndex .table .row{
-    padding: 11px 13px !important;
-  }
-  #viewIndex .table .row .cell--indexFirst{
-    padding: 11px 13px;
-    margin: -11px 0 -11px -13px;
-  }
+#viewEvents .group .table .row:last-child .cell--event::before,
+#viewEvents .group .table .row:last-child .cell--forwhere::before{
+  border-bottom-left-radius: var(--radius) !important;
 }
