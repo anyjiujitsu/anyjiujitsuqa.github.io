@@ -54,8 +54,11 @@ function renderIndexRow(r){
   row.className = "row";
 
   const otaVal = (r.OTA && String(r.OTA).trim()) ? String(r.OTA).trim() : "—";
-  const satLine = (r.SAT && String(r.SAT).trim()) ? `Sat. ${String(r.SAT).trim()}` : "Sat.";
-  const sunLine = (r.SUN && String(r.SUN).trim()) ? `Sun. ${String(r.SUN).trim()}` : "Sun.";
+
+  const satHas = (r.SAT && String(r.SAT).trim());
+  const sunHas = (r.SUN && String(r.SUN).trim());
+  const satTime = satHas ? String(r.SAT).trim() : "";
+  const sunTime = sunHas ? String(r.SUN).trim() : "";
 
   const a = document.createElement("div");
   a.className = "cell cell--indexFirst";
@@ -78,8 +81,8 @@ function renderIndexRow(r){
   const c = document.createElement("div");
   c.className = "cell cell--indexThird";
   c.innerHTML = `
-    <div class="cell__days cell__daysLine">${escapeHtml(satLine)}</div>
-    <div class="cell__days cell__daysLine">${escapeHtml(sunLine)}</div>
+    <div class="cell__days cell__daysLine"><span class="dayLbl">Sat.</span><span class="dayTime">${satTime ? escapeHtml(satTime) : "&nbsp;"}</span></div>
+    <div class="cell__days cell__daysLine"><span class="dayLbl">Sun.</span><span class="dayTime">${sunTime ? escapeHtml(sunTime) : "&nbsp;"}</span></div>
   `;
 
   row.appendChild(a);
