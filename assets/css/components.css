@@ -1319,102 +1319,99 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-/* ================================
-   INDEX: match EVENTS cardbody + alignment (v331)
-   ================================ */
+/* ===========================
+   INDEX alignment + cardbody parity (CSS-only)
+   - No HTML/JS changes required
+   =========================== */
 
-@media (max-width: 520px){
+/* Scope everything to INDEX so EVENTS cannot be affected */
+#viewIndex .row{
+  align-items: stretch;
+}
 
-  #viewIndex{ --rowFont: 8px; }
+/* 1) Make the beige first column fill like EVENTS (no inset "box") */
+#viewIndex .cell--indexFirst{
+  position: relative;
+  margin: 0;              /* kill any inset layout */
+  padding: var(--evRowPadY) var(--evRowPadX);
+  background: transparent; /* background handled by ::before so borders line up */
+  z-index: 0;
+}
+#viewIndex .cell--indexFirst::before{
+  content: "";
+  position: absolute;
+  /* extend to the row edges inside the card, matching EVENTS column fill */
+  top: calc(-1 * var(--evRowPadY));
+  bottom: calc(-1 * var(--evRowPadY));
+  left: calc(-1 * var(--evRowPadX));
+  right: 0;
+  background: var(--accentCol);
+  z-index: -1;
+}
 
-  #viewIndex .row--index{
-    grid-template-columns: 1.55fr 1.05fr 0.90fr;
-    gap: 0;
-    padding: 11px 13px;
-    align-items: stretch;
-  }
+/* preserve group corner rounding: only top/bottom of each GROUP should round */
+#viewIndex .group .row.isFirst .cell--indexFirst::before{
+  border-top-left-radius: var(--radiusCard);
+}
+#viewIndex .group .row.isLast .cell--indexFirst::before{
+  border-bottom-left-radius: var(--radiusCard);
+}
 
-  #viewIndex .row--index .cell--indexFirst{
-    position: relative;
-    margin: -11px 0 -11px -13px;
-    padding: 11px 13px;
-    background: transparent;
-    border-right: 1px solid rgba(0,0,0,0.06);
-    align-self: stretch;
-    z-index: 0;
-  }
-  #viewIndex .row--index .cell--indexFirst::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: var(--sand, #e7ddc5);
-    z-index:-1;
-  }
+/* 2) Ensure internal divider lines continue through the beige column */
+#viewIndex .row{
+  border-bottom: 1px solid var(--rowDividerCol);
+}
+#viewIndex .group .row.isLast{
+  border-bottom: none;
+}
 
-  #viewIndex .cell__indexInlineWrap{
-    display:flex;
-    align-items:baseline;
-    gap: 14px;
-    font-size: 12px;
-    line-height: 1.05;
-    font-weight: 700;
-    color: rgba(0,0,0,0.55);
-    letter-spacing: 0.02em;
-    margin: 0 0 6px 0;
-    text-transform: none;
-  }
-  #viewIndex .cell__indexInlineLabel,
-  #viewIndex .cell__indexInlineValue{
-    font: inherit;
-    color: inherit;
-    letter-spacing: inherit;
-    text-transform: none;
-  }
+/* 3) Align columns 2 & 3 vertically with NAME/IG (not with GUESTS/OTA) */
+#viewIndex{
+  /* tweak this if needed; it equals meta line height + its gap */
+  --idxMetaOffset: 18px;
+}
+@media (min-width: 521px){
+  #viewIndex{ --idxMetaOffset: 16px; }
+}
 
-  /* ensures CITY/STATE + SAT/SUN start on same baseline as NAME/IG */
-  #viewIndex .cell__indexSpacer{
-    height: calc(12px * 1.05 + 6px);
-  }
+/* Remove the previous spacer approach (if present) and use padding rebalance instead */
+#viewIndex .cell--indexSecond::before,
+#viewIndex .cell--indexThird::before{
+  content: none !important;
+}
 
-  #viewIndex .row--index .cell{
-    display:flex;
-    flex-direction: column;
-    justify-content: flex-start;
-  }
+#viewIndex .cell--indexSecond,
+#viewIndex .cell--indexThird{
+  /* push content down to align with NAME/IG while keeping row height stable */
+  padding-top: calc(var(--evRowPadY) + var(--idxMetaOffset));
+  padding-bottom: calc(var(--evRowPadY) - 2px); /* keep bottom similar; avoids tall rows */
+}
 
-  #viewIndex .row--index .cell__ig{
-    font-size: 8px;
-    color: rgba(0,0,0,0.55);
-    margin-top: 2px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
+/* Add a little breathing room on the left edge of the middle column */
+#viewIndex .cell--indexSecond{
+  padding-left: calc(var(--evRowPadX) + 6px);
+}
 
-  /* SAT/SUN label pinned; time styled like STATE field */
-  #viewIndex .cell__daysLine{
-    display:grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 10px;
-    row-gap: 2px;
-    align-items: baseline;
-  }
-  #viewIndex .dayLbl{ min-width: 44px; }
-  #viewIndex .dayTime{
-    min-width: 68px;
-    justify-self: start;
-    font-size: 8px;
-    color: rgba(0,0,0,0.55);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
+/* 4) Make SAT/SUN label position stable; time column width stable */
+#viewIndex .cell__daysLine{
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+#viewIndex .cell__daysLine .dayLbl{
+  width: 3.25ch;          /* stable label column */
+  text-align: right;
+  flex: 0 0 auto;
+}
+#viewIndex .cell__daysLine .dayTime{
+  min-width: 6.5ch;       /* stable time column so labels don't jump */
+  text-align: left;
+  flex: 0 0 auto;
+}
 
-  #viewIndex .row--index .cell--indexSecond{
-    padding-left: 14px;
-    border-right: 1px solid rgba(0,0,0,0.06);
-  }
-  #viewIndex .row--index .cell--indexThird{
-    padding-left: 14px;
-    padding-right: 8px;
-  }
+/* Keep the overall card "feel" identical to EVENTS: no extra per-row gutters */
+#viewIndex .row{
+  margin: 0;
 }
