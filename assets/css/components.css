@@ -1170,3 +1170,74 @@ nav.filters, .filters__inner, .pillRow{
 #viewIndex .table .row + .row .cell--indexFirst{
   box-shadow: inset 0 1px rgba(0,0,0,0.06);
 }
+
+/* =========================================================
+   INDEX refinements (iter328)
+   1) Wider first column to avoid wrapping
+   2) GUESTS/OTA header matches EVENTS "EVENT" label styling
+   3) Shift CITY/STATE + SAT/SUN down to align with NAME/IG
+   4) Lock SAT/SUN label position + style time like STATE
+   ========================================================= */
+
+/* 1) Wider first column */
+#viewIndex .table .row{
+  grid-template-columns: minmax(220px, 1.55fr) 1fr 112px;
+}
+@media (min-width: 521px){
+  #viewIndex .table .row{
+    grid-template-columns: minmax(280px, 1.6fr) 1fr 140px;
+  }
+}
+
+/* 2) Header styling (match EVENTS small top label rhythm) */
+#viewIndex .cell__indexInlineWrap{
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  line-height: 1.1;
+}
+#viewIndex .cell__indexGuests,
+#viewIndex .cell__indexOta{
+  color: var(--muted);
+}
+
+/* 3) Align other columns with NAME/IG, not with header line */
+#viewIndex{
+  --indexHeaderSpacer: 18px; /* tuned to sit NAME/IG baseline */
+}
+#viewIndex .cell--indexSecond::before,
+#viewIndex .cell--indexThird::before{
+  content: "";
+  display: block;
+  height: var(--indexHeaderSpacer);
+}
+@media (max-width: 520px){
+  #viewIndex{
+    --indexHeaderSpacer: 18px;
+  }
+}
+@media (min-width: 521px){
+  #viewIndex{
+    --indexHeaderSpacer: 20px;
+  }
+}
+
+/* 4) SAT/SUN: label stays fixed, time aligns consistently */
+#viewIndex .cell__daysLine{
+  display: grid;
+  grid-template-columns: 4ch minmax(7ch, 1fr);
+  column-gap: 6px;
+  align-items: baseline;
+}
+#viewIndex .cell__daysLabel{
+  font-weight: 700; /* keep Sat./Sun. bold */
+  justify-self: end;
+}
+#viewIndex .cell__daysTime{
+  justify-self: end;
+  /* match INDEX STATE styling */
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
