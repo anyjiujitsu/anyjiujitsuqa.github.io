@@ -1017,10 +1017,7 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* =========================================================
-   INDEX: inline header fields + stacked SAT/SUN (iter322)
-   - Adds "GUESTS:" placeholder + OTA inline above NAME/IG
-   - Moves OTA out of 3rd column
-   - Stacks SAT and SUN in 3rd column
+   INDEX: inline header (GUESTS / OTA) + stacked SAT/SUN (iter323)
    ========================================================= */
 
 #viewIndex .cell__indexInlineWrap{
@@ -1030,33 +1027,36 @@ nav.filters, .filters__inner, .pillRow{
   margin-bottom: 4px;
 }
 
-#viewIndex .cell__indexInline{
-  font-size: 6px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+#viewIndex .cell__indexGuests{
   color: var(--muted);
-  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* Make OTA a touch stronger than the placeholder label */
-#viewIndex .cell__indexInlineOta{
-  color: rgba(0,0,0,0.62);
+#viewIndex .cell__indexOta{
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* Third column: stack SAT and SUN */
-#viewIndex .cell__sat,
-#viewIndex .cell__sun{
+/* Make the inline header follow the same "subline" size ladder */
+@media (max-width: 520px){
+  #viewIndex .cell__indexInlineWrap{
+    font-size: var(--mSubFont);
+  }
+}
+@media (min-width: 521px){
+  #viewIndex .cell__indexInlineWrap{
+    font-size: 12px;
+  }
+}
+
+/* Stacked SAT/SUN right column */
+#viewIndex .cell__daysLine{
   display:block;
+}
+
+/* Keep the right column aligned like the old days+ota block */
+#viewIndex .table .row > div:nth-child(3){
   text-align: right;
-  font-weight: 800;
-  line-height: 1.05;
-}
-
-#viewIndex .cell__sun{
-  margin-top: 2px;
-}
-
-/* Keep the 3rd column vertically centered when rows are tall */
-#viewIndex .table .row > div:last-child{
-  align-self: center;
 }
