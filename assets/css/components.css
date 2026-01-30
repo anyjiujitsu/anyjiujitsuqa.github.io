@@ -169,24 +169,31 @@
 
 .pill--search{ min-width: 250px; }
 
-/* SEARCH PILL: iOS caret alignment fix */
-.pill--search{
-  justify-content: flex-start; /* prevent center alignment */
-}
-
+/* SEARCH PILL: ensure input uses full available typing space (prevents mid-field caret/scroll) */
 .pill--search .pill__input{
+  flex: 1 1 auto;
+  min-width: 0;            /* critical for flex children to shrink correctly */
+  width: auto;             /* override width:100% from base input rule */
   text-align: left;
-  padding-left: 34px; /* icon width + gap */
-  padding-right: 28px; /* clear button space */
-  -webkit-text-fill-color: currentColor;
 }
 
-/* iOS Safari specific: prevent internal centering of search text */
-.pill--search .pill__input::-webkit-search-decoration,
-.pill--search .pill__input::-webkit-search-cancel-button,
-.pill--search .pill__input::-webkit-search-results-button,
-.pill--search .pill__input::-webkit-search-results-decoration{
-  display: none;
+/* SEARCH helper text (placeholder) styling */
+.pill--search .pill__input::placeholder{
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  opacity: 0.55;
+}
+
+/* Mobile: slightly tighter placeholder + keep typing space maxed */
+@media (max-width: 520px){
+  .pill--search{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .pill--search .pill__input::placeholder{
+    font-size: 12px;
+    opacity: 0.5;
+  }
 }
 
 
