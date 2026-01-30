@@ -1017,35 +1017,46 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* =========================================================
-   INDEX: first-column tint block (safe) (iter321)
-   - Uses the first grid cell, but forces it to stretch so tint fills row height
-   - Extends into row padding to match EVENTS
+   INDEX: inline header fields + stacked SAT/SUN (iter322)
+   - Adds "GUESTS:" placeholder + OTA inline above NAME/IG
+   - Moves OTA out of 3rd column
+   - Stacks SAT and SUN in 3rd column
    ========================================================= */
 
-/* Ensure the first column cell stretches full row height */
-#viewIndex .table .row > div:first-child{
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
+#viewIndex .cell__indexInlineWrap{
+  display:flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-bottom: 4px;
 }
 
-/* Remove any previous tint pseudo (if present) and re-apply correctly */
-#viewIndex .table .row > div:first-child::before{
-  content:"";
-  position:absolute;
-  left: calc(-1 * var(--evRowPadX, 12px));  /* extend into row left padding */
-  right: 0;
-  top:  calc(-1 * var(--evRowPadY, 8px));   /* extend into row top padding */
-  bottom: calc(-1 * var(--evRowPadY, 8px)); /* extend into row bottom padding */
-  background: rgba(232, 221, 198, 0.85);
-  border-radius: 14px 0 0 14px;
-  z-index: 0;
-  pointer-events:none;
+#viewIndex .cell__indexInline{
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
 }
 
-#viewIndex .table .row > div:first-child > *{
-  position: relative;
-  z-index: 1;
+/* Make OTA a touch stronger than the placeholder label */
+#viewIndex .cell__indexInlineOta{
+  color: rgba(0,0,0,0.62);
+}
+
+/* Third column: stack SAT and SUN */
+#viewIndex .cell__sat,
+#viewIndex .cell__sun{
+  display:block;
+  text-align: right;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+#viewIndex .cell__sun{
+  margin-top: 2px;
+}
+
+/* Keep the 3rd column vertically centered when rows are tall */
+#viewIndex .table .row > div:last-child{
+  align-self: center;
 }
