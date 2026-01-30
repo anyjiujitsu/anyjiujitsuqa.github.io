@@ -54,29 +54,29 @@ function renderIndexRow(r){
   row.className = "row";
 
   const otaVal = (r.OTA && String(r.OTA).trim()) ? String(r.OTA).trim() : "—";
+  const satLine = (r.SAT && String(r.SAT).trim()) ? `Sat. ${String(r.SAT).trim()}` : "Sat.";
+  const sunLine = (r.SUN && String(r.SUN).trim()) ? `Sun. ${String(r.SUN).trim()}` : "Sun.";
 
   const a = document.createElement("div");
   a.innerHTML = `
     <div class="cell__indexInlineWrap">
-      <span class="cell__indexInline cell__indexInlineGuests">GUESTS:</span>
-      <span class="cell__indexInline cell__indexInlineOta">OTA: ${'${escapeHtml(otaVal)}'}</span>
+      <span class="cell__indexGuests">GUESTS:</span>
+      <span class="cell__indexOta">OTA: ${escapeHtml(otaVal)}</span>
     </div>
-    <div class="cell__name">${'${escapeHtml(r.NAME)}'}</div>
-    <div class="cell__ig">${'${escapeHtml(r.IG)}'}</div>
+    <div class="cell__name">${escapeHtml(r.NAME)}</div>
+    <div class="cell__ig">${escapeHtml(r.IG)}</div>
   `;
 
   const b = document.createElement("div");
   b.innerHTML = `
-    <div class="cell__city">${'${escapeHtml(r.CITY)}'}</div>
-    <div class="cell__state">${'${escapeHtml(r.STATE)}'}</div>
+    <div class="cell__city">${escapeHtml(r.CITY)}</div>
+    <div class="cell__state">${escapeHtml(r.STATE)}</div>
   `;
 
   const c = document.createElement("div");
-  const satLine = r.SAT ? `Sat. ${'${escapeHtml(r.SAT)}'}` : "Sat.";
-  const sunLine = r.SUN ? `Sun. ${'${escapeHtml(r.SUN)}'}` : "Sun.";
   c.innerHTML = `
-    <div class="cell__sat">${'${satLine}'}</div>
-    <div class="cell__sun">${'${sunLine}'}</div>
+    <div class="cell__days cell__daysLine">${escapeHtml(satLine)}</div>
+    <div class="cell__days cell__daysLine">${escapeHtml(sunLine)}</div>
   `;
 
   row.appendChild(a);
