@@ -1,6 +1,10 @@
-/* header.css â€” v20260131-301
-   Authoritative header + topbar styles (extracted from components.css)
-*/
+/* restored from CURRENT CODE zip â€” v20260131-302 */
+
+/* header.css (split from components.css v28; order-preserving) */
+
+
+
+
 /* FIXTURE header font (header title only) */
 @font-face{
   font-family: 'Fixture';
