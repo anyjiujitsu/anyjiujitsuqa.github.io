@@ -1,11 +1,10 @@
-/* responsive.css
-   Global media queries extracted from components.css.
-   (View-specific media queries remain in their respective files.)
-*/
+/* responsive.css â€” generated for modular CSS strategy (Step 2) */
+/* Source: previously embedded in components.css; split on 2026-01-31 */
 
 @media (max-width: 430px){
   .header__countWrap{ margin-left: 8px; }
 }
+
 
 @media (max-width: 560px){
   /* Mobile: scale logo down slightly WITHOUT changing desktop, and prevent any cropping */
@@ -19,6 +18,46 @@
     overflow: visible;
   }
 }
+
+
+@media (max-width: 520px){
+  .pill--search{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .pill--search .pill__input::placeholder{
+    font-size: 12px;
+    opacity: 0.5;
+  }
+}
+
+
+@media (max-width: 430px){
+  /* tighter density (iter114) */
+  .header{ padding-top: 10px; padding-bottom: 6px; }
+  .header__inner{ gap: 10px; }
+  .nav{ padding-top: 8px; padding-bottom: 8px; }
+  .nav__inner{ gap: 10px; }
+  .table{ gap: 10px; }
+  .group{ margin-top: 10px; }
+  .group__label{ margin-bottom: 6px; letter-spacing: .14em; }
+  .row{ padding-top: 10px; padding-bottom: 10px; }
+  .cell__meta{ margin-top: 2px; }
+
+  .header__logo{ min-width: 44px; }
+  .header__logoText{ font-size: 12px; }
+  .header__logo{ font-size: 12px; }
+
+  .viewToggle{ padding: 5px; gap: 5px; }
+  .viewToggle__tab{ padding: 8px 12px; font-size: 11px; }
+
+  .pill{ gap: 6px; box-shadow: 0 6px 12px rgba(0,0,0,0.10); }
+  .pill--search{ min-width: 220px; }
+
+  .table{ box-shadow: 0 8px 16px var(--shadow); }
+  .row{ padding: 9px 11px; gap: 8px; }
+}
+
 
 @media (max-width: 430px){
   /* Header */
@@ -45,7 +84,99 @@
   .nav{ padding-top: 4px; padding-bottom: 4px; }
   .nav__inner{ gap: 7px; }
 
-/* FINAL MOBILE TUNING: make the view toggle match desktop proportions (without scaling, so it stays crisp) */
+  /* Pills */
+  .pill{ gap: 4px; border-width: 1px; box-shadow: 0 5px 10px rgba(0,0,0,0.09); }
+  .pill--search{ min-width: 178px; }
+  .pill__icon{ font-size: 11px; margin-left: var(--evIconLeft); }
+  .pill__clear{ font-size: 17px; padding: 0 2px; }
+  .pill__caret{ font-size: 8px; }
+  .pill__dot{ margin-left: 3px; }
+
+  /* Search input: prevent iOS zoom while visually smaller */
+  .pill__input{
+    font-size: 16px;
+    transform: scale(0.76);
+    transform-origin: left center;
+    width: 132%;
+  }
+
+  /* Counter + groups */
+  .count{ font-size: 12px; margin: 10px 0 10px; }
+  .group{ margin-top: 6px; }
+  .group__label{ margin: 8px 0 5px; letter-spacing: 0.16em; }
+
+  /* Card body */
+  .table{ border-radius: 10px; box-shadow: 0 7px 14px var(--shadow); }
+  .row{ padding: 6px 8px; gap: 6px; }
+  .cell__meta{ margin-top: 1px; }
+  .cell__ig, .cell__state, .cell__ota{ margin-top: 1px; }
+}
+
+
+@media (max-width: 430px){
+  .nav__inner{
+    flex-wrap: nowrap;
+  }
+  /* The search pill was eating the row; cap it so 3 dropdown pills fit */
+  .pill--search{
+    flex: 0 1 clamp(150px, 48vw, 220px);
+    min-width: 150px;
+  }
+  /* Let other pills shrink a touch instead of being pushed off-screen */
+  .pill:not(.pill--search){
+    flex: 0 1 auto;
+    min-width: 86px;
+  }
+}
+
+
+@media (max-width: 430px){
+  /* tighten non-search pills */
+  .pill:not(.pill--search){
+    min-width: 78px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  /* slightly smaller caret + inner gap */
+  .pill{ gap: 3px; }
+  .pill__caret{ font-size: 7.5px; }
+}
+
+
+@media (max-width: 430px){
+  .pill:not(.pill--search){
+    min-width: 70px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .pill__label{
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  .pill{ gap: 2px; }
+  .pill__caret{ font-size: 7px; }
+}
+
+
+@media (max-width: 430px){
+  .pill:not(.pill--search){
+    min-width: 64px;
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+  .pill__label{
+    font-size: 8.3px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .pill{ gap: 2px; }
+  .pill__caret{ font-size: 6.6px; margin-left: 1px; }
+}
+
+
 @media (max-width: 430px){
   .viewToggle{ padding: 3px; gap: 3px; }
   .viewToggle__tab{
@@ -58,7 +189,6 @@
 }
 
 
-/* MOBILE ONLY: thin green filter bar (container only, pills untouched) */
 @media (max-width: 768px){
   nav.filters{
     padding-top: 6px !important;
@@ -69,10 +199,7 @@
     padding-bottom: 0 !important;
   }
 }
-\n
 
-
-}
 
 @media (max-width: 768px){
   .header__countWrap,
@@ -83,11 +210,141 @@
   }
 }
 
+
 @media (max-width: 768px){
   /* Some mobile browsers can end up with a transparent overlay capturing taps.
      Raising the whole filters bar ensures pills stay on top. */
   nav.filters{
     position: sticky;
     z-index: 1000;
+  }
+}
+
+
+@media (max-width: 430px){
+  /* bias label text slightly downward inside pill without affecting layout */
+  .pill__label{
+    padding-top: 2px;
+    padding-bottom: 0;
+    line-height: 1;
+  }
+  /* keep caret aligned with label */
+  .pill__caret{
+    position: relative;
+    top: 1px;
+  }
+}
+
+
+@media (max-width: 430px){
+  .viewToggle{ padding: 2px; gap: 2px; }
+  .viewToggle__tab{
+    padding: 5px 8px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  .viewToggle__thumb{ top: 2px; bottom: 2px; left: var(--evIconLeft); width: calc(50% - 2px); }
+}
+
+
+@media (max-width: 520px){
+  #viewEvents{ --evRowPadY: 5px; }
+
+  #viewEvents{ --evRowPadX: 7px; }
+
+  #viewEvents{ --evIconPad: 18px; --evIconLeft: 4px; --evIconSize: 11px; }
+
+  #viewEvents .row.row--events .cell--forwhere::after,
+  #viewEvents .row.row--events .cell--citystate::before,
+  #viewEvents .row.row--events .cell--daydate::before{
+    left: var(--evIconLeft);
+    width: var(--evIconSize);
+    height: var(--evIconSize);
+  }
+}
+
+
+@media (max-width: 520px){
+  #viewEvents{
+    --evRowPadX: 5px;
+    --evRowBleedX: calc(var(--evRowPadX) + 1px);
+  }
+  #viewEvents .row.row--events{
+    grid-template-columns: 1.6fr 1fr 66px;
+    column-gap: 10px;
+  }
+
+#viewEvents .cell--event{ display:none; }
+#viewEvents .cell__eventInlineWrap{ display:flex; }
+#viewEvents .row.row--events .cell--forwhere{
+  position: relative;
+}
+#viewEvents .row.row--events .cell--forwhere::before{
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--evRowBleedX));
+  right: 0;
+  top: calc(-1 * var(--evRowBleedY));
+  bottom: calc(-1 * var(--evRowBleedY));
+  background: rgba(232, 221, 198, 0.85);
+  border-radius: 14px 0 0 14px;
+  z-index: 0;
+  pointer-events: none;
+}
+#viewEvents .row.row--events .cell--forwhere > *{
+  position: relative;
+  z-index: 1;
+}
+
+  #viewEvents .row.row--events .cell__sub{
+    font-size: 11px;
+  }
+}
+
+
+@media (max-width: 520px){
+  /* Set Events-only row font baseline for all non EVENT/NEW fields */
+  #viewEvents{
+    --rowFont: 8px;
+  }
+
+  /* Ensure Events rows and cell lines inherit the baseline */
+  #viewEvents .row.row--events{
+    font-size: var(--rowFont);
+  }
+  #viewEvents .row.row--events .cell__top,
+  #viewEvents .row.row--events .cell__sub{
+    font-size: inherit;
+  }
+
+  /* EVENT + NEW inline strip */
+  #viewEvents .row.row--events .cell__eventInline{
+    font-size: 6px;
+  }
+  #viewEvents .row.row--events .cell__newInline{
+    font-size: 4px;
+  }
+}
+
+
+@media (max-width: 520px){
+  #viewEvents .row.row--events .cell--citystate,
+  #viewEvents .row.row--events .cell--daydate{
+    padding-top: 10px;
+  }
+}
+
+
+@media (max-width: 520px){
+  #viewEvents .row.row--events .cell--citystate::before{
+    left: calc(var(--evIconLeft) - var(--evMidShift));
+  }
+}
+
+
+@media (max-width: 520px){
+  #viewEvents .cell__eventInlineWrap .cell__newInline{
+    font-size: calc(15px + 2px);
   }
 }
