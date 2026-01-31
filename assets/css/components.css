@@ -1318,12 +1318,52 @@ nav.filters, .filters__inner, .pillRow{
   border-bottom-left-radius: var(--radius);
 }
 
-/* --- INDEX: align columns 2/3 to NAME line (not GUESTS/OTA) ---
-   We use a spacer (via ::before) inside col 2 & 3. If those columns
-   line up with the top meta line, the spacer is too small. */
-@media (max-width: 520px){
-  #viewIndex{ --indexHeaderSpacer: 34px; }
+
+/* ===== INDEX ROW DIVIDER TIGHTENING (LOCK EVENTS) ===== */
+
+/* The Index view was showing â€œbreathing roomâ€ above/below the divider because row-level
+   vertical padding was still active (unlike EVENTS, which uses internal padding + a divider pseudo element).
+   These overrides scope strictly to #viewIndex to avoid touching EVENTS. */
+
+#viewIndex .table .row{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-top: 0 !important;
+  position: relative;
 }
-@media (min-width: 521px){
-  #viewIndex{ --indexHeaderSpacer: 36px; }
+
+/* draw the divider at the true row edge (no floating in padding) */
+#viewIndex .table .row + .row::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.08);
+}
+
+/* move vertical rhythm onto cells so the colored blocks run flush to dividers */
+#viewIndex .cell--indexFirst,
+#viewIndex .cell--indexSecond,
+#viewIndex .cell--indexThird{
+  padding-top: 11px !important;
+  padding-bottom: 11px !important;
+}
+
+/* remove legacy â€œbleedâ€ hacks that created apparent gaps once row padding is removed */
+#viewIndex .cell--indexFirst{
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
+}
+#viewIndex .cell--indexFirst::after{
+  display: none !important;
+}
+#viewIndex .cell__indexSpacer{
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
 }
