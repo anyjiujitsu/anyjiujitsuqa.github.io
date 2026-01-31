@@ -1,17 +1,6 @@
-/* header.css (split from components.css v28; order-preserving) */
+/* header.css â€” generated for modular CSS strategy (Step 2) */
+/* Source: previously embedded in components.css; split on 2026-01-31 */
 
-
-
-
-/* FIXTURE header font (header title only) */
-@font-face{
-  font-family: 'Fixture';
-  src: local('Fixture'), local('Fixture Regular'), local('Fixture Display');
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-/* HEADER */
 .header__title{
   margin: 0;
   font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -24,22 +13,24 @@
 }
 
 
-/* Header totals (e.g., "(227 events)" / "(412 gyms)") */
 .header__countWrap{
   display: inline-flex;
   align-items: baseline;
   margin-left: 10px;
 }
+
+
 .header__countWrap::before{ content: "("; }
+
+
 .header__countWrap::after{ content: ")"; }
+
+
 .header__countWrap .status{
   padding: 0;              /* remove body spacing when used in header */
   font-size: 13px;         /* matches existing totals display */
   color: var(--muted);     /* matches existing totals display */
   line-height: 1;
-}
-@media (max-width: 430px){
-  .header__countWrap{ margin-left: 8px; }
 }
 
 
@@ -52,11 +43,13 @@
   font-size: 14px;
 }
 
+
 .header__logoText{
   font-weight: 800;
   color: var(--green);
   letter-spacing: 0.10em;
 }
+
 
 .header__logo .header__logoImage{
   display: block;
@@ -64,7 +57,7 @@
   width: auto;
 }
 
-/* Logo crop wrapper: trims transparent padding in the PNG by scaling/offsetting the image inside a fixed-height window */
+
 .header__logoCrop{
   height: 1em;              /* matches prior "ANY" text height */
   overflow: hidden;
@@ -72,7 +65,7 @@
   line-height: 0;
 }
 
-/* Scale + nudge the PNG to effectively "crop" the built-in transparent padding */
+
 .header__logoCrop .header__logoImage{
   height: calc(1em * var(--anyLogoCropScale, 1.35));
   width: auto;
@@ -80,64 +73,118 @@
   transform-origin: top left;
 }
 
-@media (max-width: 560px){
-  /* Mobile: scale logo down slightly WITHOUT changing desktop, and prevent any cropping */
-  .header__logo{
-    --anyLogoCropScale: 1.22; /* was 1.4 (too large) */
-    --anyLogoCropY: 0.20;
-    font-size: 12px; /* was 14px; keeps proportions stable */
-  }
-  .header__logoCrop{
-    height: auto;
-    overflow: visible;
-  }
+
+.menu__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 4px 6px 10px;
 }
 
 
-/* VIEW TOGGLE (tabs) */
-.viewToggle{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255,255,255,0.35);
-  border: 1px solid rgba(0,0,0,0.10);
-  border-radius: 999px;
-  padding: 6px;
-  gap: 6px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  user-select: none;
-  touch-action: pan-y;
+.table{
+  background: var(--row);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 10px 22px var(--shadow);
 }
 
-.viewToggle__tab{
-  position: relative;
-  z-index: 2;
-  border: 0;
-  background: transparent;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 12px;
-  color: rgba(0,0,0,0.45);
-  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-synthesis: none;
+
+\n
+
+
 }
 
-.viewToggle__tab[aria-selected="true"]{ color: #111; }
 
-.viewToggle__thumb{
+/* =========================================================
+   HEADER TOTALS (EVENTS / INDEX)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               consolidated v2
+   Fixes:
+   - Keep totals in the LEFT cluster, immediately after title
+   - Prevent any centering / absolute positioning
+   - Vertically align with the bottom/baseline of the title text
+   - Desktop sizing unchanged; mobile slightly smaller
+   ========================================================= */
+
+/* Ensure header row is a predictable flex layout */
+.header__inner{
+  display: flex;
+  align-items: flex-end;          /* bottom align children (title + totals) */
+}
+
+
+.header__logo{ order: 1; }
+
+
+.header__title{ order: 2; }
+
+
+.header__countWrap{
+  order: 3;
+  flex: 0 0 auto;                /* never grow/shrink into centering */
+  align-self: flex-end;
+  margin-left: var(--evIconLeft);              /* sits right after title */
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.55em;             /* desktop sizing */
+  line-height: 1;
+  position: static !important;   /* defeat any absolute centering */
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  text-align: left !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+
+.header__countWrap{
+  margin-bottom: 2px;            /* aligns visually with title bottom */
+}
+
+
+.header__countWrap .status{
+  color: currentColor;
+  font-size: 1em;
+  line-height: 1;
+}
+
+
+.header__countWrap::before,
+.header__countWrap:before,
+.header__countWrap::after,
+.header__countWrap:after{
+  content: "" !important;
+  display: none !important;
+}
+
+
+.viewToggle,
+.header__toggle,
+.header__actions{
+  order: 4;
+  margin-left: auto;
+}
+
+
+#viewEvents .table .row.row--events{
+  border-top: 0;          /* disable the shared .row border divider for Events rows */
+  position: relative;     /* anchor overlay divider */
+  isolation: isolate;     /* ensure divider paints above cell backgrounds on desktop */
+}
+
+
+#viewEvents .table .row.row--events + .row.row--events::before{
+  content: "";
   position: absolute;
-  top: 6px;
-  bottom: 6px;
-  left: 6px;
-  width: calc(50% - 6px);
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.14);
-  transform: translateX(calc(var(--viewProgress, 0) * 100%));
-  transition: transform 220ms ease;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.06);
+  z-index: 30;
+  pointer-events: none;
 }
