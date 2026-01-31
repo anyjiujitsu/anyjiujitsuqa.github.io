@@ -1203,7 +1203,7 @@ nav.filters, .filters__inner, .pillRow{
 
 /* 3) Align other columns with NAME/IG, not with header line */
 #viewIndex{
-  --indexHeaderSpacer: 24px; /* tuned to sit NAME/IG baseline */
+  --indexHeaderSpacer: 18px; /* tuned to sit NAME/IG baseline */
 }
 #viewIndex .cell--indexSecond::before,
 #viewIndex .cell--indexThird::before{
@@ -1213,7 +1213,7 @@ nav.filters, .filters__inner, .pillRow{
 }
 @media (max-width: 520px){
   #viewIndex{
-    --indexHeaderSpacer: 24px;
+    --indexHeaderSpacer: 18px;
   }
 }
 @media (min-width: 521px){
@@ -1318,167 +1318,12 @@ nav.filters, .filters__inner, .pillRow{
   border-bottom-left-radius: var(--radius);
 }
 
-/* ============================================================
-   INDEX â€” lock row separators to match EVENTS (no vertical gaps)
-   Fixes: extra white space above/below divider lines on INDEX rows
-   Scope: #viewIndex only (EVENTS untouched)
-   ============================================================ */
-
-#viewIndex .table .row{
-  /* remove the global .row padding that creates "breathing room" */
-  padding: 0 !important;
-  border-top: 0 !important;
-  margin: 0 !important;
-  position: relative;
+/* --- INDEX: align columns 2/3 to NAME line (not GUESTS/OTA) ---
+   We use a spacer (via ::before) inside col 2 & 3. If those columns
+   line up with the top meta line, the spacer is too small. */
+@media (max-width: 520px){
+  #viewIndex{ --indexHeaderSpacer: 34px; }
 }
-
-/* divider line (like EVENTS rowDivider), sits flush with row edge */
-#viewIndex .table .row::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: var(--line);
-  pointer-events: none;
-}
-
-/* no divider on first row inside each table block */
-#viewIndex .table .row:first-child::before{ display: none; }
-
-/* move the vertical padding onto cells so colored blocks reach dividers */
-#viewIndex .table .row > .cell{
-  padding-top: 11px !important;
-  padding-bottom: 11px !important;
-}
-
-/* kill the old negative-margin hack so alignment stays exact */
-#viewIndex .table .row > .cell--indexFirst{
-  margin: 0 !important;
-  padding-left: 13px !important;
-  padding-right: 13px !important;
-}
-
-#viewIndex .table .row > .cell--indexMid{
-  padding-left: 16px !important;
-  padding-right: 13px !important;
-}
-
-#viewIndex .table .row > .cell--indexEnd{
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-}
-
-
-/* ============================================================
-   INDEX â€” lock row separators to match EVENTS (no vertical gaps)
-   Fixes: extra space above/below divider lines on INDEX rows.
-   Scope: #viewIndex only (EVENTS untouched)
-   ============================================================ */
-
-#viewIndex .table .row{
-  /* Remove inherited global .row padding/border that creates vertical gaps */
-  padding: 0 !important;
-  border-top: 0 !important;
-  margin: 0 !important;
-  position: relative;
-}
-
-/* Use a row-level divider identical to EVENTS so it spans full width */
-#viewIndex .table .row::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: var(--line);
-  pointer-events: none;
-}
-
-/* First row in a card/group should not draw an internal divider */
-#viewIndex .table .row:first-child::before{
-  display: none;
-}
-
-/* Put the vertical rhythm back onto the cells (not the row) */
-#viewIndex .table .row > .cell{
-  padding-top: 11px !important;
-  padding-bottom: 11px !important;
-}
-
-/* Remove the old negative-margin hack on the beige first column */
-#viewIndex .table .row > .cell--indexFirst{
-  margin: 0 !important;
-  padding-left: 13px !important;
-  padding-right: 13px !important;
-}
-
-/* Ensure mid/end columns have a little breathing room from the beige edge */
-#viewIndex .table .row > .cell--indexMid{
-  padding-left: 16px !important;
-  padding-right: 12px !important;
-}
-
-#viewIndex .table .row > .cell--indexEnd{
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-}
-
-
-/* ============================================================
-   INDEX â€” lock row separators to match EVENTS (no vertical gaps)
-   Fixes: extra space above/below divider lines on INDEX rows.
-   Scope: #viewIndex only (EVENTS untouched)
-   ============================================================ */
-
-#viewIndex .table .row{
-  /* Remove inherited global .row padding/border that creates vertical gaps */
-  padding: 0 !important;
-  border-top: 0 !important;
-  margin: 0 !important;
-  position: relative;
-}
-
-/* Recreate a clean divider line like EVENTS uses */
-#viewIndex .table .row::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: var(--line, #d7d7d7);
-  pointer-events: none;
-}
-
-/* Donâ€™t draw a divider on the very first row of each table group */
-#viewIndex .table .row:first-child::before{
-  display: none;
-}
-
-/* Move the vertical spacing onto the cells so backgrounds hit the divider */
-#viewIndex .table .row > .cell{
-  padding-top: 11px !important;
-  padding-bottom: 11px !important;
-}
-
-/* The left beige block used a negative-margin hack (from earlier iterations)
-   that reintroduced gaps once row padding changed â€” disable it. */
-#viewIndex .table .row > .cell--indexFirst{
-  margin: 0 !important;
-  padding-left: 13px !important;
-  padding-right: 13px !important;
-}
-
-/* Middle / right cells: keep a little breathing room from the divider edge */
-#viewIndex .table .row > .cell--indexMid{
-  padding-left: 18px !important;
-  padding-right: 13px !important;
-}
-
-#viewIndex .table .row > .cell--indexEnd{
-  padding-left: 13px !important;
-  padding-right: 13px !important;
+@media (min-width: 521px){
+  #viewIndex{ --indexHeaderSpacer: 36px; }
 }
