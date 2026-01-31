@@ -1,190 +1,291 @@
-/* header.css â€” generated for modular CSS strategy (Step 2) */
+/* components.css (shared) â€” generated for modular CSS strategy (Step 2) */
 /* Source: previously embedded in components.css; split on 2026-01-31 */
 
-.header__title{
-  margin: 0;
-  font-family: 'Fixture', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  font-size: var(--titleSize);
-  letter-spacing: var(--titleTracking);
-  line-height: 0.9;
-  font-weight: 900;
-  color: var(--green);
-  text-transform: uppercase;
+@font-face{
+  font-family: 'Fixture';
+  src: local('Fixture'), local('Fixture Regular'), local('Fixture Display');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
 }
 
 
-.header__countWrap{
+.viewToggle{
+  position: relative;
   display: inline-flex;
-  align-items: baseline;
-  margin-left: 10px;
+  align-items: center;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 999px;
+  padding: 6px;
+  gap: 6px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  user-select: none;
+  touch-action: pan-y;
 }
 
 
-.header__countWrap::before{ content: "("; }
-
-
-.header__countWrap::after{ content: ")"; }
-
-
-.header__countWrap .status{
-  padding: 0;              /* remove body spacing when used in header */
-  font-size: 13px;         /* matches existing totals display */
-  color: var(--muted);     /* matches existing totals display */
-  line-height: 1;
-}
-
-
-.header__logo{
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  min-width: 56px;
-
-  font-size: 14px;
-}
-
-
-.header__logoText{
+.viewToggle__tab{
+  position: relative;
+  z-index: 2;
+  border: 0;
+  background: transparent;
+  padding: 10px 16px;
+  border-radius: 999px;
   font-weight: 800;
-  color: var(--green);
-  letter-spacing: 0.10em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
 }
 
 
-.header__logo .header__logoImage{
-  display: block;
-  height: 1em;
-  width: auto;
+.viewToggle__tab[aria-selected="true"]{ color: #111; }
+
+
+.viewToggle__thumb{
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.14);
+  transform: translateX(calc(var(--viewProgress, 0) * 100%));
+  transition: transform 220ms ease;
 }
 
 
-.header__logoCrop{
-  height: 1em;              /* matches prior "ANY" text height */
-  overflow: hidden;
-  display: block;
-  line-height: 0;
+.viewShell{ overflow: hidden; }
+
+
+.viewSlider{
+  display:flex;
+  width: 200%;
+  transform: translateX(calc(var(--viewProgress, 0) * -50%));
+  transition: transform 240ms ease;
+  will-change: transform;
 }
 
 
-.header__logoCrop .header__logoImage{
-  height: calc(1em * var(--anyLogoCropScale, 1.35));
-  width: auto;
-  transform: translateY(calc(-1em * var(--anyLogoCropY, 0.18)));
-  transform-origin: top left;
-}
+.viewPanel{ width: 50%; min-width: 50%; }
 
 
-.menu__header{
+.pillSelect{ position: relative; }
+
+
+.pill{
+  height: var(--pillH);
+  border-radius: var(--radiusPill);
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.12);
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding: 4px 6px 10px;
+  gap: 8px;
+  padding: 0 var(--pillPadX);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.10);
+  flex: 0 0 auto;
 }
 
 
-.table{
-  background: var(--row);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 10px 22px var(--shadow);
+.pill--search{ min-width: 250px; }
+
+
+.pill--search .pill__input{
+  flex: 1 1 auto;
+  min-width: 0;            /* critical for flex children to shrink correctly */
+  width: auto;             /* override width:100% from base input rule */
+  text-align: left;
 }
 
 
-\n
-
-
+.pill--search .pill__input::placeholder{
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  opacity: 0.55;
 }
 
 
-/* =========================================================
-   HEADER TOTALS (EVENTS / INDEX)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               consolidated v2
-   Fixes:
-   - Keep totals in the LEFT cluster, immediately after title
-   - Prevent any centering / absolute positioning
-   - Vertically align with the bottom/baseline of the title text
-   - Desktop sizing unchanged; mobile slightly smaller
-   ========================================================= */
+.pill__icon{ font-size: 14px; opacity: 0.7; }
 
-/* Ensure header row is a predictable flex layout */
-.header__inner{
-  display: flex;
-  align-items: flex-end;          /* bottom align children (title + totals) */
+
+.pill__input{
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  width: 100%;
+  font-size: 16px;
 }
 
 
-.header__logo{ order: 1; }
-
-
-.header__title{ order: 2; }
-
-
-.header__countWrap{
-  order: 3;
-  flex: 0 0 auto;                /* never grow/shrink into centering */
-  align-self: flex-end;
-  margin-left: var(--evIconLeft);              /* sits right after title */
-  margin-right: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 0.55em;             /* desktop sizing */
+.pill__clear{
+  border: 0;
+  background: transparent;
+  font-size: 20px;
   line-height: 1;
-  position: static !important;   /* defeat any absolute centering */
-  left: auto !important;
-  right: auto !important;
-  top: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  text-align: left !important;
-  width: auto !important;
-  max-width: none !important;
+  opacity: 0.55;
+  padding: 0 4px;
 }
 
 
-.header__countWrap{
-  margin-bottom: 2px;            /* aligns visually with title bottom */
+.pill__label{
+    font-weight: 600;
+line-height: 1;
+  font-synthesis: none;
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-stretch: normal;
+  font-variation-settings: 'wdth' 100, 'wght' 500;
+  font-size: var(--pillFont);
+  font-weight: 600;
+  color: rgba(0,0,0,0.55);
+  white-space: nowrap;
 }
 
 
-.header__countWrap .status{
-  color: currentColor;
-  font-size: 1em;
-  line-height: 1;
+.pill__caret{ font-size: 10px; opacity: 0.55; margin-left: var(--evIconLeft); }
+
+
+.pill__dot{
+  width: var(--dotSize);
+  height: var(--dotSize);
+  border-radius: 999px;
+  margin-left: 6px;
+  background: transparent;
+  box-shadow: none;
 }
 
 
-.header__countWrap::before,
-.header__countWrap:before,
-.header__countWrap::after,
-.header__countWrap:after{
-  content: "" !important;
-  display: none !important;
+.filter-pill[data-has-selection="true"] .pill__dot{
+  background: #D16C4E;
+  box-shadow: 0 0 0 2px rgba(209,108,78,0.45);
 }
 
 
-.viewToggle,
-.header__toggle,
-.header__actions{
-  order: 4;
-  margin-left: auto;
+.menu{
+  position: fixed;
+  z-index: 1000;
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 14px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+  padding: 10px;
+  min-width: 240px;
 }
 
 
-#viewEvents .table .row.row--events{
-  border-top: 0;          /* disable the shared .row border divider for Events rows */
-  position: relative;     /* anchor overlay divider */
-  isolation: isolate;     /* ensure divider paints above cell backgrounds on desktop */
+.menu__title{ font-weight: 800; letter-spacing: 0.08em; font-size: 12px; opacity: 0.7; }
+
+
+.menu__clear{ border:0; background:transparent; font-weight:800; font-size: 12px; color: var(--green); }
+
+
+.menu__list{ display:flex; flex-direction:column; gap: 6px; padding: 6px; max-height: 50vh; overflow:auto; }
+
+
+.menu__item{ display:flex; align-items:center; gap: 10px; font-size: 14px; }
+
+
+.menu__item input{ width: 16px; height: 16px; }
+
+
+.menu__empty{ padding: 10px; color: rgba(0,0,0,0.5); font-size: 13px; }
+
+
+.group{ margin-top: 14px; }
+
+
+.group__label{
+  font-size: var(--groupLabelFont);
+  letter-spacing: 0.22em;
+  font-weight: 800;
+  color: rgba(0,0,0,0.45);
+  text-transform: uppercase;
+  margin: 14px 0 8px;
 }
 
 
-#viewEvents .table .row.row--events + .row.row--events::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: rgba(0,0,0,0.06);
-  z-index: 30;
-  pointer-events: none;
+.row{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 10px;
+  padding: 11px 13px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  font-size: var(--rowFont);
+}
+
+
+.row:first-child{ border-top: 0; }
+
+
+.search input,
+input[type="search"]{ font-size:16px; }
+
+
+nav.filters, .filters__inner, .pillRow{
+  overflow: visible !important;
+}
+
+
+.pillRow{
+  position: relative;
+  z-index: 20;
+}
+
+
+.pillSelect{
+  position: relative;
+  z-index: 25;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  touch-action: manipulation;
+}
+
+
+.pill.filter-pill{
+  pointer-events: auto;
+}
+
+
+.menu[data-pill-panel]{
+  z-index: 9999 !important;
+  pointer-events: auto;
+}
+
+
+.pill__input::placeholder{
+  font-family: 'Fixture', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+}
+
+
+#viewEvents{
+  --evIconPad: 20px;
+  --evIconLeft: 6px;
+  --evIconSize: 13px;
+  --evIconOpacity: 0.65;
+
+  /* Events row padding (scoped) ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â shrink outer edges without touching icon sizing */
+  --evRowPadY: 8px;
+  --evRowPadX: 6px;
+
+  /* Background "bleed" so the TYPE tint reaches the rounded edge like legacy */
+  --evRowBleedX: calc(var(--evRowPadX) + 1px);
+  --evRowBleedY: calc(var(--evRowPadY) + 2px);
+}
+
+
+#viewEvents{
+  --evForWhereShiftX: 4px; /* tweak knob */
+}
+
+
+#viewEvents{
+  --evMidShift: 8px; /* was 6px; tighten a bit more per latest guide */
 }
