@@ -1041,7 +1041,9 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-/* EVENTS pill only: display options in UPPERCASE (display-only) */
-#eventsPill3Menu .menu__item{
-  text-transform: uppercase;
+@media (max-width: 768px){
+  /* Mobile-only: increase left padding inside search pill for better fitment */
+  .pill--search input{
+    padding-left: 40px;
+  }
 }
