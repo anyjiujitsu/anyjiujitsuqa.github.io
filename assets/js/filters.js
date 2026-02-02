@@ -115,6 +115,36 @@ function eventYear(row){
 }
 
 // ------------------ EVENTS ------------------
+function createdDateFromRow(row){
+  const createdRaw = String(row?.CREATED ?? "").trim();
+  if(!createdRaw) return null;
+
+  // Try native parsing first (handles ISO and many formats)
+  const ms = Date.parse(createdRaw);
+  if(!Number.isNaN(ms)) return new Date(ms);
+
+  // Fallback: handle MM/DD/YYYY or M/D/YY style
+  const m = createdRaw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    let yy = Number(m[3]);
+    if(yy < 100) yy = 2000 + yy; // assume 20xx for 2-digit years
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+  return null;
+}
+
+function isRowNew(row){
+  const d = createdDateFromRow(row);
+  if(!d) return false;
+  const now = new Date();
+  const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  mid.setDate(mid.getDate() - 4);
+  return d >= mid;
+}
+
 export function filterEvents(rows, state){
   let out = rows;
 
@@ -142,6 +172,10 @@ export function filterEvents(rows, state){
     const group = monthYearLabel(r.DATE);
     const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
     const hay = `${base} ${group}`;
-    return cs.every(c => includesAllWords(hay, c));
+    return cs.every(c => {
+      // Special token: "new" (or "*new" etc.) filters to rows that meet the NEW condition
+      if(c === "new") return isRowNew(r);
+      return includesAllWords(hay, c);
+    });
   });
 }
