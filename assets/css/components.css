@@ -386,13 +386,6 @@ input[type="search"]{ font-size:16px; }
     transform-origin: left center;
     width: 132%;
   }
-  /* Mobile fix: the search input is scaled down for iOS, so widen ONLY the search input
-     to keep usable typing space up to the visual end of the pill. */
-  .pill--search .pill__input{
-    width: 132%;
-  }
-
-
 
   /* Counter + groups */
   .count{ font-size: 12px; margin: 10px 0 10px; }
@@ -1051,4 +1044,21 @@ nav.filters, .filters__inner, .pillRow{
 /* EVENTS pill only: display options in UPPERCASE (display-only) */
 #eventsPill3Menu .menu__item{
   text-transform: uppercase;
+}
+
+
+/* MOBILE: Fix truncated typing runway in the search pill.
+   Root cause: iOS Safari caret/scroll can break with transformed <input>.
+   Strategy: on small screens, do NOT transform the actual input; keep font-size 16px (prevents iOS zoom)
+   and match placeholder size to typed text so the visual size remains consistent. */
+@media (max-width: 520px){
+  .pill--search .pill__input{
+    transform: none;
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .pill--search .pill__input::placeholder{
+    font-size: 16px;
+  }
 }
