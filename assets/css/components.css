@@ -1047,13 +1047,12 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-@media (max-width: 430px){
-  /* iOS/mobile: allow the search input to use the full pill width while typing.
-     The scaled-input hack looks good, but iOS Safari can stop horizontal scrolling early
-     when an <input> is transformed. We keep the smaller look normally, but remove the
-     transform while focused so the caret/text can reach the visual end of the pill. */
+/* MOBILE (iOS): allow full typing width in the search pill without changing visual text size.
+   We keep the 16px font (prevents iOS zoom) and the existing scale() look,
+   but expand the effective input width while focused so horizontal scrolling/caret
+   can reach the visual end of the pill. */
+@media (max-width: 520px){
   .pill--search .pill__input:focus{
-    transform: none;
-    width: 100%;
+    width: 170%;
   }
 }
