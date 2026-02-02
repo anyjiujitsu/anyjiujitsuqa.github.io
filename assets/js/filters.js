@@ -28,44 +28,6 @@ function includesAllWords(hay, needle){
   return words.every(w => h.includes(w));
 }
 
-function parseEventDate(str){
-  const s = String(str ?? "").trim();
-  if(!s) return null;
-
-  // MM/DD/YYYY or M/D/YYYY
-  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m){
-    const mm = Number(m[1]);
-    const dd = Number(m[2]);
-    const yy = Number(m[3]);
-    const d = new Date(yy, mm-1, dd);
-    return isNaN(d) ? null : d;
-  }
-
-  // MM/DD/YY or M/D/YY (assume 20YY)
-  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
-  if(m){
-    const mm = Number(m[1]);
-    const dd = Number(m[2]);
-    const yy = 2000 + Number(m[3]);
-    const d = new Date(yy, mm-1, dd);
-    return isNaN(d) ? null : d;
-  }
-
-  // ISO YYYY-MM-DD
-  m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if(m){
-    const yy = Number(m[1]);
-    const mm = Number(m[2]);
-    const dd = Number(m[3]);
-    const d = new Date(yy, mm-1, dd);
-    return isNaN(d) ? null : d;
-  }
-
-  const d = new Date(s);
-  return isNaN(d) ? null : d;
-}
-
 function monthYearLabel(dateStr){
   const str = String(dateStr ?? "").trim();
   if(!str) return "";
@@ -153,32 +115,6 @@ function eventYear(row){
 }
 
 // ------------------ EVENTS ------------------
-function createdDateFromRow(row){
-  const createdRaw = String(row?.CREATED ?? "").trim();
-  if(!createdRaw) return null;
-
-  // Prefer direct Date parsing (handles full timestamps).
-  const t = Date.parse(createdRaw);
-  if(!Number.isNaN(t)) return new Date(t);
-
-  // Fallback: parse common date-only formats.
-  try{
-    const d = parseEventDate(createdRaw);
-    return d;
-  }catch(e){
-    return null;
-  }
-}
-
-function isRowNew(row){
-  const d = createdDateFromRow(row);
-  if(!d) return false;
-  const now = new Date();
-  const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  mid.setDate(mid.getDate() - 4);
-  return d >= mid;
-}
-
 export function filterEvents(rows, state){
   let out = rows;
 
@@ -206,10 +142,6 @@ export function filterEvents(rows, state){
     const group = monthYearLabel(r.DATE);
     const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
     const hay = `${base} ${group}`;
-    return cs.every(c => {
-      // Special token: "new events" (any case) filters to rows that meet the NEW condition
-      if(c === "new events") return isRowNew(r);
-      return includesAllWords(hay, c);
-    });
+    return cs.every(c => includesAllWords(hay, c));
   });
 }
