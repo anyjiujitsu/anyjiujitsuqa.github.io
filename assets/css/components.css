@@ -1045,20 +1045,3 @@ nav.filters, .filters__inner, .pillRow{
 #eventsPill3Menu .menu__item{
   text-transform: uppercase;
 }
-
-
-/* MOBILE: Fix truncated typing runway in the search pill.
-   Root cause: iOS Safari caret/scroll can break with transformed <input>.
-   Strategy: on small screens, do NOT transform the actual input; keep font-size 16px (prevents iOS zoom)
-   and match placeholder size to typed text so the visual size remains consistent. */
-@media (max-width: 520px){
-  .pill--search .pill__input{
-    transform: none;
-    width: auto;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-  .pill--search .pill__input::placeholder{
-    font-size: 16px;
-  }
-}
