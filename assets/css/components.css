@@ -743,7 +743,7 @@ nav.filters, .filters__inner, .pillRow{
    Uses overlay icons (mask) so color inherits consistently.
    ========================================================= */
 #viewEvents{
-  --evIconPad: 24px;
+  --evIconPad: 20px;
   --evIconLeft: 6px;
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
@@ -1029,4 +1029,13 @@ nav.filters, .filters__inner, .pillRow{
 }
 .viewToggle.viewToggle--locked .viewToggle__thumb{
   opacity: 0.85;
+}
+
+
+@media (min-width: 769px){
+  /* Desktop-only: slightly reduce NEW label size */
+  #viewEvents .row.row--events .cell__sub.cell__new,
+  #viewEvents .cell__eventInlineWrap .cell__newInline{
+    font-size: 11px;
+  }
 }
