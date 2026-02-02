@@ -743,7 +743,7 @@ nav.filters, .filters__inner, .pillRow{
    Uses overlay icons (mask) so color inherits consistently.
    ========================================================= */
 #viewEvents{
-  --evIconPad: 20px;
+  --evIconPad: 24px;
   --evIconLeft: 6px;
   --evIconSize: 13px;
   --evIconOpacity: 0.65;
