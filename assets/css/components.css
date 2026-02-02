@@ -384,7 +384,10 @@ input[type="search"]{ font-size:16px; }
     font-size: 16px;
     transform: scale(0.76);
     transform-origin: left center;
-    width: 132%;
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+
   }
 
   /* Counter + groups */
@@ -1047,12 +1050,12 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-/* MOBILE (iOS): allow full typing width in the search pill without changing visual text size.
-   We keep the 16px font (prevents iOS zoom) and the existing scale() look,
-   but expand the effective input width while focused so horizontal scrolling/caret
-   can reach the visual end of the pill. */
+/* MOBILE: ensure search input can horizontally scroll to the visual end.
+   Keeping the scale() look, but avoid percentage widths that can truncate caret/scroll on iOS. */
 @media (max-width: 520px){
-  .pill--search .pill__input:focus{
-    width: 170%;
+  .pill--search .pill__input{
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 }
