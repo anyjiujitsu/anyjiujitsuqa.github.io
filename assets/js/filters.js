@@ -173,8 +173,8 @@ export function filterEvents(rows, state){
     const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
     const hay = `${base} ${group}`;
     return cs.every(c => {
-      // Special token: "new" (or "*new" etc.) filters to rows that meet the NEW condition
-      if(c === "new") return isRowNew(r);
+      // Special token: "new events" (any case) filters to rows that meet the NEW condition
+      if(c === "new events") return isRowNew(r);
       return includesAllWords(hay, c);
     });
   });
