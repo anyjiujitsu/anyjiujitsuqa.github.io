@@ -28,55 +28,6 @@ function includesAllWords(hay, needle){
   return words.every(w => h.includes(w));
 }
 
-// Special search token: "new events" (any case) filters to rows that meet the same NEW condition
-// used by render (based on CREATED within last 4 days).
-function parseEventDate(s){
-  const str = String(s ?? "").trim();
-  if(!str) return null;
-
-  // Accept MM/DD/YYYY (or M/D/YYYY)
-  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m){
-    const mm = Number(m[1]);
-    const dd = Number(m[2]);
-    const yy = Number(m[3]);
-    const d = new Date(yy, mm-1, dd);
-    return isNaN(d) ? null : d;
-  }
-
-  const d = new Date(str);
-  return isNaN(d) ? null : d;
-}
-
-function createdDateFromRow(r){
-  const createdRaw = String(r?.CREATED ?? "").trim();
-  if(!createdRaw) return null;
-
-  // Try native Date.parse first (handles ISO and many common formats)
-  const ms = Date.parse(createdRaw);
-  if(!Number.isNaN(ms)) return new Date(ms);
-
-  // Fallback: reuse parseEventDate (handles MM/DD/YYYY style used in this project)
-  try {
-    const d = parseEventDate(createdRaw);
-    if(d) return d;
-  } catch(e) {}
-
-  return null;
-}
-
-function isRowNew(r){
-  const createdDate = createdDateFromRow(r);
-  if(!createdDate) return false;
-
-  const now = new Date();
-  const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  mid.setDate(mid.getDate() - 4);
-  return createdDate >= mid;
-}
-
-
-
 function monthYearLabel(dateStr){
   const str = String(dateStr ?? "").trim();
   if(!str) return "";
@@ -152,6 +103,52 @@ export function filterDirectory(rows, state){
 }
 
 
+function parseEventDate(s){
+  const str = String(s ?? "").trim();
+  if(!str) return null;
+
+  // Accept MM/DD/YYYY (or M/D/YYYY)
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    const yy = Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+
+function createdDateFromRow(row){
+  const createdRaw = String(row?.CREATED ?? "").trim();
+  if(!createdRaw) return null;
+
+  // Try native Date.parse first (handles ISO and many common formats)
+  const ms = Date.parse(createdRaw);
+  if(!Number.isNaN(ms)) return new Date(ms);
+
+  // Fallback: reuse parseEventDate (handles MM/DD/YYYY style)
+  try{
+    const d = parseEventDate(createdRaw);
+    return d;
+  }catch(e){
+    return null;
+  }
+}
+
+function isRowNew(row){
+  const createdDate = createdDateFromRow(row);
+  if(!createdDate) return false;
+
+  const now = new Date();
+  const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  mid.setDate(mid.getDate() - 4);
+
+  return createdDate >= mid;
+}
+
 function eventYear(row){
   const y = String(row?.YEAR ?? "").trim();
   if(y) return y;
@@ -191,6 +188,10 @@ export function filterEvents(rows, state){
     const group = monthYearLabel(r.DATE);
     const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
     const hay = `${base} ${group}`;
-    return cs.every(c => (c === "new events" ? isRowNew(r) : includesAllWords(hay, c)));
+    return cs.every(c => {
+      // Special token: "new events" (any case) => filter to rows that meet the *NEW condition (CREATED within last 4 days)
+      if(c === "new events") return isRowNew(r);
+      return includesAllWords(hay, c);
+    });
   });
 }
