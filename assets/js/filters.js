@@ -28,6 +28,44 @@ function includesAllWords(hay, needle){
   return words.every(w => h.includes(w));
 }
 
+function parseEventDate(str){
+  const s = String(str ?? "").trim();
+  if(!s) return null;
+
+  // MM/DD/YYYY or M/D/YYYY
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    const yy = Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  // MM/DD/YY or M/D/YY (assume 20YY)
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+  if(m){
+    const mm = Number(m[1]);
+    const dd = Number(m[2]);
+    const yy = 2000 + Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  // ISO YYYY-MM-DD
+  m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m){
+    const yy = Number(m[1]);
+    const mm = Number(m[2]);
+    const dd = Number(m[3]);
+    const d = new Date(yy, mm-1, dd);
+    return isNaN(d) ? null : d;
+  }
+
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
 function monthYearLabel(dateStr){
   const str = String(dateStr ?? "").trim();
   if(!str) return "";
@@ -119,21 +157,17 @@ function createdDateFromRow(row){
   const createdRaw = String(row?.CREATED ?? "").trim();
   if(!createdRaw) return null;
 
-  // Try native parsing first (handles ISO and many formats)
-  const ms = Date.parse(createdRaw);
-  if(!Number.isNaN(ms)) return new Date(ms);
+  // Prefer direct Date parsing (handles full timestamps).
+  const t = Date.parse(createdRaw);
+  if(!Number.isNaN(t)) return new Date(t);
 
-  // Fallback: handle MM/DD/YYYY or M/D/YY style
-  const m = createdRaw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if(m){
-    const mm = Number(m[1]);
-    const dd = Number(m[2]);
-    let yy = Number(m[3]);
-    if(yy < 100) yy = 2000 + yy; // assume 20xx for 2-digit years
-    const d = new Date(yy, mm-1, dd);
-    return isNaN(d) ? null : d;
+  // Fallback: parse common date-only formats.
+  try{
+    const d = parseEventDate(createdRaw);
+    return d;
+  }catch(e){
+    return null;
   }
-  return null;
 }
 
 function isRowNew(row){
