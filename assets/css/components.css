@@ -1017,4 +1017,16 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 
-
+/* ============================
+   VIEW LOCK (Events-only mode)
+   ============================ */
+.viewToggle.viewToggle--locked{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.viewToggle.viewToggle--locked .viewToggle__tab{
+  pointer-events: none;
+}
+.viewToggle.viewToggle--locked .viewToggle__thumb{
+  opacity: 0.85;
+}
