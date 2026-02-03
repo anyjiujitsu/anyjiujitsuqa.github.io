@@ -2,7 +2,27 @@
 // - Case-insensitive
 // - Punctuation trimmed
 // - Comma-separated terms are ANDed (intersection): "2025, comp" => must match BOTH
-// - View A (Events) additionally matches group labels like "November 2025" derived from DATE
+// - View A (Events) additionally matches gro// Search query
+  const token = extractWeekendToken(state.events.q);
+  const cs = clauses(token.remaining);
+  const wantsWeekend = token.wantsWeekend;
+
+  if(!cs.length && !wantsWeekend) return out;
+
+  return out.filter(r=>{
+    // If searching for "this weekend", ensure event is on Saturday or Sunday
+    if(wantsWeekend && !(
+        r.SAT === token.saturday || r.SUN === token.sunday
+      )) return false;
+
+    if(!cs.length) return true;
+
+    const group = monthYearLabel(r.DATE);
+    const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
+    const hay = `${base} ${group}`;
+    return cs.every(c => includesAllWords(hay, c));
+  });
+}up labels like "November 2025" derived from DATE
 
 function norm(s){
   return String(s ?? "")
@@ -27,6 +47,39 @@ function includesAllWords(hay, needle){
   const h = norm(hay);
   return words.every(w => h.includes(w));
 }
+
+function getThisWeekend(){
+  const now = new Date();
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // set to Monday
+  const saturday = new Date(startOfWeek);
+  saturday.setDate(saturday.getDate() + 5); // Saturday
+  const sunday = new Date(startOfWeek);
+  sunday.setDate(sunday.getDate() + 6); // Sunday
+
+  return {
+    saturday: saturday.toISOString().split('T')[0],
+    sunday: sunday.toISOString().split('T')[0]
+  };
+}
+
+function extractWeekendToken(q){
+  // Check if query contains 'this weekend'
+  const normQuery = norm(q).toLowerCase();
+  if (normQuery.includes("this weekend")) {
+    const { saturday, sunday } = getThisWeekend();
+    return {
+      wantsWeekend: true,
+      saturday: saturday,
+      sunday: sunday,
+      remaining: normQuery.replace("this weekend", "").trim()
+    };
+  }
+  return {
+    wantsWeekend: false,
+    remaining: q
+  };
+}
+
 
 // --- EVENTS: special search token helpers ---
 // The UI shows *NEW based on the CREATED field being within the last 4 days (see render.js).
