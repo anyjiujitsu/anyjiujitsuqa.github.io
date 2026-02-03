@@ -2,27 +2,7 @@
 // - Case-insensitive
 // - Punctuation trimmed
 // - Comma-separated terms are ANDed (intersection): "2025, comp" => must match BOTH
-// - View A (Events) additionally matches gro// Search query
-  const token = extractWeekendToken(state.events.q);
-  const cs = clauses(token.remaining);
-  const wantsWeekend = token.wantsWeekend;
-
-  if(!cs.length && !wantsWeekend) return out;
-
-  return out.filter(r=>{
-    // If searching for "this weekend", ensure event is on Saturday or Sunday
-    if(wantsWeekend && !(
-        r.SAT === token.saturday || r.SUN === token.sunday
-      )) return false;
-
-    if(!cs.length) return true;
-
-    const group = monthYearLabel(r.DATE);
-    const base = r.searchText ?? `${r.YEAR} ${r.STATE} ${r.CITY} ${r.GYM} ${r.TYPE} ${r.DATE}`;
-    const hay = `${base} ${group}`;
-    return cs.every(c => includesAllWords(hay, c));
-  });
-}up labels like "November 2025" derived from DATE
+// - View A (Events) additionally matches group labels like "November 2025" derived from DATE
 
 function norm(s){
   return String(s ?? "")
@@ -46,9 +26,7 @@ function includesAllWords(hay, needle){
   if(!words.length) return true;
   const h = norm(hay);
   return words.every(w => h.includes(w));
-}
-
-function getThisWeekend(){
+}function getThisWeekend(){
   const now = new Date();
   const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // set to Monday
   const saturday = new Date(startOfWeek);
@@ -63,7 +41,6 @@ function getThisWeekend(){
 }
 
 function extractWeekendToken(q){
-  // Check if query contains 'this weekend'
   const normQuery = norm(q).toLowerCase();
   if (normQuery.includes("this weekend")) {
     const { saturday, sunday } = getThisWeekend();
@@ -79,7 +56,6 @@ function extractWeekendToken(q){
     remaining: q
   };
 }
-
 
 // --- EVENTS: special search token helpers ---
 // The UI shows *NEW based on the CREATED field being within the last 4 days (see render.js).
@@ -249,34 +225,18 @@ function eventYear(row){
 }
 
 // ------------------ EVENTS ------------------
-export function filterEvents(rows, state){
-  let out = rows;
-
-  // YEAR pill (multi-select)
-  const years = state?.events?.year;
-  if(years && years.size){
-    out = out.filter(r => years.has(eventYear(r)));
-  }
-
-  const statesSel = state?.events?.state;
-  if(statesSel && statesSel.size){
-    out = out.filter(r => statesSel.has(String(r.STATE ?? "").trim()));
-  }
-
-  const typesSel = state?.events?.type;
-  if(typesSel && typesSel.size){
-    out = out.filter(r => typesSel.has(String(r.TYPE ?? "").trim()));
-  }
-
-  // Search query
-  const token = extractNewEventsToken(state.events.q);
+export // Search query
+  const token = extractWeekendToken(state.events.q);
   const cs = clauses(token.remaining);
-  const wantsNew = token.wantsNew;
+  const wantsWeekend = token.wantsWeekend;
 
-  if(!cs.length && !wantsNew) return out;
+  if(!cs.length && !wantsWeekend) return out;
 
   return out.filter(r=>{
-    if(wantsNew && !isRowNew(r)) return false;
+    // Apply weekend filter if "this weekend" was found in the query
+    if(wantsWeekend && !(
+        r.SAT === token.saturday || r.SUN === token.sunday
+      )) return false;
 
     if(!cs.length) return true;
 
@@ -285,4 +245,5 @@ export function filterEvents(rows, state){
     const hay = `${base} ${group}`;
     return cs.every(c => includesAllWords(hay, c));
   });
+}
 }
