@@ -724,15 +724,21 @@ init().catch((err)=>{
   $("eventsStatus").textContent = "Failed to load data";
 });
 
-// Custom filter for 'CUSTOM' input
+// Custom filter for 'CUSTOM' input to filter the first Saturday after today
 document.querySelector('#searchBar').addEventListener('input', function(event) {
     const searchValue = event.target.value.trim().toLowerCase();
-
+    
     if (searchValue === 'custom') {
-        const today = new Date().toLocaleDateString();  // Today's date in MM/DD/YYYY format
+        // Get today's date
+        const today = new Date();
+        const firstSaturday = new Date(today);
+        firstSaturday.setDate(today.getDate() + (6 - today.getDay() + 7) % 7); // First Saturday after today
+        
+        const formattedSaturday = firstSaturday.toLocaleDateString(); // Format the date
+
         const filteredEvents = eventRows.filter(event => {
             const eventDate = new Date(event.DATE).toLocaleDateString();
-            return eventDate === today;
+            return eventDate === formattedSaturday;
         });
 
         // Call the render function to display the filtered events
