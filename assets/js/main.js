@@ -723,3 +723,19 @@ init().catch((err)=>{
   $("status").textContent = "Failed to load data";
   $("eventsStatus").textContent = "Failed to load data";
 });
+
+// Custom filter for 'CUSTOM' input
+document.querySelector('#searchBar').addEventListener('input', function(event) {
+    const searchValue = event.target.value.trim().toLowerCase();
+
+    if (searchValue === 'custom') {
+        const today = new Date().toLocaleDateString();  // Today's date in MM/DD/YYYY format
+        const filteredEvents = eventRows.filter(event => {
+            const eventDate = new Date(event.DATE).toLocaleDateString();
+            return eventDate === today;
+        });
+
+        // Call the render function to display the filtered events
+        renderEventsGroups(filteredEvents);
+    }
+});
