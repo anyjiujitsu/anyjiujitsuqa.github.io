@@ -225,19 +225,21 @@ function eventYear(row){
 }
 
 // ------------------ EVENTS ------------------
-export // Search query
-  const token = extractWeekendToken(state.events.q);
+export 
+  // Search query
+  const token = extractWeekendToken(state.events.q);  // Look for 'this weekend'
   const cs = clauses(token.remaining);
   const wantsWeekend = token.wantsWeekend;
 
-  if(!cs.length && !wantsWeekend) return out;
+  if(!cs.length && !wantsWeekend) return out;  // If no search term, or weekend search, filter here.
 
   return out.filter(r=>{
-    // Apply weekend filter if "this weekend" was found in the query
+    // If looking for 'this weekend', make sure event is on Saturday/Sunday
     if(wantsWeekend && !(
         r.SAT === token.saturday || r.SUN === token.sunday
       )) return false;
 
+    // If normal search exists, filter based on matching terms
     if(!cs.length) return true;
 
     const group = monthYearLabel(r.DATE);
