@@ -289,3 +289,14 @@ function escapeHtml(s){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+
+// Function to render filtered events
+export function renderFilteredEvents(filteredEvents) {
+    if (!filteredEvents || filteredEvents.length === 0) {
+        console.log("No events found for today's date.");
+        return;
+    }
+    const root = document.getElementById("eventsRoot"); // Assuming an ID to append the events
+    root.innerHTML = ""; // Clear current content
+    filteredEvents.forEach(event => renderEventRow(event)); // Use existing renderEventRow logic
+}
