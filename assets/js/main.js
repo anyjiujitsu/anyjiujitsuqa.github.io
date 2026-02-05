@@ -357,7 +357,7 @@ function applyProgress(p){
   document.body.style.setProperty("--viewProgress", String(clamped));
   const viewTitle = $("viewTitle");
   if(viewTitle){
-    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "FEB MAR APR MAY JUN";
+    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "JUL AUG SEP OCT NOV DEC";
   }
   return clamped;
 }
@@ -365,7 +365,7 @@ function applyProgress(p){
 function setViewUI(view){
   setView(view);
 
-  $("tabEvents")?.setAttribute("aria-selected", view === "FEB MAR APR MAY JUN" ? "true" : "false");
+  $("tabEvents")?.setAttribute("aria-selected", view === "JUL AUG SEP OCT NOV DEC" ? "true" : "false");
   $("tabIndex")?.setAttribute("aria-selected", view === "index" ? "true" : "false");
 
   // Sticky filter bars (now outside the slider)
@@ -375,7 +375,7 @@ function setViewUI(view){
   if(idxFilters) idxFilters.hidden = (view !== "index");
 
   const title = $("viewTitle");
-  if(title) title.textContent = (view === "FEB MAR APR MAY JUN") ? "EVENTS" : "INDEX";
+  if(title) title.textContent = (view === "JUL AUG SEP OCT NOV DEC") ? "EVENTS" : "INDEX";
 
   // Header counts: show the relevant total next to the header title
   const evStatus = $("eventsStatus");
