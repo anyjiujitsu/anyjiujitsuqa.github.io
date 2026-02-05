@@ -88,7 +88,7 @@ function isRowNew(row){
   const now = new Date();
   // local midnight cutoff to match render.js behavior
   const mid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  mid.setDate(mid.getDate() - 4);
+  mid.setDate(mid.getDate() - 7);
   return d >= mid;
 }
 
