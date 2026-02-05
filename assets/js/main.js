@@ -357,7 +357,7 @@ function applyProgress(p){
   document.body.style.setProperty("--viewProgress", String(clamped));
   const viewTitle = $("viewTitle");
   if(viewTitle){
-    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "EVENTS";
+    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "EVENTS (QA)";
   }
   return clamped;
 }
@@ -365,7 +365,7 @@ function applyProgress(p){
 function setViewUI(view){
   setView(view);
 
-  $("tabEvents")?.setAttribute("aria-selected", view === "EVENTS" ? "true" : "false");
+  $("tabEvents")?.setAttribute("aria-selected", view === "EVENTS (QA)" ? "true" : "false");
   $("tabIndex")?.setAttribute("aria-selected", view === "index" ? "true" : "false");
 
   // Sticky filter bars (now outside the slider)
@@ -375,7 +375,7 @@ function setViewUI(view){
   if(idxFilters) idxFilters.hidden = (view !== "index");
 
   const title = $("viewTitle");
-  if(title) title.textContent = (view === "EVENTS") ? "EVENTS" : "INDEX";
+  if(title) title.textContent = (view === "EVENTS (QA)") ? "EVENTS (QA)" : "INDEX";
 
   // Header counts: show the relevant total next to the header title
   const evStatus = $("eventsStatus");
@@ -383,7 +383,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. GRAPPLING" : "ANY N.E. â€“ GYM INDEX";
+  document.title = (view === "events") ? "ANY N.E. GRAPPLING (QA)" : "ANY N.E. â€“ GYM INDEX";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
@@ -694,8 +694,8 @@ async function init(){
   state.view = "events";
   setViewUI("events");
 
-  $("status").textContent = "Loadingâ€¦";
-  $("eventsStatus").textContent = "Loadingâ€¦";
+  $("status").textContent = "Loading...";
+  $("eventsStatus").textContent = "Loading...";
 
   const [dirRaw, evRaw] = await Promise.all([
     loadCSV("data/directory.csv"),
