@@ -1045,3 +1045,30 @@ nav.filters, .filters__inner, .pillRow{
 #eventsPill3Menu .menu__item{
   text-transform: uppercase;
 }
+
+/* START ICON ENHANCEMENT TESTING */
+
+.header-icon-wrap{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.header-icon-wrap a{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.header-icon-wrap a:hover{
+  opacity: 0.65;
+}
+
+/* END ICON ENHANCEMENT TESTING */
