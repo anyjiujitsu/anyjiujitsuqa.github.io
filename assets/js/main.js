@@ -383,7 +383,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = (view === "events") ? "ANY N.E. GRAPPLING" : "ANY N.E. GRAPPLING";
+  document.title = (view === "events") ? "ANY N.E. GRAPPLING (QA)" : "ANY N.E. GRAPPLING (QA)";
 
   setTransition(260);
   applyProgress(view === "index" ? 1 : 0);
