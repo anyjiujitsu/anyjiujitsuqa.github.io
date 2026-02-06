@@ -1065,10 +1065,17 @@ nav.filters, .filters__inner, .pillRow{
   color: var(--green);
   opacity: 1;
   transition: opacity 0.15s ease;
+  text-decoration: none;
 }
 
-.header-icon-wrap a:hover{
-  opacity: 0.65;
+.header-icon-wrap a:hover{ opacity: 0.65; }
+
+.header-icon{
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;
 }
 
 /* END ICON ENHANCEMENT TESTING */
+
