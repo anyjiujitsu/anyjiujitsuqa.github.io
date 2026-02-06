@@ -357,7 +357,7 @@ function applyProgress(p){
   document.body.style.setProperty("--viewProgress", String(clamped));
   const viewTitle = $("viewTitle");
   if(viewTitle){
-    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "EVENTS";
+    viewTitle.textContent = (clamped >= 0.5) ? "INDEX" : "EVENTS (QA)";
   }
   return clamped;
 }
@@ -375,7 +375,7 @@ function setViewUI(view){
   if(idxFilters) idxFilters.hidden = (view !== "index");
 
   const title = $("viewTitle");
-  if(title) title.textContent = (view === "events") ? "EVENTS" : "INDEX";
+  if(title) title.textContent = (view === "events") ? "EVENTS (QA)" : "INDEX";
 
   // Header counts: show the relevant total next to the header title
   const evStatus = $("eventsStatus");
