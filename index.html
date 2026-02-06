@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/pills.css?v=20260129-302">
-  <link rel="stylesheet" href="assets/css/components.css?v=20260202-301" />
+  <link rel="stylesheet" href="assets/css/components.css?v=20260206-302" />
 <!-- IMPORTANT: repo references main.js (no sequence) -->
   <script type="module" src="assets/js/main.js?v=20260202-321"></script>
 </head>
@@ -27,13 +27,7 @@
       </div>
     </div>
 
-      <!--ORIGNAL TESTING -->
-<!--<div class="header__inner" style="padding-top:0px;">
-
-  <!-- REVISED TESTING -->
-  <div class="header__inner" style="padding-top:0px; position:relative;"> 
-<!-- REVISED TESTING END -->
-    
+      <div class="header__inner" style="padding-top:0px;">
         <h1 class="header__title" id="viewTitle" aria-label="Current view">EVENTS (QA)</h1>
 
         <div class="header__countWrap" id="headerCounts" aria-live="polite">
@@ -41,42 +35,30 @@
           <span id="status" class="status header__count" hidden></span>
         </div>
 
+        <!-- START ICON ENHANCEMENT TESTING -->
+        <div class="headerSocial" aria-label="Header social links">
+          <a class="headerSocial__link" href="https://www.instagram.com/any.jiujitsu/" target="_blank" rel="noopener" aria-label="Instagram profile">
+            <svg class="headerSocial__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9A3.5 3.5 0 0 0 20 16.5v-9A3.5 3.5 0 0 0 16.5 4h-9Zm4.5 4.5A5.5 5.5 0 1 1 6.5 14 5.5 5.5 0 0 1 12 8.5Zm0 2A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5Zm5.75-2.35a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1Z"/>
+            </svg>
+          </a>
 
-       
+          <a class="headerSocial__link" href="https://ig.me/m/any.jiujitsu" target="_blank" rel="noopener" aria-label="Instagram DM">
+            <svg class="headerSocial__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21.8 4.2a1 1 0 0 0-1.05-.16L2.6 11.2a1 1 0 0 0 .08 1.9l7.26 2.42 2.42 7.26a1 1 0 0 0 1.9.08l7.16-18.15a1 1 0 0 0-.62-1.51ZM11.2 14.3l-5.02-1.67 11.9-4.7-6.88 6.37Zm1.5 1.5 6.37-6.88-4.7 11.9-1.67-5.02Z"/>
+            </svg>
+          </a>
+        </div>
+        <!-- END ICON ENHANCEMENT TESTING -->
+
         <!-- Toggle: LEFT = EVENTS, RIGHT = INDEX [TESTING HOLD] -->
-
-  <!-- Toggle: LEFT = EVENTS, RIGHT = INDEX [TESTING HOLD] -->
-
-<!-- START ICON ENHANCEMENT TESTING -->
-<div class="viewToggleWrap" aria-label="View toggle wrap">
-
-  <div class="header-icon-wrap" aria-label="Header social links">
-    <a href="https://www.instagram.com/any.jiujitsu/" target="_blank" rel="noopener" aria-label="Instagram profile">
-      <!-- (keep your existing Instagram SVG here) -->
-    </a>
-
-    <a href="https://ig.me/m/any.jiujitsu" target="_blank" rel="noopener" aria-label="Instagram DM">
-      <!-- (keep your existing DM SVG here) -->
-    </a>
-  </div>
-
-  <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
-    <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="true" type="button">Events</button>
-    <button class="viewToggle__tab" id="tabIndex" role="tab" aria-selected="false" type="button">Index</button>
-    <div class="viewToggle__thumb" aria-hidden="true"></div>
-  </div>
-
-</div>
-<!-- END ICON ENHANCEMENT TESTING -->
-
-  
-          <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
+        <div class="viewToggle" id="viewToggle" role="tablist" aria-label="View toggle">
           <button class="viewToggle__tab" id="tabEvents" role="tab" aria-selected="true" type="button">Events</button>
           <button class="viewToggle__tab" id="tabIndex" role="tab" aria-selected="false" type="button">Index</button>
           <div class="viewToggle__thumb" aria-hidden="true"></div>
         </div>
-      </div>  
-  
+      </div>
+
     <!-- Sticky Filter Bars (locked with header) -->
     <div class="stickyFilters" id="stickyFilters">
       <nav class="filters" id="eventsFilters" aria-label="Events filters">
