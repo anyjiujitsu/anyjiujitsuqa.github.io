@@ -1048,9 +1048,16 @@ nav.filters, .filters__inner, .pillRow{
 
 /* START ICON ENHANCEMENT TESTING */
 
-.header-icon-wrap{
+/* anchor point for absolute icons */
+.viewToggleWrap{
+  position: relative;
+  display: inline-block; /* does not change the header flex layout */
+}
+
+/* place icons immediately LEFT of the toggle */
+.viewToggleWrap .header-icon-wrap{
   position: absolute;
-  left: 12px;
+  right: calc(100% + 14px); /* <-- gap between icons and toggle */
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -1058,19 +1065,19 @@ nav.filters, .filters__inner, .pillRow{
   z-index: 5;
 }
 
-.header-icon-wrap a{
+.viewToggleWrap .header-icon-wrap a{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--green);
+  color: var(--green); /* matches EVENTS green */
   opacity: 1;
   transition: opacity 0.15s ease;
   text-decoration: none;
 }
 
-.header-icon-wrap a:hover{ opacity: 0.65; }
+.viewToggleWrap .header-icon-wrap a:hover{ opacity: 0.65; }
 
-.header-icon{
+.viewToggleWrap .header-icon{
   width: 18px;
   height: 18px;
   display: block;
@@ -1078,4 +1085,6 @@ nav.filters, .filters__inner, .pillRow{
 }
 
 /* END ICON ENHANCEMENT TESTING */
+
+
 
