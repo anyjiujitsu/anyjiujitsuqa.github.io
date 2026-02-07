@@ -1102,7 +1102,33 @@ nav.filters, .filters__inner, .pillRow{
   .headerSocial__icon{ width: 18px; height: 18px; }
 }
 
+/* START ICON ENHANCEMENT TESTING */
+
+/* ...your existing desktop rules stay exactly as-is... */
+
+/* MOBILE override: move icons to top-right (goal layout) */
+@media (max-width: 640px){
+  .headerSocial{
+    /* dock to top-right of the header row */
+    top: 12px;
+    right: 14px;
+
+    /* stop “vertical centering” behavior on mobile */
+    transform: none;
+  }
+
+  .headerSocial a{
+    /* keep your slight scaling change (adjust if you want) */
+    transform: scale(0.95);
+    transform-origin: center;
+  }
+}
+
 /* END ICON ENHANCEMENT TESTING */
+
+
+/* END ICON ENHANCEMENT TESTING */
+
 
 
 
