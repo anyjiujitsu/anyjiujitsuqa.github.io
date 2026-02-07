@@ -1119,7 +1119,7 @@ nav.filters, .filters__inner, .pillRow{
 
   .headerSocial a{
     /* keep your slight scaling change (adjust if you want) */
-    transform: scale(0.90);
+    transform: scale(0.80);
     transform-origin: center;
   }
 }
@@ -1128,6 +1128,7 @@ nav.filters, .filters__inner, .pillRow{
 
 
 /* END ICON ENHANCEMENT TESTING */
+
 
 
 
