@@ -1111,7 +1111,7 @@ nav.filters, .filters__inner, .pillRow{
   .headerSocial{
     /* dock to top-right of the header row */
     top: 12px;
-    right: 14px;
+    right: 20px;
 
     /* stop “vertical centering” behavior on mobile */
     transform: none;
@@ -1128,6 +1128,7 @@ nav.filters, .filters__inner, .pillRow{
 
 
 /* END ICON ENHANCEMENT TESTING */
+
 
 
 
