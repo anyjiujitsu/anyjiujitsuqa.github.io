@@ -1110,8 +1110,8 @@ nav.filters, .filters__inner, .pillRow{
 @media (max-width: 640px){
   .headerSocial{
     /* dock to top-right of the header row */
-    top: 12px;
-    right: 20px;
+    top: 1px;
+    right: 14px;
 
     /* stop “vertical centering” behavior on mobile */
     transform: none;
@@ -1128,6 +1128,7 @@ nav.filters, .filters__inner, .pillRow{
 
 
 /* END ICON ENHANCEMENT TESTING */
+
 
 
 
