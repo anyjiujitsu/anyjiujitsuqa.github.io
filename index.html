@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/pills.css?v=20260129-302">
-  <link rel="stylesheet" href="assets/css/components.css?v=20260206-303" />
+  <link rel="stylesheet" href="assets/css/components.css?v=20260209-401" />
 <!-- IMPORTANT: repo references main.js (no sequence) -->
-  <script type="module" src="assets/js/main.js?v=20260202-321"></script>
+  <script type="module" src="assets/js/main.js?v=20260209-401"></script>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
     </div>
 
       <div class="header__inner" style="padding-top:0px;">
-        <h1 class="header__title" id="viewTitle" aria-label="Current view">EVENTS (QA)</h1>
+        <h1 class="header__title" id="viewTitle" aria-label="Current view">EVENTS (DEV)</h1>
 
         <div class="header__countWrap" id="headerCounts" aria-live="polite">
           <span id="eventsStatus" class="status header__count">Loading</span>
@@ -69,12 +69,25 @@
       <nav class="filters" id="eventsFilters" aria-label="Events filters">
             <div class="filters__inner">
               <!-- Natural language search -->
+              <div class="suggestWrap" id="eventsSearchWrap">
+
               <div class="pill pill--search">
                 <span class="pill__icon" aria-hidden="true">🔎</span>
                 <input id="eventsSearchInput" class="pill__input" type="text" inputmode="search"
                        autocomplete="off" autocapitalize="none" spellcheck="false"
                        placeholder="Search events" />
                 <button id="eventsSearchClear" class="pill__clear" type="button" aria-label="Clear">×</button>
+              </div>
+              <div id="eventsSearchSuggest" class="suggest" hidden>
+  <div class="menu__header menu__header--static">
+    <span class="menu__title">Quick Searches</span>
+  </div>
+  <div class="menu__divider"></div>
+
+                <button type="button" class="suggest__item" data-value="THIS WEEKEND">THIS WEEKEND</button>
+                <button type="button" class="suggest__item" data-value="2026, COMP">2026, COMP</button>
+                <button type="button" class="suggest__item" data-value="NEW EVENTS">NEW EVENTS</button>
+              </div>
               </div>
 
               <!-- Pill 1: YEAR -->
@@ -89,8 +102,7 @@
                     <div class="menu__title">YEAR</div>
                     <button id="eventsPill1Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
                   </div>
-                  <div class="menu__empty">Coming soon</div>
-                </div>
+</div>
               </div>
 
               <!-- Pill 2: STATE -->
@@ -105,8 +117,7 @@
                     <div class="menu__title">STATE</div>
                     <button id="eventsPill2Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
                   </div>
-                  <div class="menu__empty">Coming soon</div>
-                </div>
+</div>
               </div>
 
               <!-- Pill 3: EVENT -->
@@ -121,8 +132,7 @@
                     <div class="menu__title">EVENT</div>
                     <button id="eventsPill3Clear" class="menu__clear" data-pill-clear type="button">Clear</button>
                   </div>
-                  <div class="menu__empty">Coming soon</div>
-                </div>
+</div>
               </div>
             </div>
           </nav>
