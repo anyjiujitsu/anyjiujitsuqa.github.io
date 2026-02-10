@@ -6,6 +6,8 @@ import { renderDirectoryGroups, renderEventsGroups } from "./render.js?v=2026020
 let directoryRows = [];
 let eventRows = [];
 
+
+let didRender = false;
 // TEMP: lock app to Events while Index view is being rebuilt
 const VIEW_LOCKED = true;
 
@@ -670,7 +672,58 @@ function wireSearch(){
   });
 }
 
+
+/* section: search suggestions // purpose: quick-pick common search tokens for Events */
+function wireSearchSuggestions(){
+  const wrap  = $("eventsSearchWrap");
+  const input = $("eventsSearchInput");
+  const panel = $("eventsSearchSuggest");
+  if(!wrap || !input || !panel) return;
+
+  const open = ()=>{
+    if(panel.hasAttribute("hidden")) panel.removeAttribute("hidden");
+  };
+  const close = ()=>{
+    if(!panel.hasAttribute("hidden")) panel.setAttribute("hidden","");
+  };
+
+  input.addEventListener("focus", ()=>{
+    if(!String(input.value || "").trim()) open();
+  });
+  input.addEventListener("click", ()=>{
+    if(!String(input.value || "").trim()) open();
+  });
+
+  input.addEventListener("input", ()=>{
+    if(String(input.value || "").trim()) close();
+  });
+
+  panel.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button[data-value]");
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const val = btn.getAttribute("data-value") || "";
+    input.value = val;
+    setEventsQuery(val);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    close();
+    input.blur();
+  });
+
+  document.addEventListener("pointerdown", (e)=>{
+    if(wrap.contains(e.target)) return;
+    close();
+  }, true);
+
+  input.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") close();
+  });
+}
+
 function render(){
+  didRender = true;
   const evFiltered = filterEvents(eventRows, state);
   renderEventsGroups($("eventsRoot"), evFiltered);
   $("eventsStatus").textContent = `${evFiltered.length} events`;
@@ -688,7 +741,7 @@ function render(){
 async function init(){
   wireViewToggle();
   wireSearch();
-
+  wireSearchSuggestions();
   if(!state.view) state.view = "events";
   setView("events");
   state.view = "events";
@@ -711,15 +764,22 @@ async function init(){
   wireEventsTypePill(()=>eventRows, render);
 
   // Wire STATE + OPENS + GUESTS filter pills (Index view)
-  wireIndexStatePill(()=>directoryRows, render);
-  wireIndexOpensPill(()=>directoryRows, render);
-  wireIndexGuestsPill(()=>directoryRows, render);
+  // purpose: Index UI should never break Events if elements are missing/hidden
+  try{
+    wireIndexStatePill(()=>directoryRows, render);
+    wireIndexOpensPill(()=>directoryRows, render);
+    wireIndexGuestsPill(()=>directoryRows, render);
+  }catch(err){
+    console.warn("Index pill wiring skipped:", err);
+  }
 
   render();
 }
 
 init().catch((err)=>{
   console.error(err);
+  // If we already rendered successfully, don't overwrite the UI with a generic failure.
+  if(didRender) return;
   $("status").textContent = "Failed to load data";
   $("eventsStatus").textContent = "Failed to load data";
 });
