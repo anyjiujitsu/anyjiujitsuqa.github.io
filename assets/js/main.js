@@ -181,7 +181,7 @@ function setViewUI(view){
   if(evStatus) evStatus.hidden = (view !== "events");
   if(idxStatus) idxStatus.hidden = (view !== "index");
 
-  document.title = "ANY N.E. GRAPPLING (DEV)";
+  document.title = "ANY N.E. GRAPPLING (QA)";
 
   setTransition(260);
   refreshEventsPillDots({ $, activeEventsState });
