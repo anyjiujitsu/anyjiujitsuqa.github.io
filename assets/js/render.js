@@ -55,10 +55,15 @@ function renderIndexRow(r){
   const row = document.createElement("div");
   row.className = "row";
 
+  // INDEX view only: on mobile, clamp long IG handles to stabilize the first column.
+  // We keep the full value available via the title attribute.
+  const igFull = (r.IG || "").toString();
+  const igDisplay = shouldClampIg() ? clampChars(igFull, 26) : igFull;
+
   const a = document.createElement("div");
   a.innerHTML = `
     <div class="cell__name">${escapeHtml(r.NAME)}</div>
-    <div class="cell__ig">${escapeHtml(r.IG)}</div>
+    <div class="cell__ig" title="${escapeHtml(igFull)}">${escapeHtml(igDisplay)}</div>
   `;
 
   const b = document.createElement("div");
@@ -77,6 +82,22 @@ function renderIndexRow(r){
   row.appendChild(b);
   row.appendChild(c);
   return row;
+}
+
+function shouldClampIg(){
+  // Match the CSS breakpoint used for INDEX mobile layout.
+  try{
+    return !!(window.matchMedia && window.matchMedia("(max-width: 520px)").matches);
+  } catch {
+    return false;
+  }
+}
+
+function clampChars(str, maxChars){
+  const s = String(str ?? "");
+  if(s.length <= maxChars) return s;
+  // Use three dots ("...") per your UI expectation.
+  return s.slice(0, maxChars).replace(/\s+$/g, "") + "...";
 }
 
 function composeDays(r){
@@ -141,6 +162,110 @@ export function renderEventsGroups(root, rows){
   }
 }
 
+
+/* section: Index events-style groups (directory remap)
+   purpose: render directory rows using the exact Events card markup, but without date parsing/grouping */
+export function renderIndexEventsGroups(root, rows){
+  if(!root) return;
+
+  root.innerHTML = "";
+
+  // Group by STATE (ascending), then CITY (ascending) within each state.
+  // This view is meant to mirror the Events layout, but use directory data.
+  const map = new Map();
+  for(const r of rows){
+    const key = (r.STATE || "—").toString().trim().toUpperCase() || "—";
+    if(!map.has(key)) map.set(key, []);
+    map.get(key).push(r);
+  }
+
+  const stateKeys = Array.from(map.keys()).sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
+  for(const state of stateKeys){
+    const list = map.get(state) || [];
+    list.sort((a,b) => {
+      const ac = (a.CITY || "").toString().trim();
+      const bc = (b.CITY || "").toString().trim();
+      const cmp = ac.localeCompare(bc, undefined, {sensitivity:"base"});
+      if(cmp) return cmp;
+      const an = (a.FOR || "").toString().trim();
+      const bn = (b.FOR || "").toString().trim();
+      return an.localeCompare(bn, undefined, {sensitivity:"base"});
+    });
+
+    const group = document.createElement("section");
+    group.className = "group";
+
+    const label = document.createElement("div");
+    label.className = "group__label";
+    label.textContent = state;
+
+    const table = document.createElement("div");
+    table.className = "table";
+
+    for(const r of list){
+      table.appendChild(renderIndexEventRow(r));
+    }
+
+    group.appendChild(label);
+    group.appendChild(table);
+    root.appendChild(group);
+  }
+}
+
+function renderIndexEventRow(r){
+  const row = document.createElement("div");
+  row.className = "row row--events";
+
+  const otaVal = String(r.OTA || "").trim().toUpperCase();
+  const otaLabel = otaVal === "Y" ? "ALLOWED" : (otaVal === "N" ? "NOT ALLOWED" : "");
+
+  const c1 = document.createElement("div");
+  c1.className = "cell cell--event";
+  c1.innerHTML = `
+    <div class="cell__top cell__event">${escapeHtml(r.EVENT || "—")}</div>
+    ${otaLabel ? `<div class="cell__sub cell__new">${escapeHtml(otaLabel)}</div>` : `<div class="cell__sub cell__new">&nbsp;</div>`}
+  `;
+
+  const c2 = document.createElement("div");
+  c2.className = "cell cell--forwhere";
+  c2.innerHTML = `
+    <div class="cell__eventInlineWrap">
+      <span class="cell__eventInline">${escapeHtml(r.EVENT || "—")}</span>
+      ${otaLabel ? `<span class="cell__newInline">${escapeHtml(otaLabel)}</span>` : `<span class="cell__newInline">&nbsp;</span>`}
+    </div>
+    <div class="cell__top cell__for">${escapeHtml(r.FOR || "—")}</div>
+    <div class="cell__sub cell__where">${renderIndexIgLink(r.WHERE)}</div>
+  `;
+
+  const c3 = document.createElement("div");
+  c3.className = "cell cell--citystate";
+  c3.innerHTML = `
+    <div class="cell__top cell__city">${escapeHtml(r.CITY || "—")}</div>
+    <div class="cell__sub cell__state">${escapeHtml(r.STATE || "—")}</div>
+  `;
+
+  const c4 = document.createElement("div");
+  c4.className = "cell cell--daydate";
+  // Index view mapping: SAT -> DAY, SUN -> DATE (see main.js dirToIndexEventRow)
+  const sat = String(r.DAY ?? "").trim() || "—";
+  const sun = String(r.DATE ?? "").trim() || "—";
+  c4.innerHTML = `
+    <div class="cell__dayline">
+      <span class="cell__top dayLabel">Sat:</span>
+      <span class="cell__sub dayValue">${escapeHtml(sat)}</span>
+    </div>
+    <div class="cell__dayline">
+      <span class="cell__top dayLabel">Sun:</span>
+      <span class="cell__sub dayValue">${escapeHtml(sun)}</span>
+    </div>
+  `;
+
+  row.appendChild(c1);
+  row.appendChild(c2);
+  row.appendChild(c3);
+  row.appendChild(c4);
+  return row;
+}
 function renderEventGroup(root, groupTuple, dir, isPast=false){
   const [labelText, list] = groupTuple;
 
@@ -313,4 +438,18 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+}
+
+function renderIndexIgLink(whereVal){
+  const raw = String(whereVal ?? "").trim();
+  if(!raw || raw === "—") return escapeHtml(raw || "—");
+
+  // Display always with leading '@', but build URL without '@'
+  const handle = raw.replace(/^@+/, "").trim();
+  if(!handle) return "—";
+
+  const href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+  const label = `@${handle}`;
+
+  return `<a class="cell__whereLink" href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
 }
