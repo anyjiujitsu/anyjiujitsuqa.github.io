@@ -176,7 +176,7 @@ function setViewUI(view){
   // Phase 1: Index uses Events filter bar for a 1:1 UI match
 
   const title = $("viewTitle");
-  if(title) title.textContent = (view === "events") ? "EVENTS (QA)" : "INDEX (QA)";
+  if(title) title.textContent = (view === "events") ? "EVENTS (QA)" : "FIND TRAINING (QA)";
 
 
   // Events filter bar is shared across views (Phase 1).
